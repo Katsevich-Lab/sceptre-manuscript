@@ -1,50 +1,60 @@
-# This file contains functions for performing likelihood-based inference on single-cell pooled crispr screen data.
-
-
-#' Run negative binomial model
+#' Run negative binomial model (known size)
 #'
-#' Runs a negative binomial model on a vector of expression data, gRNA indicators, and a covariate matrix.
+#' Runs NB model on gene-gRNA pair where gene has known size. Returns the one-sided p-value.
 #'
-#' @param expressions a vector of expressions
-#' @param gRNA_indicators a vector of gRNA indicators
-#' @param covariate_matrix a covariate matrix
+#' @param expressions vector of expressions
+#' @param gRNA_indicators vector of gRNA indicators
+#' @param covariate_matrix covariate matrix
+#' @param gene_size precomputed gene size
 #'
-#' @return p-value corresponding to the gRNA indicator
+#' @return a left-tailed p-value
 #' @export
 #'
 #' @examples
 #' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
 #' processed_dir <- paste0(offsite_dir, "/data/xie/processed")
 #' covariate_matrix <- read.fst(paste0(processed_dir, "/covariate_model_matrix.fst"))
-#' ordered_gene_ids <- readRDS(paste0(processed_dir, "/ordered_genes.RDS"))
+#' ordered_gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 #' cell_gene_expression_matrix <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm
-#' expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == "ARL15")]
+#' expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == "ENSG00000197530.12")]
 #' gRNA_indicators <- paste0(processed_dir, "/gRNA_indicator_matrix.fst") %>% read.fst() %>% pull()
-run_NB_model <- function(expressions, gRNA_indicators, covariate_matrix) {
-  # construct the full model matrix
-  if("gRNA_indic" %in% colnames(covariate_matrix)) stop("gRNA_indic should be passed as a vector and not included as a column in the covariate matrix.")
-  model_matrix <- mutate(covariate_matrix, gRNA_indic = as.integer(gRNA_indicators))
-
-  # first, we estimate the size parameter.
-  backup_2 <- function(pois_fit) {
-    theta.mm(y = expressions, mu = pois_fit$fitted.values, dfr = pois_fit$df.residual)
-  }
-  backup <- function() {
-    pois_fit <- glm(expressions ~ ., data = model_matrix, family = poisson())
-    tryCatch({
-      theta.ml(y = expressions, mu = pois_fit$fitted.values, limit = 50)[1]
-    }, error = function(e) backup_2(pois_fit), warning = function(w) backup_2(pois_fit))
-  }
-  size <- tryCatch({
-  fit_nb <- glm.nb(formula = expressions ~ ., data = model_matrix)
-  fit_nb$theta
-  }, error = function(e) backup(), warning = function(w) backup())
-
-  # next, we fit the model with known size parameter.
-  fit_star <- vglm(formula = expressions ~ ., family = negbinomial.size(size), data = model_matrix)
-  # we extract the z-value corresponding to gRNA_indic
-  z_val <- summaryvglm(fit_star)@coef3["gRNA_indic", "z value"]
-  # Return the appropriate one-sided p-value
+#' gene_size <- readRDS(file = paste0(offsite_dir, "/data/xie/precomp/gene/gene_size_unreg_2.rds"))[["ENSG00000197530.12"]]
+run_NB_model_known_size <- function(expressions, gRNA_indicators, covariate_matrix, gene_size) {
+  full_covariate_matrix <- mutate(covariate_matrix, gRNA_indicator = as.integer(gRNA_indicators))
+  fit <- vglm(formula = expressions ~ ., family = negbinomial.size(gene_size), data = full_covariate_matrix)
+  z_val <- summaryvglm(fit)@coef3["gRNA_indicator", "z value"]
   p <- pnorm(q = z_val, lower.tail = TRUE)
   return(p)
+}
+
+
+#' Run NB model at scale
+#'
+#' Runs the negative binomial regression model at scale.
+#'
+#' @export
+run_nb_model_at_scale <- function(pod_id, gene_precomp_dir, results_dir_negbin, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, cell_subset, log_dir) {
+  if (!is.null(log_dir)) activate_sink(paste0(log_dir, "/result_negbinmom_", pod_id, ".Rout"))
+  results_dict <- read.fst(paste0(results_dir_negbin, "/results_dictionary.fst")) %>% filter(pod_id == !!pod_id)
+  to_save_fp <- results_dict$result_file[1] %>% as.character()
+  gene_ids <- results_dict$gene_id
+  gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))[gene_ids]
+  p_vals <- sapply(1:nrow(results_dict), function(i) {
+    curr_gene <- results_dict[[i, "gene_id"]] %>% as.character()
+    curr_gRNA <- results_dict[[i, "gRNA_id"]] %>% as.character()
+    cat(paste0("Running NB regression of gene ", curr_gene, " on gRNA ", curr_gRNA, ".\n"))
+
+    expressions <- cell_gene_expression_matrix[, which(curr_gene == ordered_gene_ids)]
+    gRNA_indicators <- read.fst(path = gRNA_indicator_matrix_fp, columns = curr_gRNA) %>% pull() %>% as.integer()
+    gene_size <- gene_sizes[[curr_gene]]
+
+    if (!is.null(cell_subset)) {
+      expressions <- expressions[cell_subset]
+      gRNA_indicators <- gRNA_indicators[cell_subset]
+      covariate_matrix <- covariate_matrix[cell_subset,]
+    }
+    run_NB_model_known_size(expressions = expressions, gRNA_indicators = gRNA_indicators, covariate_matrix = covariate_matrix, gene_size = gene_size)
+  })
+  out <- select(results_dict, gRNA_id, gene_id) %>% mutate(p_value = p_vals)
+  write_fst(x = out, path = to_save_fp)
 }

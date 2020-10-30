@@ -6,5 +6,6 @@ param_file <- if(is.na(args[2])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/anal
 # source the function arguments
 source(param_file)
 
-pod_id <- as.integer(args[3])
-run_gene_precomputation_at_scale(pod_id = pod_id, gene_precomp_dir = gene_precomp_dir, cell_gene_expression_matrix = cell_gene_expression_matrix, ordered_gene_ids = ordered_gene_ids, covariate_matrix = covariate_matrix, cell_subset = cell_subset, gene_sizes = gene_sizes, log_dir = log_dir)
+x <- if (!is.null(log_dir)) file.remove(list.files(log_dir, full.names = TRUE))
+dicts <- create_and_store_dictionaries(gRNA_gene_pairs = gRNA_gene_pairs, gene_precomp_dir = gene_precomp_dir, gRNA_precomp_dir = gRNA_precomp_dir, results_dir = results_dir, pod_sizes = pod_sizes)
+paste(dicts$n_pods[["gene"]], dicts$n_pods[["gRNA"]], dicts$n_pods[["pairs"]]) %>% cat

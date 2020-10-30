@@ -15,9 +15,17 @@ n_gene_pods="$(echo $pod_sizes | cut -d' ' -f1)"
 n_gRNA_pods="$(echo $pod_sizes | cut -d' ' -f2)"
 n_pair_pods="$(echo $pod_sizes | cut -d' ' -f3)"
 
-# Run the gene precomputation
-echo Run gene precomputation across all gene pods.
-seq 1 $n_gene_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir/"run_gene_precomputation.R" $offsite_dir $parameter_file {} &
+echo Run the first round of gene precomputations across all gene pods.
+seq 1 $n_gene_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir/"run_gene_precomputation_round_1.R" $offsite_dir $parameter_file {} &
+wait
+
+echo Regularize the gene size estimates.
+Rscript $sceptre_at_scale_bash_dir"/regularize_gene_size_estimates.R" $offsite_dir $parameter_file
+wait
+
+echo Run the second round of gene precomputations across all gene pods.
+seq 1 $n_gene_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir/"run_gene_precomputation_round_2.R" $offsite_dir $parameter_file {} &
+wait
 
 echo Run gRNA precomputation across all gRNA pods.
 seq 1 $n_gRNA_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir"/run_gRNA_precomputation.R" $offsite_dir $parameter_file {} &

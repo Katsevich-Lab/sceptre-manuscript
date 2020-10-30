@@ -21,6 +21,22 @@ deactivate_sink <- function() {
 }
 
 
+#' Initialze directories
+#'
+#' @param storage_location file path to a directory in which to store the intermediate and final results
+#'
+#' @return named vector containing the file paths of the gene_precomp_dir, gRNA_precomp_dir, results_dir, and log_dir.
+#' @export
+initialize_directories <- function(storage_location) {
+  if (!dir.exists(storage_location)) dir.create(storage_location, recursive = TRUE)
+  sub_dirs <- c("gene_precomp", "gRNA_precomp", "results", "logs")
+  dirs_to_create <- paste0(storage_location, "/", sub_dirs)
+  for (dir in dirs_to_create) {
+    if (!dir.exists(dir)) dir.create(dir)
+  }
+  return(c(gene_precomp_dir = dirs_to_create[1], gRNA_precomp_dir = dirs_to_create[2], results_dir = dirs_to_create[3], log_dir = dirs_to_create[4]))
+}
+
 #' Create dictionary
 #'
 #' Create a dictionary that maps named elements (gRNAs, genes, or gRNA pairs) to files for a given "pod" size.
@@ -336,18 +352,15 @@ collect_results <- function(results_dir, save_to_disk = TRUE) {
 #' This function has the side-effect of saving the result dataframe in the results directory.
 #'
 #' @param gRNA_gene_pairs a data-frame containing the gRNA-gene pairs to analyze
-#' @param gene_precomp_dir a file-path to the directory that will store the gene precomputation
-#' @param gRNA_precomp_dir a file-path to the directory that will store the gRNA precomputation
-#' @param results_dir a file-path to the directory that will store the results
 #' @param cell_gene_expression_matrix a file-backed matrix containing the cell-by-gene UMI counts
 #' @param ordered_gene_ids a character vector containing the names of the genes in the cell-by-gene expression matrix
 #' @param gRNA_indicator_matrix_fp a file-path to the gRNA indicator matrix, assumed to be stored as a dataframe in .fst format
 #' @param covariate_matrix a dataframe containing the cell-specific covariates to use in the model
+#' @param storage_location the file path to a folder that will store all intermediate and final results; alternately, a named character vector with entries for gene_precomp_dir, gRNA_precomp_dir, results_dir, log_dir.
 #' @param cell_subset (optional) an integer vector identifying the cells to use
 #' @param regularization_amount (optional, default 3) a non-negative scalar value indicating the amount of regularization to apply to the estimated gene sizes. 0 corresponds to no regularization at all, and greater values correspond to more regularization.
 #' @param pod_sizes (optional) a named integer vector containing entries for "gene," "gRNA," and "pair." The entries specify the number of elements (gene, gRNAs, or pairs) to include per "pod." This purely is for computational purposes.
 #' @param seed (optional) seed to the conditional randomization test subroutine
-#' @param log_dir (optional) a file-path to the directory containing the log-files. If NULL, print everything to the standard output (i.e., R console).
 #' @param B (optional, default 500) number of resamples to draw in CRT subroutine
 #' @param mutli_processor (opitional boolean, default TRUE) should this function use multiple processors?
 #'
@@ -357,8 +370,15 @@ collect_results <- function(results_dir, save_to_disk = TRUE) {
 #' @examples
 #' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
 #' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_xie/sceptre_function_args.R")
-#' r <- run_sceptre_at_scale(gRNA_gene_pairs, gene_precomp_dir, gRNA_precomp_dir, results_dir, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, cell_subset, regularization_amount, pod_sizes, seed, log_dir, B, multi_processor = TRUE)
-run_sceptre_at_scale <- function(gRNA_gene_pairs, gene_precomp_dir, gRNA_precomp_dir, results_dir, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, cell_subset = NULL, regularization_amount = 3, pod_sizes = c(gene = 100, gRNA = 500, pair = 200), seed = 1234, log_dir = NULL, B = 500, multi_processor = TRUE) {
+#' r <- run_sceptre_at_scale(gRNA_gene_pairs = gRNA_gene_pairs, cell_gene_expression_matrix = cell_gene_expression_matrix, ordered_gene_ids = ordered_gene_ids, gRNA_indicator_matrix_fp = gRNA_indicator_matrix_fp, covariate_matrix = covariate_matrix, storage_location = storage_location, cell_subset = cell_subset, regularization_amount = regularization_amount, pod_sizes = pod_sizes, seed = seed, B = B, multi_processor = TRUE)
+run_sceptre_at_scale <- function(gRNA_gene_pairs, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, storage_location, cell_subset = NULL, regularization_amount = 3, pod_sizes = c(gene = 100, gRNA = 500, pair = 200), seed = 1234, B = 500, multi_processor = TRUE) {
+  # Create offsite directories (if necessary)
+  if (length(storage_location) == 1) storage_location <- initialize_directories(storage_location)
+  gene_precomp_dir <- storage_location[["gene_precomp_dir"]]
+  gRNA_precomp_dir <- storage_location[["gRNA_precomp_dir"]]
+  results_dir <- storage_location[["results_dir"]]
+  log_dir <- storage_location[["log_dir"]]
+
   # Load the future package for parallel computation
   if (multi_processor) {
     library(future.apply)

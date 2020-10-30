@@ -1,6 +1,6 @@
 # At scale functions
 
-#' Map reduce at scale
+#' Map reduce at scale (deprecated)
 #'
 #' @param f function we are applying
 #' @param pod_id pod id
@@ -12,7 +12,6 @@
 #' @param covariate_matrix matrix of covariates
 #' @param cell_subset integer vector indicating cell subset
 #' @param log_dir location to sink log fles
-#' @export
 map_reduce_at_scale <- function(f, pod_id, dictionary, results_dir, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, cell_subset = NULL, log_dir = NULL) {
   if (!is.null(log_dir)) activate_sink(paste0(log_dir, "/" , f, "_", pod_id, ".Rout"))
   pairs_to_analyze <- filter(dictionary, pod_id == !!pod_id)
