@@ -6,16 +6,16 @@
 machine=local
 n_processors=20
 
-# Make sure the sceptre and katsevich2020 packages are up-to-date.
-bash build_and_install_package.bash sceptre $machine
-bash build_and_install_package.bash katsevich2020 $machine
-
 # Obtain the filepaths to the code and "offsite" directories
 code_dir=$(bash get_file_paths.bash $machine code)
 offsite_dir=$(bash get_file_paths.bash $machine data_results)
 
 echo Check the availability of the required packages
 Rscript $code_dir"/analysis_drivers_gasp/"check_packages_0.R $code_dir
+
+# Make sure the sceptre and katsevich2020 packages are up-to-date.
+bash build_and_install_package.bash sceptre $machine
+bash build_and_install_package.bash katsevich2020 $machine
 
 echo Initialize the offsite directory structure.
 Rscript $code_dir"/analysis_drivers_gasp/"check_directory_structure_1.R $code_dir $offsite_dir
