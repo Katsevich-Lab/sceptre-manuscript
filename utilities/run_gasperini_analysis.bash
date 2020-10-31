@@ -3,7 +3,7 @@
 # This bash script runs the Gasperini data analysis. The code is commented to increase ease of adoption and use. It is assumed that this bash file is being executed from within the utilities directory.
 
 # Set the machine.
-machine=local
+machine=uberduo
 n_processors=20
 
 # Obtain the filepaths to the code and "offsite" directories

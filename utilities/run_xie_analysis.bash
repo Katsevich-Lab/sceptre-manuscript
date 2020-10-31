@@ -3,7 +3,7 @@
 # This script runs the Xie data analysis. It is assumed that this script is being executed from within the utilities directory.
 
 # Set the machine and number of processors.
-machine=local
+machine=uberduo
 n_processors=20
 echo Running on machine $machine with $n_processors processors.
 
