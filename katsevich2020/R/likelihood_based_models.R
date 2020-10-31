@@ -38,7 +38,7 @@ run_nb_model_at_scale <- function(pod_id, gene_precomp_dir, results_dir_negbin, 
   results_dict <- read.fst(paste0(results_dir_negbin, "/results_dictionary.fst")) %>% filter(pod_id == !!pod_id)
   to_save_fp <- results_dict$result_file[1] %>% as.character()
   gene_ids <- results_dict$gene_id
-  gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))[gene_ids]
+  gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))[as.character(gene_ids)]
   p_vals <- sapply(1:nrow(results_dict), function(i) {
     curr_gene <- results_dict[[i, "gene_id"]] %>% as.character()
     curr_gRNA <- results_dict[[i, "gRNA_id"]] %>% as.character()

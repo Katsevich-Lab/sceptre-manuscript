@@ -285,7 +285,7 @@ run_gRNA_gene_pair_analysis_at_scale <- function(pod_id, gene_precomp_dir, gRNA_
   results_dict <- read.fst(paste0(results_dir, "/results_dictionary.fst")) %>% filter(pod_id == !!pod_id)
   gene_dict <- read.fst(paste0(gene_precomp_dir, "/gene_dictionary.fst"))
   gRNA_dict <- read.fst(paste0(gRNA_precomp_dir, "/gRNA_dictionary.fst"))
-  if (regularization_amount > 0) regularized_gene_sizes <- readRDS(gene_dict$size_reg_file[1] %>% as.character())[results_dict$gene_id]
+  if (regularization_amount > 0) regularized_gene_sizes <- readRDS(gene_dict$size_reg_file[1] %>% as.character())[as.character(results_dict$gene_id)]
 
   p_vals <- sapply(1:nrow(results_dict), function(i) {
     curr_gene <- results_dict[[i, "gene_id"]] %>% as.character()

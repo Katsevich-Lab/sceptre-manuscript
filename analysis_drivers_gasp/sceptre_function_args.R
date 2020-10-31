@@ -1,24 +1,25 @@
-# sceptre function arguments; these arguments should be defined in terms of offsite_dir
+# sceptre function arguments; these arguments should be defined in terms of "offsite_dir"
 # offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
+small_example <- TRUE
 
 processed_dir <- paste0(offsite_dir, "/data/gasperini/processed")
-gene_precomp_dir <- paste0(offsite_dir, "/data/gasperini/precomp/gene")
-gRNA_precomp_dir <- paste0(offsite_dir, "/data/gasperini/precomp/gRNA")
-results_dir <- paste0(offsite_dir, "/results/gasperini/sceptre")
 results_dir_negbin <- paste0(offsite_dir, "/results/gasperini/negative_binomial")
-log_dir <- paste0(offsite_dir, "/logs/gasperini")
-
+gRNA_gene_pairs <- read.fst(paste0(processed_dir, "/gene_gRNA_pairs_to_study.fst"))
 covariate_matrix <- read.fst(paste0(processed_dir, "/cell_covariate_model_matrix.fst"))
-cell_subset <- readRDS(paste0(processed_dir, "/cells_to_keep.rds"))
 cell_gene_expression_matrix <- readRDS(paste0(processed_dir, "/expression_FBM_metadata.rds")) %>% load_fbm
 ordered_gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 gRNA_indicator_matrix_fp <- paste0(processed_dir, "/gRNA_indicators.fst")
-gRNA_gene_pairs <- read.fst(paste0(processed_dir, "/gene_gRNA_pairs_to_study.fst"))
-if (TRUE) gRNA_gene_pairs <- gRNA_gene_pairs %>% slice(c(12262, 185202, 323756, 305770, 492670, 596203, 553777, 205062, 400245, 320979, 288925, 506135, 607659, 222201, 332665, 519542, 614764, 457555, 358113, 481437, 166854, 304582, 141405, 360173, 64637))
-# all_dispersions <- read.fst(paste0(processed_dir, "/disp_table.fst"))
-# select_dispersions <- sapply(X = gRNA_gene_pairs$gene_id, FUN = function(id) {
-#  filter(all_dispersions, gene_id == as.character(id)) %>% pull(disp)
-#  })
-# select_sizes <- 1/select_dispersions
-# names(select_sizes) <- gRNA_gene_pairs$gene_id
-# rm(all_dispersions, select_dispersions)
+regularization_amount <- 3
+cell_subset <- readRDS(paste0(processed_dir, "/cells_to_keep.rds"))
+seed <- 1234
+B <- 500
+pod_sizes <- c(gene = 200, gRNA = 200, pair = 200)
+storage_location <- c(gene_precomp_dir = paste0(offsite_dir, "/data/gasperini/precomp/gene"), gRNA_precomp_dir = paste0(offsite_dir, "/data/gasperini/precomp/gRNA"), results_dir = paste0(offsite_dir, "/results/gasperini/sceptre"), log_dir = paste0(offsite_dir, "/logs/gasperini"))
+gene_precomp_dir <- storage_location[["gene_precomp_dir"]]
+gRNA_precomp_dir <- storage_location[["gRNA_precomp_dir"]]
+results_dir <- storage_location[["results_dir"]]
+log_dir <- storage_location[["log_dir"]]
+if (small_example) {
+  pod_sizes <- c(gene = 10, gRNA = 1, pair = 10)
+  gRNA_gene_pairs <- slice(gRNA_gene_pairs, c(1:10, 6001:6010))
+}
