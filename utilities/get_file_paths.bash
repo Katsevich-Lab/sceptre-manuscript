@@ -4,7 +4,7 @@
 
 # Define machine_name, code_dir, and data_results_dir arrays.
 machine_name=(local ubergenno uberduo hydra bridges)
-code_dir=(/Users/timbarry/Box/SCEPTRE/sceptre_paper /home/tbarry2/SCEPTRE/sceptre_paper uberduo_code_dur hydra_code_dir bridges_code_dir)
+code_dir=(/Users/timbarry/Box/SCEPTRE/sceptre_paper /home/tbarry2/SCEPTRE/sceptre_paper /home/tbarry2/SCEPTRE/sceptre_paper hydra_code_dir bridges_code_dir)
 data_results_dir=(/Volumes/tims_new_drive/research/sceptre_files /raid6/Tim/sceptre_offsite_dir /raid6/Tim/sceptre_offsite_dir hydra_data_dir bridges_data_dir)
 
 # find the index of the selected machine
