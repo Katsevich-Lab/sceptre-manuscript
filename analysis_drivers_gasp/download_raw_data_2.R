@@ -67,33 +67,34 @@ supplementary_table_file <- "https://www.cell.com/cms/10.1016/j.cell.2018.11.029
 download.file(supplementary_table_file, paste0(raw_data_dir_gasp, "/Gasperini_TableS2.xlsx"))
 
 ####################
-# Download HI-C data
+# Download HI-C data (currently deactivated)
 ####################
 
-# URL of data
-functional_data_dir <- paste0(offsite_dir, "/data/functional")
-remote <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE63525&format=file&file="
-TADs_filename <- "GSE63525_K562_Arrowhead_domainlist.txt"
-contact_matrices_dirname <- "GSE63525_K562_intrachromosomal_contact_matrices"
-
-# download TADs file, if necessary
-dest <- paste0(functional_data_dir, "/HIC/", TADs_filename)
-if (!file.exists(dest)) {
-  cat(paste0("Downloading ",TADs_filename, "\n"))
-  download.file(paste0(remote, TADs_filename, ".gz"),
-                paste0(dest, ".gz"))
-  gunzip(paste0(dest, ".gz"))
+if (FALSE) {
+  # URL of data
+  functional_data_dir <- paste0(offsite_dir, "/data/functional")
+  remote <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE63525&format=file&file="
+  TADs_filename <- "GSE63525_K562_Arrowhead_domainlist.txt"
+  contact_matrices_dirname <- "GSE63525_K562_intrachromosomal_contact_matrices"
+  
+  # download TADs file, if necessary
+  dest <- paste0(functional_data_dir, "/HIC/", TADs_filename)
+  if (!file.exists(dest)) {
+    cat(paste0("Downloading ",TADs_filename, "\n"))
+    download.file(paste0(remote, TADs_filename, ".gz"),
+                  paste0(dest, ".gz"))
+    gunzip(paste0(dest, ".gz"))
+  }
+  
+  # download contact matrices, if necessary
+  dest <- paste0(functional_data_dir, "/HIC/", contact_matrices_dirname)
+  if (!dir.exists(dest)) {
+    cat(paste0("Downloading ", contact_matrices_dirname, "\n"))
+    download.file(paste0(remote, contact_matrices_dirname, ".tar.gz"),
+                  paste0(dest, ".tar.gz"))
+    untar(paste0(dest, ".tar.gz"))
+  }
 }
-
-# download contact matrices, if necessary
-dest <- paste0(functional_data_dir, "/HIC/", contact_matrices_dirname)
-if (!dir.exists(dest)) {
-  cat(paste0("Downloading ", contact_matrices_dirname, "\n"))
-  download.file(paste0(remote, contact_matrices_dirname, ".tar.gz"),
-                paste0(dest, ".tar.gz"))
-  untar(paste0(dest, ".tar.gz"))
-}
-
 ########################
 # Download ChIP-seq data
 ########################
