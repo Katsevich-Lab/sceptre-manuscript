@@ -20,6 +20,9 @@ gRNA_precomp_dir <- storage_location[["gRNA_precomp_dir"]]
 results_dir <- storage_location[["results_dir"]]
 log_dir <- storage_location[["log_dir"]]
 if (small_example) {
+  gRNA_names <- readRDS(paste0(processed_dir, "/bulk_region_names.rds"))
+  arl15_region <- filter(gRNA_names, targeted_gene == "ARL15") %>% pull(region)
+  gRNA_gene_pairs <- filter(gRNA_gene_pairs, gRNA_id == arl15_region)
   pod_sizes <- c(gene = 10, gRNA = 1, pair = 10)
   gRNA_gene_pairs <- slice(gRNA_gene_pairs, 1:20)
 }

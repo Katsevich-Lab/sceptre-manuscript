@@ -19,7 +19,7 @@ gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 exp_mat <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm()
 gene_expression_p <- big_apply(exp_mat, function(X, ind) colMeans(X[,ind] >= 1)) %>% unlist()
 highly_expressed_genes <- gene_ids[which(gene_expression_p >= 0.08)] %>% unique()
-gRNA_gene_pairs <- tibble(gene_id = highly_expressed_genes, gRNA_id = gRNA_id)
+gRNA_gene_pairs <- expand_grid(gene_id = highly_expressed_genes, gRNA_id = gRNA_id) %>% mutate(gene_id = factor(gene_id), gRNA_id = factor(gRNA_id))
 write.fst(gRNA_gene_pairs, paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 
 # Finally, partition the cells into exploratory and validation sets
