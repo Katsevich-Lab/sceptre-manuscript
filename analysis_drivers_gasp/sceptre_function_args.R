@@ -19,7 +19,9 @@ gene_precomp_dir <- storage_location[["gene_precomp_dir"]]
 gRNA_precomp_dir <- storage_location[["gRNA_precomp_dir"]]
 results_dir <- storage_location[["results_dir"]]
 log_dir <- storage_location[["log_dir"]]
+
 if (small_example) {
-  pod_sizes <- c(gene = 10, gRNA = 1, pair = 10)
-  gRNA_gene_pairs <- slice(gRNA_gene_pairs, c(1:10, 6001:6010))
+  pod_sizes <- c(gene = 10, gRNA = 10, pair = 10)
+  set.seed(1)
+  gRNA_gene_pairs <- slice(gRNA_gene_pairs, sample(x = 1:nrow(gRNA_gene_pairs), size = 60, replace = FALSE))
 }

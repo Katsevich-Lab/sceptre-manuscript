@@ -11,7 +11,8 @@ run_sceptre_using_precomp(
   gene_precomp_size,
   gene_precomp_offsets,
   B,
-  seed
+  seed,
+  reduced_output = TRUE
 )
 }
 \arguments{

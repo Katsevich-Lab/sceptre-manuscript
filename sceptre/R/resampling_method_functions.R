@@ -14,7 +14,7 @@
 #'
 #' @export
 #' @return a p-value of the null hypothesis of no gRNA effect on gene expression
-run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed) {
+run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, reduced_output = TRUE) {
   if (!is.null(seed)) set.seed(seed)
 
   # compute the test statistic on the real data
@@ -43,8 +43,26 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
       p_value_skew_t <- pst(x = t_star, dp = dp) # then compute the skew t-based p-value.
     }
   }
-  p_value_raw <- mean(c(-Inf, t_nulls) <= t_star)
-  out <- if (is.na(p_value_skew_t)) p_value_raw else p_value_skew_t
+  # check if the skew-t fit worked
+  skew_t_fit_success <- !is.na(p_value_skew_t)
+  if (skew_t_fit_success) {
+    out_p <- p_value_skew_t
+    skew_t_mle <- dp
+  } else {
+    out_p <- mean(c(-Inf, t_nulls) <= t_star)
+    skew_t_mle <- c(xi = NA, omega = NA, alpha = NA, nu = NA)
+  }
+
+  # Prepare the output
+  if (reduced_output) {
+    out <- data.frame(p_value =  out_p, skew_t_fit_success = skew_t_fit_success, xi = skew_t_mle[["xi"]], omega = skew_t_mle[["omega"]], alpha = skew_t_mle[["alpha"]], nu = skew_t_mle[["nu"]])
+  } else {
+    out <- list(p_value = out_p,
+                skew_t_fit_success = skew_t_fit_success,
+                skew_t_mle = skew_t_mle,
+                z_value = t_star,
+                resampled_z_values = t_nulls)
+  }
   return(out)
 }
 

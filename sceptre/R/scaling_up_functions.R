@@ -287,7 +287,7 @@ run_gRNA_gene_pair_analysis_at_scale <- function(pod_id, gene_precomp_dir, gRNA_
   gRNA_dict <- read.fst(paste0(gRNA_precomp_dir, "/gRNA_dictionary.fst"))
   if (regularization_amount > 0) regularized_gene_sizes <- readRDS(gene_dict$size_reg_file[1] %>% as.character())[as.character(results_dict$gene_id)]
 
-  p_vals <- sapply(1:nrow(results_dict), function(i) {
+  p_vals <- map_dfr(1:nrow(results_dict), function(i) {
     curr_gene <- results_dict[[i, "gene_id"]] %>% as.character()
     curr_gRNA <- results_dict[[i, "gRNA_id"]] %>% as.character()
     cat(paste0("Running distilled CRT on gene ", curr_gene, " and gRNA ", curr_gRNA, ".\n"))
@@ -320,7 +320,7 @@ run_gRNA_gene_pair_analysis_at_scale <- function(pod_id, gene_precomp_dir, gRNA_
   })
 
   # Create and save the result dataframe
-  out <- results_dict %>% summarize(gene_id = gene_id, gRNA_id = gRNA_id) %>% mutate(p_value = p_vals)
+  out <- results_dict %>% select(gene_id = gene_id, gRNA_id = gRNA_id) %>% mutate(p_vals)
   out_fp <- (results_dict %>% pull(result_file))[1] %>% as.character()
   write.fst(out, out_fp)
   if (!is.null(log_dir)) deactivate_sink()

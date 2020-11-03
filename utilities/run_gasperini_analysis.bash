@@ -3,7 +3,7 @@
 # This bash script runs the Gasperini data analysis. The code is commented to increase ease of adoption and use. It is assumed that this bash file is being executed from within the utilities directory.
 
 # Set the machine.
-machine=uberduo
+machine=local
 n_processors=20
 
 # Obtain the filepaths to the code and "offsite" directories
@@ -18,7 +18,7 @@ bash build_and_install_package.bash sceptre $machine
 bash build_and_install_package.bash katsevich2020 $machine
 
 echo Initialize the offsite directory structure.
-Rscript $code_dir"/analysis_drivers_gasp/"check_directory_structure_1.R $code_dir $offsite_dir
+# Rscript $code_dir"/analysis_drivers_gasp/"check_directory_structure_1.R $code_dir $offsite_dir
 
 echo Download the data.
 # Rscript $code_dir"/analysis_drivers_gasp/"download_raw_data_2.R $code_dir $offsite_dir
@@ -34,8 +34,8 @@ parameter_file=$code_dir"/analysis_drivers_gasp/sceptre_function_args.R"
 
 echo Run the sceptre analysis at scale.
 sceptre_at_scale_bash_dir=$code_dir"/functions_at_scale/sceptre_at_scale"
-# bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
+bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
 
 echo Run the negative binomial regression at scale.
 nb_at_scale_bash_dir=$code_dir"/functions_at_scale/nb_regression_at_scale"
-# bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
+bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
