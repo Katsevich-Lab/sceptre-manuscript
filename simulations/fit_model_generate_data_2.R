@@ -39,7 +39,7 @@ n_enh <- 5
 
 synthetic_ys <- map_dfc(.x = set_names(1:n_sim, paste0("rep_", 1:n_sim)), .f = function(i) {
   cat(paste0("Generating y vector ", i, ".\n"))
-  sapply(X = fitted_nb_means, FUN = function(curr_mean) rnegbin(n = 1, mu = curr_mean, theta = fitted_theta)) 
+  sapply(X = fitted_nb_means, FUN = function(curr_mean) rnegbin(n = 1, mu = curr_mean, theta = fitted_theta))
 })
 
 synthetic_xs <- map_dfc(.x = 1:n_sim, .f = function(i) {
