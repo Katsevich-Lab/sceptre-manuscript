@@ -25,5 +25,6 @@ write.fst(gRNA_gene_pairs, paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 # Finally, partition the cells into exploratory and validation sets
 set.seed(1234)
 exploratory_cells <- sample(x = cell_subset, size = floor(length(cell_subset)/2), replace = FALSE) %>% sort()
-validation_cells <- cell_subset[-exploratory_cells]
-saveRDS(object = list(exploratory_cells = exploratory_cells, validation_cells = validation_cells), file = paste0(processed_dir, "/cell_subsets.rds"))
+validation_cells <- cell_subset[!(cell_subset %in% exploratory_cells)]
+all(sort(c(exploratory_cells, validation_cells)) == cell_subset)
+saveRDS(object = list(exploratory_cells = exploratory_cells, validation_cells = validation_cells, all_cells = cell_subset), file = paste0(processed_dir, "/cell_subsets.rds"))

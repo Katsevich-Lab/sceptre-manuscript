@@ -90,14 +90,16 @@ single_gene_matrix_regression <- function(targetobj, ngctrlgene = c("NonTargetin
 #' @param Ym the Y matrix
 #' @param lambda the ridge penalty
 #' @param npermutation number of permutations to run
+#' @param seed an argument to set.seed to run before the resampling procedure
 #'
 #' @return
 #' @export
-getsolvedmatrix_with_permutation_cell_label <- function(Xm, Ym, lambda = 0.01, npermutation = 1000) {
+getsolvedmatrix_with_permutation_cell_label <- function(Xm, Ym, lambda = 0.01, npermutation = 1000, seed = 1234) {
   Amat_ret = getsolvedmatrix(Xm, Ym, lambda = lambda)
   Amat_ret_higher = matrix(rep(0, ncol(Amat_ret) * nrow(Amat_ret)), nrow = nrow(Amat_ret))
   rownames(Amat_ret_higher) = rownames(Amat_ret)
   colnames(Amat_ret_higher) = colnames(Amat_ret)
+  set.seed(seed)
   # permute N times randomly shuffle cell labels
   for (npm in 1:npermutation) {
     if (npm%%100 == 0) {
@@ -177,7 +179,22 @@ run_scMaGECK_analysis <- function(expression_matrix, gRNA_indic_matrix) {
   Ymat = mat_for_single_reg[[2]]
   LAMBDA <- 0.01
   Amat_pm_lst = getsolvedmatrix_with_permutation_cell_label(Xmat, Ymat, lambda = LAMBDA, npermutation = 500)
-  Amat = Amat_pm_lst[[1]]
   Amat_pval = Amat_pm_lst[[2]]
   return(Amat_pval)
+}
+
+
+
+#' Run scMAGeCK simulation
+#'
+#' @param expressions a vector of expressions
+#' @param gRNA_indic_matrix the gRNA indicator matrix
+#' @param lib_sizes the cell-specific library sizes
+#'
+#' @return a p-value corresponding the gRNA 1
+#' @export
+run_scmageck_simulation <- function(expressions, gRNA_indic_matrix, lib_sizes) {
+  expression_matrix <- data.frame(expressions, lib_sizes - expressions)
+  res <- run_scMaGECK_analysis(expression_matrix = expression_matrix, gRNA_indic_matrix = gRNA_indic_matrix)
+  return(res["gRNA-1" , "gene-1"])
 }

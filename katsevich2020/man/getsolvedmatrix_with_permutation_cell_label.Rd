@@ -8,7 +8,8 @@ getsolvedmatrix_with_permutation_cell_label(
   Xm,
   Ym,
   lambda = 0.01,
-  npermutation = 1000
+  npermutation = 1000,
+  seed = 1234
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getsolvedmatrix_with_permutation_cell_label(
 \item{lambda}{the ridge penalty}
 
 \item{npermutation}{number of permutations to run}
+
+\item{seed}{an argument to set.seed to run before the resampling procedure}
 }
 \value{
 
