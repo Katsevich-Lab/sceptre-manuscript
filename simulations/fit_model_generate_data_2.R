@@ -34,7 +34,7 @@ fitted_logistic_probs <- predict.glm(object = fit_logistic_exploratory, newdata 
 
 # Randomly generate n_sim = 500 datasets, where we have n_enh = 20 enhancers
 set.seed(1234)
-n_sim <- 500
+n_sim <- 5
 n_enh <- 5
 
 synthetic_ys <- map_dfc(.x = set_names(1:n_sim, paste0("rep_", 1:n_sim)), .f = function(i) {
