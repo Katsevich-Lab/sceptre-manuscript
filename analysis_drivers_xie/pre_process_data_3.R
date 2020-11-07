@@ -2,7 +2,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/" else args[1]
 source(paste0(code_dir, "/analysis_drivers_xie/paths_to_dirs.R"))
-packs <- c("Matrix", "rhdf5", "stringr", "openxlsx", "ravel")
+packs <- c("purrr", "Matrix", "rhdf5", "stringr", "openxlsx", "ravel")
 for (pack in packs) suppressPackageStartupMessages(library(pack, character.only = TRUE))
 
 ###################
@@ -74,7 +74,7 @@ for (h5_file in h5_files) {
 }
 
 cell_covariate_matrix <- tibble(ordered_cell_barcodes = ordered_cell_barcodes, batch = batch)
-write.fst(x = cell_covariate_matrix, path = paste0(processed_dir, "/cell_covariate_matrix.fst"))
+# write.fst(x = cell_covariate_matrix, path = paste0(processed_dir, "/cell_covariate_matrix.fst"))
 saveRDS(object = genes_in_use, file = paste0(processed_dir, "/ordered_genes.RDS"))
 saveRDS(object = genes_in_use_ids, file = paste0(processed_dir, "/ordered_gene_ids.RDS"))
 
@@ -95,7 +95,9 @@ names(target_regions) <- target_regions
 raw_fs <- list.files(raw_data_dir)
 gRNA_files <- paste0(raw_data_dir, "/", grep(pattern = "sgRNA-enrichment_5K-sgRNAs_Batch", x = raw_fs, value = TRUE))
 
-res <- map(.x = gRNA_files, .f = function(curr_file) {
+# Run this part in parallel
+plan(multisession, workers = 8)
+res <- future_map(.x = gRNA_files, .f = function(curr_file) {
   print(paste("Working on file", curr_file))
   curr_gRNA_count_matrix <- read_tsv(file = curr_file, col_names = c("cell_barcode", "total_read_count", "total_umi_count", "gRNA_spacer_seqs", "read_counts", "umi_counts"), col_types = c("cccccc")) %>% select(cell_barcode, gRNA_spacer_seqs, umi_counts, total_umi_count)
   cell_barcodes <- pull(curr_gRNA_count_matrix, cell_barcode)
@@ -133,7 +135,7 @@ combine_gRNAs_in_group <- function(gRNA_count_matrix) {
 gRNA_indic_matrix <- map_dfr(gRNA_count_matrix_list, combine_gRNAs_in_group)
 
 # Finally, confirm that the cell barcode order for the gRNA indicator matrix matches that of the cell-by-gene expression matrix and cell-specific covariate matrix. Also, append the gRNA UMI count to the cell covariate matrix.
-cell_covariate_matrix <- read.fst(paste0(processed_dir, "/cell_covariate_matrix.fst"))
+# cell_covariate_matrix <- read.fst(paste0(processed_dir, "/cell_covariate_matrix.fst"))
 cell_barcodes_to_check <- pull(cell_covariate_matrix, ordered_cell_barcodes) %>% gsub(pattern = "-1", replacement = "")
 m <- match(x = cell_barcodes_to_check, table = cell_barcodes) # There will be some na's.
 gRNA_indic_matrix_ordered <- gRNA_indic_matrix[m,]
