@@ -2,7 +2,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/" else args[1]
 source(paste0(code_dir, "/analysis_drivers_xie/paths_to_dirs.R"))
-packs <- c("purrr", "Matrix", "rhdf5", "stringr", "openxlsx", "ravel")
+packs <- c("future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "ravel")
 for (pack in packs) suppressPackageStartupMessages(library(pack, character.only = TRUE))
 
 ###################
@@ -96,7 +96,7 @@ raw_fs <- list.files(raw_data_dir)
 gRNA_files <- paste0(raw_data_dir, "/", grep(pattern = "sgRNA-enrichment_5K-sgRNAs_Batch", x = raw_fs, value = TRUE))
 
 # Run this part in parallel
-plan(multisession, workers = 8)
+plan(multisession, workers = 10)
 res <- future_map(.x = gRNA_files, .f = function(curr_file) {
   print(paste("Working on file", curr_file))
   curr_gRNA_count_matrix <- read_tsv(file = curr_file, col_names = c("cell_barcode", "total_read_count", "total_umi_count", "gRNA_spacer_seqs", "read_counts", "umi_counts"), col_types = c("cccccc")) %>% select(cell_barcode, gRNA_spacer_seqs, umi_counts, total_umi_count)
