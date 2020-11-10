@@ -19,16 +19,3 @@ a named list containing two items: offsets and size.
 \description{
 This function runs the precomputation for a given gene. In particlar, it fits an NB regression of expression against covariates. The estimate of theta (i.e., the NB size parameter) is obtained from glm.nb function. This is sensible as, under the null hypothesis, the NB model without the gRNA indicator is true. Offsets are obtained by log-transforming the fitted values.
 }
-\examples{
-sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-grna_mean_prob = 0.2,
-covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-mRNA_mean_expression = 40,
-gRNA_effect = 0,
-covariate_effects = c(0.5, 1),
-zero_inflation = 0,
-neg_binom_size = 2)
-expressions <- sim_dat$Y
-covariate_matrix <- sim_dat$covariate_df
-gene_precomp <- run_gene_precomputation(expressions, covariate_matrix, NULL, NULL)
-}

@@ -4,7 +4,6 @@ library(katsevich2020)
 library(gridExtra)
 source(paste0(code_dir, "/analysis_drivers_xie/paths_to_dirs.R"))
 
-
 p1 <- readRDS(paste0(offsite_dir, "/figures/arl15_qqplot.rds"))
 p2 <- readRDS(paste0(offsite_dir, "/figures/bulk_vs_sc_pvals.rds"))
 

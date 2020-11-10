@@ -17,16 +17,3 @@ the fitted probabilities
 \description{
 This function runs the precomputation for a given gRNA.
 }
-\examples{
-sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-grna_mean_prob = 0.2,
-covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-mRNA_mean_expression = 40,
-gRNA_effect = -4,
-covariate_effects = c(0.5, 1),
-zero_inflation = 0,
-neg_binom_size = 2)
-gRNA_indicators <- sim_dat$X
-covariate_matrix <-sim_dat$covariate_df
-fitted_probs <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)
-}

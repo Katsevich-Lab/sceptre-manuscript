@@ -40,7 +40,7 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
   if (class(skew_t_fit) == "selm") { # If the fit worked,
     dp <- skew_t_fit@param$dp # then extract the parameters.
     if (!any(is.na(dp))) { # If all the fitted parameters are numbers,
-      p_value_skew_t <- pst(x = t_star, dp = dp) # then compute the skew t-based p-value.
+      p_value_skew_t <- pmax(.Machine$double.eps, pst(x = t_star, dp = dp, method = 2, rel.tol = .Machine$double.eps)) # then compute the skew t-based p-value. pst(x = t_star, dp = dp)
     }
   }
   # check if the skew-t fit worked
@@ -82,37 +82,12 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' @export
 #'
 #' @examples
-#' # An example in which the alternative is true.
-#' sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-#' grna_mean_prob = 0.2,
-#' covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-#' mRNA_mean_expression = 40,
-#' gRNA_effect = -4,
-#' covariate_effects = c(0.5, 1),
-#' zero_inflation = 0,
-#' neg_binom_size = 2)
-#' expressions <- sim_dat$Y
-#' gRNA_indicators <- sim_dat$X
-#' covariate_matrix <-sim_dat$covariate_df
-#' run_sceptre_gRNA_gene_pair(expressions = expressions,
-#' gRNA_indicators = gRNA_indicators,
-#' covariate_matrix = covariate_matrix)
-#'
-#' # An example in which the null is true.
-#' sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-#' grna_mean_prob = 0.2,
-#' covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-#' mRNA_mean_expression = 40,
-#' gRNA_effect = 0,
-#' covariate_effects = c(0.5, 1),
-#' zero_inflation = 0,
-#' neg_binom_size = 2)
-#' expressions <- sim_dat$Y
-#' gRNA_indicators <- sim_dat$X
-#' covariate_matrix <-sim_dat$covariate_df
-#' run_sceptre_gRNA_gene_pair(expressions = expressions,
-#' gRNA_indicators = gRNA_indicators,
-#' covariate_matrix = covariate_matrix)
+#' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
+#' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_xie/sceptre_function_args.R")
+#' expressions <- cell_gene_expression_matrix[,2][cell_subset]
+#' gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "chr5:54325645-54326045") %>% pull() %>% as.integer())[cell_subset]
+#' covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
+#' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL) {
   cat(paste0("Running gRNA precomputation.\n"))
   gRNA_precomp <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)
@@ -134,19 +109,6 @@ run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_m
 #'
 #' @export
 #' @return the fitted probabilities
-#'
-#' @examples
-#' sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-#' grna_mean_prob = 0.2,
-#' covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-#' mRNA_mean_expression = 40,
-#' gRNA_effect = -4,
-#' covariate_effects = c(0.5, 1),
-#' zero_inflation = 0,
-#' neg_binom_size = 2)
-#' gRNA_indicators <- sim_dat$X
-#' covariate_matrix <-sim_dat$covariate_df
-#' fitted_probs <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)
 run_gRNA_precomputation <- function(gRNA_indicators, covariate_matrix) {
   fit_model_grna <- glm(gRNA_indicators ~ ., family = binomial(), data = covariate_matrix)
   out <- as.numeric(fitted(fit_model_grna))
@@ -164,19 +126,6 @@ run_gRNA_precomputation <- function(gRNA_indicators, covariate_matrix) {
 #'
 #' @return a named list containing two items: offsets and size.
 #' @export
-#'
-#' @examples
-#' sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-#' grna_mean_prob = 0.2,
-#' covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-#' mRNA_mean_expression = 40,
-#' gRNA_effect = 0,
-#' covariate_effects = c(0.5, 1),
-#' zero_inflation = 0,
-#' neg_binom_size = 2)
-#' expressions <- sim_dat$Y
-#' covariate_matrix <- sim_dat$covariate_df
-#' gene_precomp <- run_gene_precomputation(expressions, covariate_matrix, NULL, NULL)
 run_gene_precomputation <- function(expressions, covariate_matrix, gene_precomp_size) {
   # cases on gene_precomp_size
   if (is.null(gene_precomp_size)) { # no size supplied; use glm.nb to estimate size and fit model

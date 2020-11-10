@@ -33,35 +33,10 @@ a p-value of the null hypothesis of no gRNA effect on gene expression
 This function runs the sceptre algorithm on a single gRNA-gene pair. It requires as arguments the gene expression vector, the gRNA indicator vector, and the covariate matrix. Users optionally can pass the gRNA precomputation or gene precomputation as arguments.
 }
 \examples{
-# An example in which the alternative is true.
-sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-grna_mean_prob = 0.2,
-covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-mRNA_mean_expression = 40,
-gRNA_effect = -4,
-covariate_effects = c(0.5, 1),
-zero_inflation = 0,
-neg_binom_size = 2)
-expressions <- sim_dat$Y
-gRNA_indicators <- sim_dat$X
-covariate_matrix <-sim_dat$covariate_df
-run_sceptre_gRNA_gene_pair(expressions = expressions,
-gRNA_indicators = gRNA_indicators,
-covariate_matrix = covariate_matrix)
-
-# An example in which the null is true.
-sim_dat <- simulate_crispr_screen_data(num_cells = 1000,
-grna_mean_prob = 0.2,
-covariate_sampler = list(cell_size = rnorm, cell_cycle = runif),
-mRNA_mean_expression = 40,
-gRNA_effect = 0,
-covariate_effects = c(0.5, 1),
-zero_inflation = 0,
-neg_binom_size = 2)
-expressions <- sim_dat$Y
-gRNA_indicators <- sim_dat$X
-covariate_matrix <-sim_dat$covariate_df
-run_sceptre_gRNA_gene_pair(expressions = expressions,
-gRNA_indicators = gRNA_indicators,
-covariate_matrix = covariate_matrix)
+offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
+source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_xie/sceptre_function_args.R")
+expressions <- cell_gene_expression_matrix[,1][cell_subset]
+gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "chr5:54325645-54326045") \%>\% pull() \%>\% as.integer())[cell_subset]
+covariate_matrix <- if (nrow(covariate_matrix) == 106664) covariate_matrix else covariate_matrix[cell_subset,]
+run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 }

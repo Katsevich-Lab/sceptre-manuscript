@@ -51,5 +51,5 @@ download.file(url = "https://ars.els-cdn.com/content/image/1-s2.0-S2211124719313
 dest <- paste0(raw_data_dir, "/hypergeometric_pvals_arl15_down.mat")
 download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/chr5-54325645-54326045-down_log-pval.mat?raw=true", destfile = dest)
 
-dest <- paste0(raw_data_dir, "/hypergeometric_pvals_arl15_up.mat")
-download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/chr5-54325645-54326045-up_log-pval.mat?raw=true", destfile = dest)
+dest <- paste0(raw_data_dir, "/hypergeometric_pvals_myb3_down.mat")
+download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/chr6-135323137-135323537-down_log-pval.mat?raw=true", destfile = dest)

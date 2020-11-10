@@ -151,13 +151,17 @@ write.fst(cell_covariate_matrix, paste0(processed_dir, "/cell_covariate_matrix.f
 ##############
 # Bulk RNA-seq
 ##############
-bulk_info <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/bulk_rna_info.xlsx"), sheet = 3)
-bulk_info <- slice(bulk_info, 1:25) %>% select(library_name = Library.Name, gRNA = sgRNA, region = Region, biological_duplicate = Biological.Duplicate)
-bulk_df <- suppressWarnings(read_tsv(file = paste0(raw_data_dir, "/GSE129825_Libraries.FeatureCounts.ARL15_enhancer.txt"), col_types = "ccccciiiiiiiiiiiiiiiiiiiiiiiiii")) %>% rename("PZ788" = "PZ778", "PZ778" = "PZ778_1")
-bulk_df <- filter(bulk_df, Geneid %in% all_protein_coding_genes)
+bulk_info <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/bulk_rna_info.xlsx"), sheet = 3) %>% select(library_name = Library.Name, gRNA = sgRNA, region = Region, biological_duplicate = Biological.Duplicate)
+bulk_info_arl15_enh <- slice(bulk_info, 1:25)
+bulk_info_myb_enh3 <- slice(bulk_info, 26:49) 
 
-write.fst(x = bulk_info, path = paste0(processed_dir, "/bulk_RNAseq_info.fst"))
-write.fst(x = bulk_df, path = paste0(processed_dir, "/bulk_RNAseq.fst"))
+bulk_df <- suppressWarnings(read_tsv(file = paste0(raw_data_dir, "/GSE129825_Libraries.FeatureCounts.ARL15_enhancer.txt"), col_types = "ccccciiiiiiiiiiiiiiiiiiiiiiiiii")) %>% rename("PZ788" = "PZ778", "PZ778" = "PZ778_1")
+bulk_df_arl15_enh <- filter(bulk_df, Geneid %in% all_protein_coding_genes)
+bulk_df <- suppressWarnings(read_tsv(file = paste0(raw_data_dir, "/GSE129825_Libraries.FeatureCounts.MYB_enhancer.txt"), col_types = "ccccciiiiiiiiiiiiiiiiiiiiiiiiii"))
+bulk_df_myb_enh3 <- filter(bulk_df, Geneid %in% all_protein_coding_genes)
+
+bulk_rnaseq <- list(data = list(arl15_enh = bulk_df_arl15_enh, myb_enh3 = bulk_df_myb_enh3), info = list(arl15_enh = bulk_info_arl15_enh, myb_enh3 = bulk_info_myb_enh3))
+saveRDS(object = bulk_rnaseq, file = paste0(processed_dir, "/bulk_RNAseq.rds"))
 
 #############################
 # Xie hypergeometric p-values
@@ -166,12 +170,11 @@ write.fst(x = bulk_df, path = paste0(processed_dir, "/bulk_RNAseq.fst"))
 suppressPackageStartupMessages(library(R.matlab))
 extract_p_vals_hypergeo <- function(p_vals_hypergeo) {
   p_vals <- exp(p_vals_hypergeo$matrix[1,])
-  names(p_vals) <- all_sequenced_genes
+  names(p_vals) <- all_sequenced_genes_ids
   return(p_vals)
 }
 
-xie_pfiles <- setNames(paste0(raw_data_dir, c("/hypergeometric_pvals_arl15_down.mat", "/hypergeometric_pvals_arl15_up.mat")), c("down", "up"))
+xie_pfiles <- setNames(paste0(raw_data_dir, c("/hypergeometric_pvals_arl15_down.mat", "/hypergeometric_pvals_myb3_down.mat")), c("arl15_enh", "myb_enh3"))
 xie_pfiles_r <- xie_pfiles %>% map(readMat) %>% map(extract_p_vals_hypergeo)
 
-saveRDS(object = xie_pfiles_r$down, file = paste0(processed_dir, "/hypergeometric_arl15enh_pvals_down.rds"))
-saveRDS(object =  xie_pfiles_r$up, file = paste0(processed_dir, "/hypergeometric_arl15enh_pvals_up.rds"))
+saveRDS(object = xie_pfiles_r, file = paste0(processed_dir, c("/xie_p_values.rds")))
