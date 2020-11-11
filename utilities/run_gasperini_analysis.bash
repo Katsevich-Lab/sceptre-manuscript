@@ -6,9 +6,10 @@
 machine=local
 n_processors=20
 
-# Obtain the filepaths to the code and "offsite" directories
+# Obtain the filepaths to the code and "offsite" directories. Also, determine if the cluster uses a scheduler.
 code_dir=$(bash get_file_paths.bash $machine code)
 offsite_dir=$(bash get_file_paths.bash $machine data_results)
+scheduler=$(bash get_file_paths.bash $machine scheduler)
 
 echo Check the availability of the required packages
 Rscript $code_dir"/analysis_drivers_gasp/"check_packages_0.R $code_dir
@@ -18,24 +19,42 @@ bash build_and_install_package.bash sceptre $machine
 bash build_and_install_package.bash katsevich2020 $machine
 
 echo Initialize the offsite directory structure.
-# Rscript $code_dir"/analysis_drivers_gasp/"check_directory_structure_1.R $code_dir $offsite_dir
+Rscript $code_dir"/analysis_drivers_gasp/"check_directory_structure_1.R $code_dir $offsite_dir
 
 echo Download the data.
-# Rscript $code_dir"/analysis_drivers_gasp/"download_raw_data_2.R $code_dir $offsite_dir
+R_file=$code_dir"/analysis_drivers_gasp/"download_raw_data_2.R
+if $scheduler
+then
+  sbatch --time=12:00:00 -p RM-shared -J "download_data" --output=/dev/null --error=/dev/null run_r_script.sh $R_file $code_dir $offsite_dir
+else
+  Rscript $R_file $code_dir $offsite_dir
+fi
 
 echo Pre-process the data.
-# Rscript $code_dir"/analysis_drivers_gasp/"pre_process_data_3.R $code_dir $offsite_dir
+R_file=$code_dir"/analysis_drivers_gasp/"pre_process_data_3.R
+if $scheduler
+then
+  sbatch --time=24:00:00 -p RM-shared -J "pre-process data" --output=/dev/null --error=/dev/null run_r_script.sh $R_file $code_dir $offsite_dir
+else
+  Rscript $R_file $code_dir $offsite_dir
+fi
 
 echo Perform quality control.
-# Rscript $code_dir"/analysis_drivers_gasp/"perform_quality_control_4.R $code_dir $offsite_dir
+R_file=$code_dir"/analysis_drivers_gasp/"perform_quality_control_4.R
+if $scheduler
+then
+  sbatch --time=1:00:00 -p RM-shared -J "quality control" --output=/dev/null --error=/dev/null run_r_script.sh $R_file $code_dir $offsite_dir
+else
+  Rscript $R_file $code_dir $offsite_dir
+fi
 
 # Locate the parameter file
 parameter_file=$code_dir"/analysis_drivers_gasp/sceptre_function_args.R"
 
 echo Run the sceptre analysis at scale.
 sceptre_at_scale_bash_dir=$code_dir"/functions_at_scale/sceptre_at_scale"
-bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
+# bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
 
 echo Run the negative binomial regression at scale.
 nb_at_scale_bash_dir=$code_dir"/functions_at_scale/nb_regression_at_scale"
-bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
+# bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
