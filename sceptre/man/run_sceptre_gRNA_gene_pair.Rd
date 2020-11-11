@@ -35,8 +35,8 @@ This function runs the sceptre algorithm on a single gRNA-gene pair. It requires
 \examples{
 offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
 source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_xie/sceptre_function_args.R")
-expressions <- cell_gene_expression_matrix[,1][cell_subset]
+expressions <- cell_gene_expression_matrix[,2][cell_subset]
 gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "chr5:54325645-54326045") \%>\% pull() \%>\% as.integer())[cell_subset]
-covariate_matrix <- if (nrow(covariate_matrix) == 106664) covariate_matrix else covariate_matrix[cell_subset,]
+covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 }

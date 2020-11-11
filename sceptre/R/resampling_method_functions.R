@@ -55,7 +55,7 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 
   # Prepare the output
   if (reduced_output) {
-    out <- data.frame(p_value =  out_p, skew_t_fit_success = skew_t_fit_success, xi = skew_t_mle[["xi"]], omega = skew_t_mle[["omega"]], alpha = skew_t_mle[["alpha"]], nu = skew_t_mle[["nu"]])
+    out <- data.frame(p_value =  out_p, skew_t_fit_success = skew_t_fit_success, xi = skew_t_mle[["xi"]], omega = skew_t_mle[["omega"]], alpha = skew_t_mle[["alpha"]], nu = skew_t_mle[["nu"]], z_value = t_star)
   } else {
     out <- list(p_value = out_p,
                 skew_t_fit_success = skew_t_fit_success,
