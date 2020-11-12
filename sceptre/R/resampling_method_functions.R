@@ -1,3 +1,33 @@
+#' Fit skew-t
+#'
+#' Fits a skew-t distribution on a set of resampled test statistics.
+#' @param t_nulls
+#'
+#' @return
+#' A list containing (i) skew_t_fit_success (boolean), (ii) out_p (the p-value), and (iii) skew-t mle (a vector containing the fitted MLEs, NA if fit failed).
+#'
+#' @export
+fit_skew_t <- function(t_nulls, t_star) {
+  p_value_skew_t <- NA
+  skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA), warning = function(w) return(NA))
+  if (class(skew_t_fit) == "selm") { # If the fit worked,
+    dp <- skew_t_fit@param$dp # then extract the parameters.
+    if (!any(is.na(dp))) { # If all the fitted parameters are numbers,
+      p_value_skew_t <- pmax(.Machine$double.eps, pst(x = t_star, dp = dp, method = 2, rel.tol = .Machine$double.eps)) # then compute the skew t-based p-value. pst(x = t_star, dp = dp)
+    }
+  }
+  # check if the skew-t fit worked
+  skew_t_fit_success <- !is.na(p_value_skew_t)
+  if (skew_t_fit_success) {
+    out_p <- p_value_skew_t
+    skew_t_mle <- dp
+  } else {
+    out_p <- mean(c(-Inf, t_nulls) <= t_star)
+    skew_t_mle <- c(xi = NA, omega = NA, alpha = NA, nu = NA)
+  }
+  return(list(skew_t_fit_success = skew_t_fit_success, out_p = out_p, skew_t_mle = skew_t_mle))
+}
+
 #' Run sceptre using precomputations for gRNAs and genes.
 #'
 #' This function is the workhorse function of the sceptre package. It runs a distilled CRT using a negative binomial test statistic based on an expression vector, a gRNA indicator vector, an offset vector (from the distillation step), gRNA conditional probabilities, an estimate of the negative binomial size parameter, and the number of resampling replicates.
@@ -21,45 +51,41 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
   fit_star <- vglm(formula = expressions[gRNA_indicators == 1] ~ 1, family = negbinomial.size(gene_precomp_size), offset = gene_precomp_offsets[gRNA_indicators == 1])
   t_star <- summaryvglm(fit_star)@coef3["(Intercept)", "z value"]
 
-  # resample B times
-  t_nulls <- sapply(1:B, function(i) {
-    if (i %% 100 == 0) cat(paste0("Running resample ", i ,"/", B, ".\n"))
-    gRNA_indicators_null <- rbinom(n = length(gRNA_precomp), size = 1, prob = gRNA_precomp)
-    tryCatch({
-      fit_null <- vglm(formula = expressions[gRNA_indicators_null == 1] ~ 1, family = negbinomial.size(gene_precomp_size), offset = gene_precomp_offsets[gRNA_indicators_null == 1])
-      summaryvglm(fit_null)@coef3["(Intercept)", "z value"]},
-      error = function(e) return(NA),
-      warning = function(w) return(NA)
+  # Define a closure to resample B times (omitting the NAs)
+  resample_B_times <- function(my_B) {
+    t_nulls <- sapply(1:my_B, function(i) {
+      if (i %% 100 == 0) cat(paste0("Running resample ", i ,"/", my_B, ".\n"))
+      gRNA_indicators_null <- rbinom(n = length(gRNA_precomp), size = 1, prob = gRNA_precomp)
+      tryCatch({
+        fit_null <- vglm(formula = expressions[gRNA_indicators_null == 1] ~ 1, family = negbinomial.size(gene_precomp_size), offset = gene_precomp_offsets[gRNA_indicators_null == 1])
+        summaryvglm(fit_null)@coef3["(Intercept)", "z value"]},
+        error = function(e) return(NA),
+        warning = function(w) return(NA)
       )
-  })
-  t_nulls <- t_nulls[!is.na(t_nulls)]
-
-  # Fit a skew-t distribution and obtain a p-value
-  p_value_skew_t <- NA
-  skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA), warning = function(w) return(NA))
-  if (class(skew_t_fit) == "selm") { # If the fit worked,
-    dp <- skew_t_fit@param$dp # then extract the parameters.
-    if (!any(is.na(dp))) { # If all the fitted parameters are numbers,
-      p_value_skew_t <- pmax(.Machine$double.eps, pst(x = t_star, dp = dp, method = 2, rel.tol = .Machine$double.eps)) # then compute the skew t-based p-value. pst(x = t_star, dp = dp)
-    }
+    })
+    t_nulls[!is.na(t_nulls)]
   }
-  # check if the skew-t fit worked
-  skew_t_fit_success <- !is.na(p_value_skew_t)
-  if (skew_t_fit_success) {
-    out_p <- p_value_skew_t
-    skew_t_mle <- dp
-  } else {
-    out_p <- mean(c(-Inf, t_nulls) <= t_star)
-    skew_t_mle <- c(xi = NA, omega = NA, alpha = NA, nu = NA)
+
+  # resample B times
+  t_nulls <- resample_B_times(B)
+
+  # obtain a p-value
+  skew_t_fit <- fit_skew_t(t_nulls, t_star)
+
+  # determine if the fit was successful
+  if (!skew_t_fit$skew_t_fit_success || length(t_nulls) <= floor(0.95 * B)) { # If the skew-t fit failed, then try again.
+    t_nulls_second_set <- resample_B_times(9 * B)
+    t_nulls <- c(t_nulls, t_nulls_second_set)
+    skew_t_fit <- fit_skew_t(t_nulls, t_star)
   }
 
   # Prepare the output
   if (reduced_output) {
-    out <- data.frame(p_value =  out_p, skew_t_fit_success = skew_t_fit_success, xi = skew_t_mle[["xi"]], omega = skew_t_mle[["omega"]], alpha = skew_t_mle[["alpha"]], nu = skew_t_mle[["nu"]], z_value = t_star)
+    out <- data.frame(p_value = skew_t_fit$out_p, skew_t_fit_success = skew_t_fit$skew_t_fit_success, xi = skew_t_fit$skew_t_mle[["xi"]], omega = skew_t_fit$skew_t_mle[["omega"]], alpha = skew_t_fit$skew_t_mle[["alpha"]], nu = skew_t_fit$skew_t_mle[["nu"]], z_value = t_star, n_successful_resamples = length(t_nulls))
   } else {
-    out <- list(p_value = out_p,
-                skew_t_fit_success = skew_t_fit_success,
-                skew_t_mle = skew_t_mle,
+    out <- list(p_value = skew_t_fit$out_p,
+                skew_t_fit_success = skew_t_fit$skew_t_fit_success,
+                skew_t_mle = skew_t_fit$skew_t_mle,
                 z_value = t_star,
                 resampled_z_values = t_nulls)
   }
@@ -88,6 +114,15 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "chr5:54325645-54326045") %>% pull() %>% as.integer())[cell_subset]
 #' covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 #' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
+#'
+#' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
+#' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_gasp/sceptre_function_args.R")
+#' expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == "ENSG00000171428")][cell_subset]
+#' gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "ASAH1_TSS") %>% pull() %>% as.integer())[cell_subset]
+#' covariate_matrix <- covariate_matrix[cell_subset,]
+#' gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))
+#' gene_precomp_size <- gene_sizes[["ENSG00000171428"]]
+#' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size)
 run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL) {
   cat(paste0("Running gRNA precomputation.\n"))
   gRNA_precomp <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)

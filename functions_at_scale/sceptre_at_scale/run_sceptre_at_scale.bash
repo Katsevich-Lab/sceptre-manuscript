@@ -9,12 +9,17 @@ offsite_dir=$2
 parameter_file=$3
 n_processors=$4
 
+# Also, define an additional variable indicating whether the precomputation has been completed (default false).
+precomputation_complete=false
+
 # Create the precomputation and result dictionaries
-pod_sizes=$(Rscript $sceptre_at_scale_bash_dir"/create_dictionaries.R" $offsite_dir $parameter_file)
+pod_sizes=$(Rscript $sceptre_at_scale_bash_dir"/create_dictionaries.R" $offsite_dir $parameter_file $precomputation_complete)
 n_gene_pods="$(echo $pod_sizes | cut -d' ' -f1)"
 n_gRNA_pods="$(echo $pod_sizes | cut -d' ' -f2)"
 n_pair_pods="$(echo $pod_sizes | cut -d' ' -f3)"
 
+if [$precomputation_complete = false]
+then
 echo Run the first round of gene precomputations across all gene pods.
 seq 1 $n_gene_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir/"run_gene_precomputation_round_1.R" $offsite_dir $parameter_file {} &
 wait
@@ -30,6 +35,7 @@ wait
 echo Run gRNA precomputation across all gRNA pods.
 seq 1 $n_gRNA_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir"/run_gRNA_precomputation.R" $offsite_dir $parameter_file {} &
 wait
+fi
 
 echo Run gRNA-gene pair analysis across all pair pods.
 seq 1 $n_pair_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir"/run_pair_analysis_at_scale.R" $offsite_dir $parameter_file {} &
