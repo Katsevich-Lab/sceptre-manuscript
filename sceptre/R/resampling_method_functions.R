@@ -5,8 +5,8 @@
 #'
 #' @return
 #' A list containing (i) skew_t_fit_success (boolean), (ii) out_p (the p-value), and (iii) skew-t mle (a vector containing the fitted MLEs, NA if fit failed).
-#'
 #' @export
+
 fit_skew_t <- function(t_nulls, t_star) {
   p_value_skew_t <- NA
   skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA), warning = function(w) return(NA))
@@ -44,6 +44,18 @@ fit_skew_t <- function(t_nulls, t_star) {
 #'
 #' @export
 #' @return a p-value of the null hypothesis of no gRNA effect on gene expression
+#' @examples
+#' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
+#' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_gasp/sceptre_function_args.R")
+#' gene_id <- "ENSG00000008256"
+#' gRNA_id <- "ACTB_TSS"
+#' expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == gene_id)][cell_subset]
+#' gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "ASAH1_TSS") %>% pull() %>% as.integer())[cell_subset]
+#' gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))
+#' gene_precomp_size <- gene_sizes[[gene_id]]
+#' gRNA_precomp <- paste0(gRNA_precomp_dir, "/gRNA_precomp_1.fst") %>% read.fst(columns = gRNA_id) %>% pull()
+#' gene_precomp_offsets <- paste0(gene_precomp_dir, "/gene_offsets_1.fst") %>% read.fst(columns = gene_id) %>% pull()
+#' run_sceptre_using_precomp(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, 500, 1234)
 run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, reduced_output = TRUE) {
   if (!is.null(seed)) set.seed(seed)
 
@@ -93,6 +105,75 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 }
 
 
+#' Run sceptre using precomputations for gRNAs and genes (old version)
+#'
+#' This function is the workhorse function of the sceptre package. It runs a distilled CRT using a negative binomial test statistic based on an expression vector, a gRNA indicator vector, an offset vector (from the distillation step), gRNA conditional probabilities, an estimate of the negative binomial size parameter, and the number of resampling replicates.
+#'
+#' This currently is a one-tailed, left-sided test. Thus, it is suitable for up-regulatory elements like enhancers and promoters but not down-regulatory elements like silencers.
+#'
+#' @param expressions a vector of gene expressions (in UMI counts)
+#' @param gRNA_indicators a vector of gRNA indicators
+#' @param gRNA_precomp a vector of conditional probabilities for gRNA assignments
+#' @param gene_precomp_size the pre-computed size
+#' @param gene_precomp_offsets the pre-computed distillation offsets
+#' @param B the number of resamples to make (default 500)
+#' @param seed an arguement to set.seed; if null, no seed is set
+#'
+#' @export
+#' @return a p-value of the null hypothesis of no gRNA effect on gene expression
+run_sceptre_using_precomp_old <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, reduced_output = TRUE) {
+  if (!is.null(seed)) set.seed(seed)
+
+  # compute the test statistic on the real data
+  fit_star <- vglm(formula = expressions[gRNA_indicators == 1] ~ 1, family = negbinomial.size(gene_precomp_size), offset = gene_precomp_offsets[gRNA_indicators == 1])
+  t_star <- summaryvglm(fit_star)@coef3["(Intercept)", "z value"]
+
+  # resample B times
+  t_nulls <- sapply(1:B, function(i) {
+    if (i %% 100 == 0) cat(paste0("Running resample ", i ,"/", B, ".\n"))
+    gRNA_indicators_null <- rbinom(n = length(gRNA_precomp), size = 1, prob = gRNA_precomp)
+    tryCatch({
+      fit_null <- vglm(formula = expressions[gRNA_indicators_null == 1] ~ 1, family = negbinomial.size(gene_precomp_size), offset = gene_precomp_offsets[gRNA_indicators_null == 1])
+      summaryvglm(fit_null)@coef3["(Intercept)", "z value"]},
+      error = function(e) return(NA),
+      warning = function(w) return(NA)
+    )
+  })
+  t_nulls <- t_nulls[!is.na(t_nulls)]
+
+  # Fit a skew-t distribution and obtain a p-value
+  p_value_skew_t <- NA
+  skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA), warning = function(w) return(NA))
+  if (class(skew_t_fit) == "selm") { # If the fit worked,
+    dp <- skew_t_fit@param$dp # then extract the parameters.
+    if (!any(is.na(dp))) { # If all the fitted parameters are numbers,
+      p_value_skew_t <- pst(x = t_star, dp = dp) # then compute the skew t-based p-value.
+    }
+  }
+  # check if the skew-t fit worked
+  skew_t_fit_success <- !is.na(p_value_skew_t)
+  if (skew_t_fit_success) {
+    out_p <- p_value_skew_t
+    skew_t_mle <- dp
+  } else {
+    out_p <- mean(c(-Inf, t_nulls) <= t_star)
+    skew_t_mle <- c(xi = NA, omega = NA, alpha = NA, nu = NA)
+  }
+
+  # Prepare the output
+  if (reduced_output) {
+    out <- data.frame(p_value =  out_p, skew_t_fit_success = skew_t_fit_success, xi = skew_t_mle[["xi"]], omega = skew_t_mle[["omega"]], alpha = skew_t_mle[["alpha"]], nu = skew_t_mle[["nu"]])
+  } else {
+    out <- list(p_value = out_p,
+                skew_t_fit_success = skew_t_fit_success,
+                skew_t_mle = skew_t_mle,
+                z_value = t_star,
+                resampled_z_values = t_nulls)
+  }
+  return(out)
+}
+
+
 #' Run sceptre on a gRNA-gene pair
 #'
 #' This function runs the sceptre algorithm on a single gRNA-gene pair. It requires as arguments the gene expression vector, the gRNA indicator vector, and the covariate matrix. Users optionally can pass the gRNA precomputation or gene precomputation as arguments.
@@ -115,14 +196,6 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 #' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 #'
-#' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
-#' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_gasp/sceptre_function_args.R")
-#' expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == "ENSG00000171428")][cell_subset]
-#' gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "ASAH1_TSS") %>% pull() %>% as.integer())[cell_subset]
-#' covariate_matrix <- covariate_matrix[cell_subset,]
-#' gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))
-#' gene_precomp_size <- gene_sizes[["ENSG00000171428"]]
-#' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size)
 run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL) {
   cat(paste0("Running gRNA precomputation.\n"))
   gRNA_precomp <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)

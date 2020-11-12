@@ -40,12 +40,4 @@ gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "chr5:54325645-
 covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 
-offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
-source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_gasp/sceptre_function_args.R")
-expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == "ENSG00000171428")][cell_subset]
-gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "ASAH1_TSS") \%>\% pull() \%>\% as.integer())[cell_subset]
-covariate_matrix <- covariate_matrix[cell_subset,]
-gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))
-gene_precomp_size <- gene_sizes[["ENSG00000171428"]]
-run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size)
 }
