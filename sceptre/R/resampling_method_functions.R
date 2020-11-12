@@ -9,7 +9,7 @@
 
 fit_skew_t <- function(t_nulls, t_star) {
   p_value_skew_t <- NA
-  skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA), warning = function(w) return(NA))
+  skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA))
   if (class(skew_t_fit) == "selm") { # If the fit worked,
     dp <- skew_t_fit@param$dp # then extract the parameters.
     if (!any(is.na(dp))) { # If all the fitted parameters are numbers,
