@@ -45,7 +45,7 @@ source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_gasp/sceptre_
 gene_id <- "ENSG00000008256"
 gRNA_id <- "ACTB_TSS"
 expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == gene_id)][cell_subset]
-gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "ASAH1_TSS") \%>\% pull() \%>\% as.integer())[cell_subset]
+gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = gRNA_id) \%>\% pull() \%>\% as.integer())[cell_subset]
 gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))
 gene_precomp_size <- gene_sizes[[gene_id]]
 gRNA_precomp <- paste0(gRNA_precomp_dir, "/gRNA_precomp_1.fst") \%>\% read.fst(columns = gRNA_id) \%>\% pull()

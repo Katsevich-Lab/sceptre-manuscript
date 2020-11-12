@@ -2,7 +2,7 @@
 % Please edit documentation in R/resampling_method_functions.R
 \name{run_sceptre_using_precomp_old}
 \alias{run_sceptre_using_precomp_old}
-\title{Run sceptre using precomputations for gRNAs and genes.}
+\title{Run sceptre using precomputations for gRNAs and genes (old version)}
 \usage{
 run_sceptre_using_precomp_old(
   expressions,
