@@ -5,7 +5,7 @@
 # Set the machine.
 machine=local
 n_processors=20
-precomputation_complete=false
+precomputation_complete=FALSE
 
 # Obtain the filepaths to the code and "offsite" directories
 code_dir=$(bash get_file_paths.bash $machine code)

@@ -16,7 +16,7 @@ n_gene_pods="$(echo $pod_sizes | cut -d' ' -f1)"
 n_gRNA_pods="$(echo $pod_sizes | cut -d' ' -f2)"
 n_pair_pods="$(echo $pod_sizes | cut -d' ' -f3)"
 
-if [ $precomputation_complete = "false" ]
+if [ $precomputation_complete = "FALSE" ]
 then
 echo Run the first round of gene precomputations across all gene pods.
 seq 1 $n_gene_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir/"run_gene_precomputation_round_1.R" $offsite_dir $parameter_file {} &

@@ -5,7 +5,7 @@
 # Set the machine and number of processors.
 machine=local
 n_processors=20
-precomputation_complete=false
+precomputation_complete=FALSE
 
 echo Running on machine $machine with $n_processors processors.
 
