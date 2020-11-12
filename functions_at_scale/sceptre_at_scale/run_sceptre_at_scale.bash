@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script runs an "at-scale" sceptre analysis. Parallelization is done within Unix (instead of within R). The script takes four arguments: (i) the location of the directory containing the run_sceptre_at_scale.bash script, (ii) the location of the offsite directory, (iii) the name of the R file containing the parameters of the computation, and (iv) the number of processors to use in the computation.
+# This script runs an "at-scale" sceptre analysis. Parallelization is done within Unix (instead of within R). The script takes five arguments: (i) the location of the directory containing the run_sceptre_at_scale.bash script, (ii) the location of the offsite directory, (iii) the name of the R file containing the parameters of the computation, (iv) the number of processors to use in the computation, and (v) whether the precomputation already has been completed.
 
 # The parameter_file must define the following variables in the global environment: gene_precomp_dir, gRNA_precomp_dir, results_dir, log_dir, gRNA_gene_pairs, covariate_matrix, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, cell_subset, seed, B, pod_sizes, select_sizes. These variables can be defined in terms of offsite_dir, which will be available in the global environment.
 
@@ -8,9 +8,7 @@ sceptre_at_scale_bash_dir=$1
 offsite_dir=$2
 parameter_file=$3
 n_processors=$4
-
-# Also, define an additional variable indicating whether the precomputation has been completed (default false).
-precomputation_complete=false
+precomputation_complete=$5
 
 # Create the precomputation and result dictionaries
 pod_sizes=$(Rscript $sceptre_at_scale_bash_dir"/create_dictionaries.R" $offsite_dir $parameter_file $precomputation_complete)
@@ -18,7 +16,7 @@ n_gene_pods="$(echo $pod_sizes | cut -d' ' -f1)"
 n_gRNA_pods="$(echo $pod_sizes | cut -d' ' -f2)"
 n_pair_pods="$(echo $pod_sizes | cut -d' ' -f3)"
 
-if [$precomputation_complete = false]
+if [ $precomputation_complete = "false" ]
 then
 echo Run the first round of gene precomputations across all gene pods.
 seq 1 $n_gene_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir/"run_gene_precomputation_round_1.R" $offsite_dir $parameter_file {} &

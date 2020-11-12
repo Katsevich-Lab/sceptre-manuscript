@@ -5,6 +5,7 @@
 # Set the machine.
 machine=local
 n_processors=20
+precomputation_complete=false
 
 # Obtain the filepaths to the code and "offsite" directories
 code_dir=$(bash get_file_paths.bash $machine code)
@@ -34,7 +35,7 @@ parameter_file=$code_dir"/analysis_drivers_gasp/sceptre_function_args.R"
 
 echo Run the sceptre analysis at scale.
 sceptre_at_scale_bash_dir=$code_dir"/functions_at_scale/sceptre_at_scale"
-bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
+bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors $precomputation_complete
 
 echo Run the negative binomial regression at scale.
 nb_at_scale_bash_dir=$code_dir"/functions_at_scale/nb_regression_at_scale"
