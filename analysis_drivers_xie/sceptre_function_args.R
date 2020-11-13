@@ -14,7 +14,7 @@ regularization_amount <- 3
 cell_subset <- readRDS(paste0(processed_dir, "/cell_subsets.rds"))[["all_cells"]]
 seed <- 1234
 B <- 500
-pod_sizes <- c(gene = 500, gRNA = 5, pair = 2000)
+pod_sizes <- c(gene = 500, gRNA = 2, pair = 2000)
 storage_location <- c(gene_precomp_dir = paste0(offsite_dir, "/data/xie/precomp/gene"), gRNA_precomp_dir = paste0(offsite_dir, "/data/xie/precomp/gRNA"), results_dir = paste0(offsite_dir, "/results/xie/sceptre"), log_dir = paste0(offsite_dir, "/logs/xie"))
 gene_precomp_dir <- storage_location[["gene_precomp_dir"]]
 gRNA_precomp_dir <- storage_location[["gRNA_precomp_dir"]]
