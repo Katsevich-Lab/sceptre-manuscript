@@ -5,32 +5,29 @@
 \title{Simulate CRISPR screen data}
 \usage{
 simulate_crispr_screen_data(
-  n_cells,
-  grna_mean_prob,
-  mRNA_mean_expression,
+  covariate_matrices,
   covariate_effects_gRNA,
   covariate_effects_gene,
   zero_inflation,
-  neg_binom_size,
-  seed = NULL
+  theta,
+  n_enh,
+  seed
 )
 }
 \arguments{
-\item{n_cells}{number of cells}
+\item{covariate_matrices}{a list of covariate matrices}
 
-\item{grna_mean_prob}{mean probability of gRNA presence across enhancers (absent covariates)}
+\item{covariate_effects_gRNA}{the effect of the technical covariates on gRNA presence probability (a vector of values, whose length corresponds to the number of covariates; must include an intercept term)}
 
-\item{mRNA_mean_expression}{mean expression level of gene across genes (absent covariates)}
-
-\item{covariate_effects_gRNA}{the effect of the technical covariate on gRNA presence probability; length equals number of enhancers}
-
-\item{covariate_effects_gene}{the effect of the technical covariate on mean gene expression; length equals number of genes}
+\item{covariate_effects_gene}{the effect of the technical covariates on mean gene expression (a vector of values, whose length corresponds to the number of covariates; must include an intercept term)}
 
 \item{zero_inflation}{zero inflation rate (between 0 and 1)}
 
-\item{neg_binom_size}{size of the negative binomial distributions for gene expression}
+\item{theta}{size of the negative binomial distribution for gene expression}
 
 \item{seed}{(optonal) seed to the random number generator}
+
+\item{n_enhancers}{number of enhancers to sample (conditionally on the covariates)}
 }
 \value{
 list with components (i) cell_by_gene_expressions, (ii) cell_by_enhancer_perturbation_indicators, and (iii) Z
@@ -39,12 +36,20 @@ list with components (i) cell_by_gene_expressions, (ii) cell_by_enhancer_perturb
 Simulate CRISPR screen data
 }
 \examples{
-r <- simulate_crispr_screen_data(n_cells = 1000,
-grna_mean_prob = 0.2,
-mRNA_mean_expression = 40,
-covariate_effects_gRNA = rep(4, 10),
-covariate_effects_gene = rep(2, 50),
-zero_inflation = 0,
-neg_binom_size = 2
-)
+n_cells <- 1000
+gasp_cov_mat <- read.fst("/Volumes/tims_new_drive/research/sceptre_files/data/gasperini/processed/cell_covariate_model_matrix.fst")
+covariate_matrices <- replicate(n = 500, expr = {
+ gasp_cov_mat \%>\% select(lg_total_umis, prep_batch) \%>\% mutate(prep_batch = factor(prep_batch, levels = c("prep_batch_1", "prep_batch_2"), labels = c("prep_batch_1", "prep_batch_2"))) \%>\% sample_n(n_cells)
+}, simplify = FALSE)
+mean_log_umis <- mean(gasp_cov_mat$lg_total_umis)
+mean_batch <- mean(ifelse(gasp_cov_mat$prep_batch == "prep_batch_1", 0, 1))
+covariate_effects_gRNA <- c(-7, 0.5, -2)
+covariate_effects_gene <- c(-2.5, 0.5, -2)
+mean_mu_gRNA <- (covariate_effects_gRNA[1] + covariate_effects_gRNA[2] * mean_log_umis + covariate_effects_gRNA[3] * mean_batch) \%>\% binomial()$linkinv()
+mean_mu_gene <- (covariate_effects_gene[1] + covariate_effects_gene[2] * mean_log_umis + covariate_effects_gene[3] * mean_batch) \%>\% negative.binomial(1)$linkinv()
+zero_inflation <- 0
+theta <- 1
+n_enh <- 5
+seed <- 1234
+sim_data <- simulate_crispr_screen_data(covariate_matrices, covariate_effects_gRNA, covariate_effects_gene, zero_inflation, theta, n_enh, seed)
 }
