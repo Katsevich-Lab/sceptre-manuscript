@@ -88,12 +88,15 @@ ggsave(filename = paste0(offsite_dir, "/figures/gasp_qqplot_per_gene.pdf"), plot
 #################################
 # Comparison of new SCEPTRE p-values to Gene's SCEPTRE p-values.
 if (FALSE) {
+  gene_orig_results <- paste0(offsite_dir, "/results/comparison_to_gene/resampling_results.tsv") %>% read_tsv()
   joined <- left_join(x = gene_orig_results %>% filter(method == "conditional_randomization") %>% select(pval_old = corrected_pvalue_st, pair_id, quality_rank_grna, site_type), y = sceptre_results %>% select(pval_new = p_value, pair_id), by = "pair_id")
 
   joined_adj <- joined %>% filter(quality_rank_grna == "top_two" & site_type == "DHS") %>% mutate(pval_old_adj = p.adjust(pval_old, method = "BH"), pval_new_adj = p.adjust(pval_new, method = "BH"), reject_old = pval_old_adj <= 0.1, reject_new = pval_new_adj <= 0.1) 
-
+  table(joined_adj$reject_new, joined_adj$reject_old)
+  
   p_thresh_old <- filter(joined_adj, reject_old) %>% summarize(max(pval_old)) %>% pull()
   p_thresh_new <- filter(joined_adj, reject_new) %>% summarize(max(pval_new)) %>% pull()
 
   p <- ggplot(data = joined %>% filter(pval_old <= 0.1 | pval_new <= 0.1 | row_number() %% subsampling_factor == 0), mapping = aes(x = pval_old, y = pval_new)) + geom_point() + scale_x_log10() + scale_y_log10() + geom_hline(yintercept = p_thresh_new, col = "blue") + geom_vline(xintercept = p_thresh_old, col = "blue")
+  ggsave(filename = paste0(offsite_dir, "/figures/p_value_comparison.pdf"), plot = p, scale = 1, width = 5, height = 4)
 }

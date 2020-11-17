@@ -36,7 +36,10 @@ wait
 fi
 
 echo Run gRNA-gene pair analysis across all pair pods.
-seq 1 $n_pair_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir"/run_pair_analysis_at_scale.R" $offsite_dir $parameter_file {} &
+# seq 1 $n_pair_pods | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir"/run_pair_analysis_at_scale.R" $offsite_dir $parameter_file {} &
+wait
+
+echo 40 41 49 | xargs -I{} -n 1 -P $n_processors Rscript $sceptre_at_scale_bash_dir"/run_pair_analysis_at_scale.R" $offsite_dir $parameter_file {} &
 wait
 
 echo Collect and save results.

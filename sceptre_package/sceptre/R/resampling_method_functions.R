@@ -46,15 +46,15 @@ fit_skew_t <- function(t_nulls, t_star) {
 #' @return a p-value of the null hypothesis of no gRNA effect on gene expression
 #' @examples
 #' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
-#' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_gasp/sceptre_function_args.R")
+#' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R")
 #' gene_id <- "ENSG00000008256"
 #' gRNA_id <- "ACTB_TSS"
 #' expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == gene_id)][cell_subset]
 #' gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = gRNA_id) %>% pull() %>% as.integer())[cell_subset]
 #' gene_sizes <- readRDS(paste0(gene_precomp_dir, "/size_reg_file.rds"))
 #' gene_precomp_size <- gene_sizes[[gene_id]]
-#' gRNA_precomp <- paste0(gRNA_precomp_dir, "/gRNA_precomp_1.fst") %>% read.fst(columns = gRNA_id) %>% pull()
-#' gene_precomp_offsets <- paste0(gene_precomp_dir, "/gene_offsets_1.fst") %>% read.fst(columns = gene_id) %>% pull()
+#' gRNA_precomp <- paste0(gRNA_precomp_dir, "/gRNA_dictionary.fst") %>% read.fst() %>% filter(id == gRNA_id) %>% pull(pod_id) %>% paste0(gRNA_precomp_dir, "/gRNA_precomp_", ., ".fst") %>% read.fst(columns = gRNA_id) %>% pull()
+#' gene_precomp_offsets <- paste0(gene_precomp_dir, "/gene_dictionary.fst") %>% read.fst() %>% filter(id == gene_id) %>% pull(pod_id) %>% paste0(gene_precomp_dir, "/gene_offsets_", ., ".fst") %>% read.fst(columns = gene_id) %>% pull()
 #' run_sceptre_using_precomp(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, 500, 1234)
 run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, reduced_output = TRUE) {
   if (!is.null(seed)) set.seed(seed)

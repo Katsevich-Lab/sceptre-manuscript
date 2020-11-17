@@ -41,7 +41,7 @@ This currently is a one-tailed, left-sided test. Thus, it is suitable for up-reg
 }
 \examples{
 offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
-source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_gasp/sceptre_function_args.R")
+source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R")
 gene_id <- "ENSG00000008256"
 gRNA_id <- "ACTB_TSS"
 expressions <- cell_gene_expression_matrix[, which(ordered_gene_ids == gene_id)][cell_subset]
