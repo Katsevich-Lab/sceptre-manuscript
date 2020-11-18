@@ -1,11 +1,25 @@
-offsite_dir = "/Users/ekatsevi/Dropbox (Penn)/project-files/SCEPTRE"
+offsite_dir = "/Users/ekatsevi/Dropbox (Penn)/project-files/sceptre_files"
 
-original_results = read_tsv(sprintf("%s/data/raw/CRISPR/GSE120861_all_deg_results.at_scale.txt", offsite_dir))
-resampling_results = read.fst(sprintf("%s/resampling_results.fst", offsite_dir)) %>% as_tibble()
-likelihood_results = read.fst(sprintf("%s/likelihood_results.fst", offsite_dir)) %>% as_tibble()
-
-covariates_xie = read.fst(sprintf("%s/cell_covariate_model_matrix_xie.fst", offsite_dir)) %>% as_tibble()
+# Gasperini results
+original_results_gasp = read_tsv(sprintf("%s/data/gasperini/raw/GSE120861_all_deg_results.at_scale.txt", offsite_dir))
+resampling_results_gasp = read.fst(sprintf("%s/results/gasperini/sceptre/resampling_results.fst", offsite_dir)) %>% as_tibble()
+likelihood_results_gasp = read.fst(sprintf("%s/results/gasperini/negative_binomial/likelihood_results.fst", offsite_dir)) %>% as_tibble()
 covariates_gasp = read.fst(sprintf("%s/cell_covariate_model_matrix_gasp.fst", offsite_dir)) %>% as_tibble()
 
+# Xie results
+original_results_xie = readRDS(sprintf("%s/data/xie/processed/xie_p_values.rds", offsite_dir))
+resampling_results_xie = read.fst(sprintf("%s/results/xie/sceptre/all_results_with_names.fst", offsite_dir)) %>% as_tibble()
+resampling_results_xie = read.fst(sprintf("%s/results/xie/sceptre/all_results_with_names.fst", offsite_dir)) %>% as_tibble()
+covariates_xie = read.fst(sprintf("%s/cell_covariate_model_matrix_xie.fst", offsite_dir)) %>% as_tibble()
 grna_indicator_matrix_xie = read.fst(sprintf("%s/grna_indicator_matrix_xie.fst", offsite_dir)) %>% as_tibble()
-covariates_xie$guide_count = rowSums(grna_indicator_matrix_xie)
+
+# simulation results
+simulation_results = read.fst(sprintf("%s/results/simulations/all_results.fst", offsite_dir)) %>% as_tibble()
+
+# enrichment results
+rejected_pairs_HIC = read_tsv(sprintf("%s/results/gasperini/enrichment/rejected_pairs_HIC.tsv", offsite_dir),
+                              col_types = "cciiiciilliid")
+TF_enrichments = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_enrichments.tsv", offsite_dir), 
+                          col_types = "ccd")
+paired_fractions = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_paired_enhancer_fractions.tsv", offsite_dir),
+                            col_types = "cidd")

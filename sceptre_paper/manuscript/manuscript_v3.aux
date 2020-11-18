@@ -1,0 +1,140 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\bibstyle{naturemag}
+\citation{Dixit2016,Adamson2016}
+\citation{Jaitin2016}
+\citation{Datlinger2017}
+\citation{Xie2017,Gasperini2019,Xie2019}
+\citation{Norman2019}
+\citation{Mimitou2019,Frangieh2020}
+\citation{Gasperini2020}
+\citation{Gasperini2019}
+\citation{Xie2019}
+\citation{Yang2020}
+\citation{Lin2020}
+\citation{Townes2019,Hafemeister2019,Svensson2020}
+\citation{Dixit2016,Hill2018,Replogle2020}
+\citation{CetL16}
+\citation{Gasperini2019}
+\citation{Gasperini2019}
+\citation{Datlinger2017,Hill2018}
+\citation{Love2014}
+\citation{Qiu2017}
+\citation{Hill2018}
+\citation{Xie2017}
+\citation{Hafemeister2019}
+\@writefile{toc}{\contentsline {paragraph}{Analysis challenges.}{2}{section*.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {CRISPR screen analysis challenges can lead to false positives and false negatives.} \textbf  {a}, QQ-plot of Gasperini et al. $p$-values for all gene-gRNA pairs involving either candidate enhancer or negative control gRNAs. Inflation in negative controls makes it harder to interpret associations between genes and candidate enhancers, motivating the empirical $p$-value correction. \textbf  {b-c}, Sequencing depth (total mRNA UMIs per cell) impacts gRNA detection (b) and observed expression levels, and therefore acts as a confounder (c). This analysis challenge distinguishes CRISPR screens from traditional differential expression applications. \textbf  {d-g}, Collapsing dispersion estimates to fitted mean-variance relationship (d) leads to over-correction for some genes (e) and under-correction for others (f, g). \textbf  {d,} Dispersion estimation procedure employed leads to miscalibration for high-dispersion genes, which the empirical correction does not adequately correct for, as measured by KS test applied to empirical $p$-values per gene (point colors). \textbf  {e,} Raw $p$-values already well-calibrated for LUC7L2 gene, so empirical correction unnecessarily shrinks the significance of the association with TSS-targeting gRNA, depicted by horizontal lines, by three orders of magnitude. \textbf  {f,} Empirical correction not strong enough for HIST1H1D, which is among circled genes in panel d, which have an NTC-based miscalibration $p$-value smaller than the Bonferroni threshold. \textbf  {g}, Under-correction leads to two potential false discoveries for HIST1H1D. Dashed horizontal line represents the multiple testing threshold.}}{3}{figure.1}\protected@file@percent }
+\newlabel{fig:analysis-challenges}{{1}{3}{\textbf {CRISPR screen analysis challenges can lead to false positives and false negatives.} \textbf {a}, QQ-plot of Gasperini et al. $p$-values for all gene-gRNA pairs involving either candidate enhancer or negative control gRNAs. Inflation in negative controls makes it harder to interpret associations between genes and candidate enhancers, motivating the empirical $p$-value correction. \textbf {b-c}, Sequencing depth (total mRNA UMIs per cell) impacts gRNA detection (b) and observed expression levels, and therefore acts as a confounder (c). This analysis challenge distinguishes CRISPR screens from traditional differential expression applications. \textbf {d-g}, Collapsing dispersion estimates to fitted mean-variance relationship (d) leads to over-correction for some genes (e) and under-correction for others (f, g). \textbf {d,} Dispersion estimation procedure employed leads to miscalibration for high-dispersion genes, which the empirical correction does not adequately correct for, as measured by KS test applied to empirical $p$-values per gene (point colors). \textbf {e,} Raw $p$-values already well-calibrated for LUC7L2 gene, so empirical correction unnecessarily shrinks the significance of the association with TSS-targeting gRNA, depicted by horizontal lines, by three orders of magnitude. \textbf {f,} Empirical correction not strong enough for HIST1H1D, which is among circled genes in panel d, which have an NTC-based miscalibration $p$-value smaller than the Bonferroni threshold. \textbf {g}, Under-correction leads to two potential false discoveries for HIST1H1D. Dashed horizontal line represents the multiple testing threshold}{figure.1}{}}
+\citation{Xie2019}
+\citation{Hafemeister2019}
+\@writefile{toc}{\contentsline {paragraph}{Improvements to the negative binomial approach.}{4}{section*.3}\protected@file@percent }
+\citation{CetL16}
+\citation{Daley2018}
+\@writefile{toc}{\contentsline {paragraph}{SCEPTRE: Analysis of single cell perturbation screens via conditional resampling.}{5}{section*.4}\protected@file@percent }
+\citation{CetL16}
+\citation{CetL16}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {SCEPTRE: Analysis of single cell perturbation screens via conditional resampling.} A schematic and outline of the SCEPTRE methodology for one gene and one gRNA is shown, entailing the application of the conditional randomization test\cite  {CetL16} to single cell CRISPR screens. The idea is to assign to every cell the probability of gRNA observation based on its technical factors, and then to build a null distribution for the negative binomial $z$-value by independently resampling the gRNA indicator for each cell according to these probabilities to form ``negative control" data sets. A skew-$t$ distribution is fit to the resulting histogram to obtain precise $p$-values based on a limited number of resamples, against which the original NB $z$-value is compared. The dashed line shows the standard normal distribution, against which the NB $z$-value would normally be compared.}}{5}{figure.2}\protected@file@percent }
+\newlabel{fig:method}{{2}{5}{\textbf {SCEPTRE: Analysis of single cell perturbation screens via conditional resampling.} A schematic and outline of the SCEPTRE methodology for one gene and one gRNA is shown, entailing the application of the conditional randomization test\cite {CetL16} to single cell CRISPR screens. The idea is to assign to every cell the probability of gRNA observation based on its technical factors, and then to build a null distribution for the negative binomial $z$-value by independently resampling the gRNA indicator for each cell according to these probabilities to form ``negative control" data sets. A skew-$t$ distribution is fit to the resulting histogram to obtain precise $p$-values based on a limited number of resamples, against which the original NB $z$-value is compared. The dashed line shows the standard normal distribution, against which the NB $z$-value would normally be compared}{figure.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{SCEPTRE is well calibrated despite sequencing depth confounding and expression model misspecification.}{6}{section*.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {SCEPTRE improves on the sensitivity and specificity of the parametric approach by correcting for expression model misspecification.} \textbf  {a,} Numerical simulation comparing three ways of calibrating a negative binomial test statistic (parametric, permutation, conditional resampling), when the test statistic is based on the correct model or contains expression model misspecifications. Only the conditional resampling approach maintains calibration despite model misspecification. \textbf  {b,c,} Application of SCEPTRE to Gasperini et al negative control gRNAs, comparing all gene-NTC pairs to the uniform distribution (b) or breaking down by NTC (c); details as in Figure\nobreakspace  {}\ref  {fig:calibration-comparison-all}a,c. The matching of SCEPTRE's colored region with the gray one in panel c, together with the overall near-uniformity in panel b, demonstrates its excellent calibration on real negative control data. \textbf  {d,} SCEPTRE $p$-values for TSS-targeting controls generally more significant than the original empirical $p$-values; dashed line is the $45^\circ $ line. Note: $p$-values truncated for visualization, and empirical $p$-values in panel d at least 1/538,560 $\approx $ 2$\times 10^{-6}$ by construction.}}{6}{figure.3}\protected@file@percent }
+\newlabel{fig:calibration}{{3}{6}{\textbf {SCEPTRE improves on the sensitivity and specificity of the parametric approach by correcting for expression model misspecification.} \textbf {a,} Numerical simulation comparing three ways of calibrating a negative binomial test statistic (parametric, permutation, conditional resampling), when the test statistic is based on the correct model or contains expression model misspecifications. Only the conditional resampling approach maintains calibration despite model misspecification. \textbf {b,c,} Application of SCEPTRE to Gasperini et al negative control gRNAs, comparing all gene-NTC pairs to the uniform distribution (b) or breaking down by NTC (c); details as in Figure~\ref {fig:calibration-comparison-all}a,c. The matching of SCEPTRE's colored region with the gray one in panel c, together with the overall near-uniformity in panel b, demonstrates its excellent calibration on real negative control data. \textbf {d,} SCEPTRE $p$-values for TSS-targeting controls generally more significant than the original empirical $p$-values; dashed line is the $45^\circ $ line. Note: $p$-values truncated for visualization, and empirical $p$-values in panel d at least 1/538,560 $\approx $ 2$\times 10^{-6}$ by construction}{figure.3}{}}
+\citation{GTExPilot}
+\citation{Andersson2014}
+\citation{Fishilevich2017}
+\@writefile{toc}{\contentsline {paragraph}{Analysis of candidate gene-enhancer regulatory relationships.}{7}{section*.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Application to Gasperini et al. data yields biologically plausible gene-enhancer links.} \textbf  {a,} Well-calibrated NTC $p$-values give confidence in SCEPTRE $p$-values for candidate enhancers (compare to Figure\nobreakspace  {}\ref  {fig:analysis-challenges}a). \textbf  {b}, Comparing the original empirical $p$-values to those obtained from SCEPTRE. The two analysis methods differ substantially, with 217 gene-enhancer links discovered only by SCEPTRE and 102 discovered only by the original. \textbf  {c}, Five gene-enhancer pairs discovered by SCEPTRE but not the original analysis, each supported by a whole blood GTEx eQTL or FANTOM enhancer RNA correlation $p$-value. \textbf  {d,} Distribution of distances from TSS to upstream paired enhancers. Compared to the original analysis, SCEPTRE pairs genes with nearer enhancers on average. \textbf  {e,} For those gene-enhancer pairs falling in the same TAD, the cumulative distribution of the fractional rank of the HI-C interaction frequency compared to other distance-matched loci pairs within the same TAD. SCEPTRE shows similar enrichment despite finding 32\% more within-TAD pairs. Inset table shows gene-enhancer pairs falling in the same TAD. SCEPTRE finds 115 more total pairs, and a higher percentage of pairs fall in the same TAD. \textbf  {f,} Enrichment of ChIP-seq signal from seven cell-type relevant transcription factors and one histone mark among paired enhancers. SCEPTRE exhibits greater enrichment across all ChIP-seq targets.}}{7}{figure.4}\protected@file@percent }
+\newlabel{fig:application}{{4}{7}{\textbf {Application to Gasperini et al. data yields biologically plausible gene-enhancer links.} \textbf {a,} Well-calibrated NTC $p$-values give confidence in SCEPTRE $p$-values for candidate enhancers (compare to Figure~\ref {fig:analysis-challenges}a). \textbf {b}, Comparing the original empirical $p$-values to those obtained from SCEPTRE. The two analysis methods differ substantially, with 217 gene-enhancer links discovered only by SCEPTRE and 102 discovered only by the original. \textbf {c}, Five gene-enhancer pairs discovered by SCEPTRE but not the original analysis, each supported by a whole blood GTEx eQTL or FANTOM enhancer RNA correlation $p$-value. \textbf {d,} Distribution of distances from TSS to upstream paired enhancers. Compared to the original analysis, SCEPTRE pairs genes with nearer enhancers on average. \textbf {e,} For those gene-enhancer pairs falling in the same TAD, the cumulative distribution of the fractional rank of the HI-C interaction frequency compared to other distance-matched loci pairs within the same TAD. SCEPTRE shows similar enrichment despite finding 32\% more within-TAD pairs. Inset table shows gene-enhancer pairs falling in the same TAD. SCEPTRE finds 115 more total pairs, and a higher percentage of pairs fall in the same TAD. \textbf {f,} Enrichment of ChIP-seq signal from seven cell-type relevant transcription factors and one histone mark among paired enhancers. SCEPTRE exhibits greater enrichment across all ChIP-seq targets}{figure.4}{}}
+\citation{Robins2001,VanderLaan2003}
+\citation{Katsevich2020a}
+\citation{Li2015,Daley2018,Xie2019}
+\citation{Xie2017,Zamanighomi2019,Norman2019}
+\citation{Hsu2018}
+\citation{Replogle2020}
+\bibdata{library}
+\bibcite{Dixit2016}{1}
+\bibcite{Adamson2016}{2}
+\bibcite{Jaitin2016}{3}
+\bibcite{Datlinger2017}{4}
+\bibcite{Xie2017}{5}
+\bibcite{Gasperini2019}{6}
+\bibcite{Xie2019}{7}
+\bibcite{Norman2019}{8}
+\bibcite{Mimitou2019}{9}
+\bibcite{Frangieh2020}{10}
+\bibcite{Gasperini2020}{11}
+\bibcite{Yang2020}{12}
+\bibcite{Lin2020}{13}
+\bibcite{Townes2019}{14}
+\bibcite{Hafemeister2019}{15}
+\bibcite{Svensson2020}{16}
+\bibcite{Hill2018}{17}
+\bibcite{Replogle2020}{18}
+\bibcite{CetL16}{19}
+\bibcite{Love2014}{20}
+\bibcite{Qiu2017}{21}
+\bibcite{Daley2018}{22}
+\bibcite{GTExPilot}{23}
+\bibcite{Andersson2014}{24}
+\bibcite{Fishilevich2017}{25}
+\bibcite{Robins2001}{26}
+\bibcite{VanderLaan2003}{27}
+\bibcite{Katsevich2020a}{28}
+\bibcite{Li2015}{29}
+\bibcite{Zamanighomi2019}{30}
+\bibcite{Hsu2018}{31}
+\bibcite{XSEDE}{32}
+\bibcite{Bridges}{33}
+\bibcite{Liu2020}{34}
+\bibcite{FR01}{35}
+\bibcite{Dunham2012}{36}
+\bibcite{Rao2014}{37}
+\citation{Gasperini2019}
+\citation{XSEDE}
+\citation{Bridges}
+\@writefile{toc}{\contentsline {paragraph}{Reproducing the negative binomial approach of Gasperini et al.}{12}{section*.10}\protected@file@percent }
+\newlabel{negative-binomial}{{1}{12}{Reproducing the negative binomial approach of Gasperini et al}{equation.0.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Exploration of sequencing depth confounding.}{12}{section*.11}\protected@file@percent }
+\citation{CetL16}
+\citation{Liu2020}
+\@writefile{toc}{\contentsline {paragraph}{Conditional randomization test and accelerations.}{13}{section*.12}\protected@file@percent }
+\newlabel{X-tilde-dist}{{2}{13}{Conditional randomization test and accelerations}{equation.0.2}{}}
+\newlabel{conditional-randomization}{{3}{13}{Conditional randomization test and accelerations}{equation.0.3}{}}
+\newlabel{negative-binomial-distillation}{{4}{13}{Conditional randomization test and accelerations}{equation.0.4}{}}
+\newlabel{distilled-negative-binomial}{{5}{13}{Conditional randomization test and accelerations}{equation.0.5}{}}
+\newlabel{distilled-negative-binomial-accelerated}{{6}{14}{Conditional randomization test and accelerations}{equation.0.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{SCEPTRE methodology.}{14}{section*.13}\protected@file@percent }
+\newlabel{logistic-regression}{{7}{14}{SCEPTRE methodology}{equation.0.7}{}}
+\citation{FR01}
+\@writefile{toc}{\contentsline {paragraph}{Numerical simulation to assess calibration.}{15}{section*.14}\protected@file@percent }
+\citation{Gasperini2019}
+\citation{Dunham2012}
+\citation{Rao2014}
+\citation{Fishilevich2017}
+\@writefile{toc}{\contentsline {paragraph}{Definition of Gasperini et al. discovery set.}{16}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{ChIP-seq, HI-C enrichment analyses.}{16}{section*.16}\protected@file@percent }
+\citation{Xie2017}
+\citation{Xie2017}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Supplementary Figures}{16}{appendix.A}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {S.1}{\ignorespaces Sequencing depth (total mRNA UMIs per cell) impacts gRNA detection for Mosaic-seq data\cite  {Xie2017}, as was demonstrated for Gasperini et al. data in Figure\nobreakspace  {}\ref  {fig:analysis-challenges}b.}}{16}{figure.A.1}\protected@file@percent }
+\newlabel{fig:mosaicseq}{{S.1}{16}{Sequencing depth (total mRNA UMIs per cell) impacts gRNA detection for Mosaic-seq data\cite {Xie2017}, as was demonstrated for Gasperini et al. data in Figure~\ref {fig:analysis-challenges}b}{figure.A.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {S.2}{\ignorespaces \textbf  {Comparing negative binomial and conditional resampling $p$-values based on the same test statistic.} \textbf  {a,} The standard parametric negative binomial $p$-value versus that obtained from the same test statistic by conditional resampling, for each gene / candidate enhancer pair (both truncated at $10^{-10}$ for visualization). The two can diverge fairly substantially. \textbf  {b-d,} Parametric and conditional resampling null distributions for the negative binomial $z$-value in three cases: the parametric $p$-value is more significant (b), the conditional resampling $p$-value is more significant (c), the two $p$-values are about the same (d).}}{17}{figure.A.2}\protected@file@percent }
+\newlabel{fig:NB-vs-CP}{{S.2}{17}{\textbf {Comparing negative binomial and conditional resampling $p$-values based on the same test statistic.} \textbf {a,} The standard parametric negative binomial $p$-value versus that obtained from the same test statistic by conditional resampling, for each gene / candidate enhancer pair (both truncated at $10^{-10}$ for visualization). The two can diverge fairly substantially. \textbf {b-d,} Parametric and conditional resampling null distributions for the negative binomial $z$-value in three cases: the parametric $p$-value is more significant (b), the conditional resampling $p$-value is more significant (c), the two $p$-values are about the same (d)}{figure.A.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {S.3}{\ignorespaces \textbf  {Details on ChIP-seq enrichment analysis.} Fraction of candidate enhancers paired with a gene, broken down by quintile of ChIP-seq signal (0 means the candidate enhancer did not overlap a ChIP-seq peak), based on which the odds ratios in Figure\nobreakspace  {}\ref  {fig:application}f were computed. Both methods generally pair candidate enhancers in higher ChIP-seq quintiles more frequently, but this enrichment is more pronounced in SCEPTRE across all eight ChIP-seq targets.}}{18}{figure.A.3}\protected@file@percent }
+\newlabel{fig:chipseq-enrichment-details}{{S.3}{18}{\textbf {Details on ChIP-seq enrichment analysis.} Fraction of candidate enhancers paired with a gene, broken down by quintile of ChIP-seq signal (0 means the candidate enhancer did not overlap a ChIP-seq peak), based on which the odds ratios in Figure~\ref {fig:application}f were computed. Both methods generally pair candidate enhancers in higher ChIP-seq quintiles more frequently, but this enrichment is more pronounced in SCEPTRE across all eight ChIP-seq targets}{figure.A.3}{}}

@@ -1,7 +1,6 @@
 source("load_data_for_plotting.R")
 source("../katsevich2020/R/plotting_functs.R")
 
-
 # QQ plot of Gasperini NTC p-values
 
 ci = 0.95
@@ -65,6 +64,7 @@ p = df %>% arrange(desc(KS_pval)) %>% mutate(KS_pval = ifelse(KS_pval < 1e-5, 1e
                      legend.background = element_rect(fill = "transparent", colour = NA))
 plot(p)
 
+covariates_xie$guide_count = rowSums(grna_indicator_matrix_xie)
 p = covariates_xie %>% 
   mutate(total_umis = 10^(log_n_umis)) %>%
   ggplot(aes(x = total_umis, y = guide_count)) +

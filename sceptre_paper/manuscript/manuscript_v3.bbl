@@ -1,0 +1,292 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem{Dixit2016}
+\bibinfo{author}{Dixit, A.} \emph{et~al.}
+\newblock \bibinfo{title}{{Perturb-Seq: Dissecting Molecular Circuits with
+  Scalable Single-Cell RNA Profiling of Pooled Genetic Screens}}.
+\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{167}},
+  \bibinfo{pages}{1853--1866} (\bibinfo{year}{2016}).
+
+\bibitem{Adamson2016}
+\bibinfo{author}{Adamson, B.} \emph{et~al.}
+\newblock \bibinfo{title}{{A Multiplexed Single-Cell CRISPR Screening Platform
+  Enables Systematic Dissection of the Unfolded Protein Response}}.
+\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{167}},
+  \bibinfo{pages}{1867--1882.e21} (\bibinfo{year}{2016}).
+
+\bibitem{Jaitin2016}
+\bibinfo{author}{Jaitin, D.~A.} \emph{et~al.}
+\newblock \bibinfo{title}{{Dissecting Immune Circuits by Linking CRISPR-Pooled
+  Screens with Single-Cell RNA-Seq}}.
+\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{167}},
+  \bibinfo{pages}{1883--1896.e15} (\bibinfo{year}{2016}).
+
+\bibitem{Datlinger2017}
+\bibinfo{author}{Datlinger, P.} \emph{et~al.}
+\newblock \bibinfo{title}{{Pooled CRISPR screening with single-cell
+  transcriptome readout}}.
+\newblock \emph{\bibinfo{journal}{Nature Methods}}
+  \textbf{\bibinfo{volume}{14}}, \bibinfo{pages}{297--301}
+  (\bibinfo{year}{2017}).
+
+\bibitem{Xie2017}
+\bibinfo{author}{Xie, S.}, \bibinfo{author}{Duan, J.}, \bibinfo{author}{Li,
+  B.}, \bibinfo{author}{Zhou, P.} \& \bibinfo{author}{Hon, G.~C.}
+\newblock \bibinfo{title}{{Multiplexed Engineering and Analysis of
+  Combinatorial Enhancer Activity in Single Cells}}.
+\newblock \emph{\bibinfo{journal}{Molecular Cell}}
+  \textbf{\bibinfo{volume}{66}}, \bibinfo{pages}{285--299}
+  (\bibinfo{year}{2017}).
+
+\bibitem{Gasperini2019}
+\bibinfo{author}{Gasperini, M.} \emph{et~al.}
+\newblock \bibinfo{title}{{A Genome-wide Framework for Mapping Gene Regulation
+  via Cellular Genetic Screens}}.
+\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{176}},
+  \bibinfo{pages}{377--390.e19} (\bibinfo{year}{2019}).
+
+\bibitem{Xie2019}
+\bibinfo{author}{Xie, S.}, \bibinfo{author}{Armendariz, D.},
+  \bibinfo{author}{Zhou, P.}, \bibinfo{author}{Duan, J.} \&
+  \bibinfo{author}{Hon, G.~C.}
+\newblock \bibinfo{title}{{Global Analysis of Enhancer Targets Reveals
+  Convergent Enhancer-Driven Regulatory Modules}}.
+\newblock \emph{\bibinfo{journal}{Cell Reports}} \textbf{\bibinfo{volume}{29}},
+  \bibinfo{pages}{2570--2578.e5} (\bibinfo{year}{2019}).
+
+\bibitem{Norman2019}
+\bibinfo{author}{Norman, T.~M.} \emph{et~al.}
+\newblock \bibinfo{title}{{Exploring genetic interaction manifolds constructed
+  from rich single-cell phenotypes}}.
+\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{365}},
+  \bibinfo{pages}{786--793} (\bibinfo{year}{2019}).
+
+\bibitem{Mimitou2019}
+\bibinfo{author}{Mimitou, E.~P.} \emph{et~al.}
+\newblock \bibinfo{title}{{Multiplexed detection of proteins, transcriptomes,
+  clonotypes and CRISPR perturbations in single cells}}.
+\newblock \emph{\bibinfo{journal}{Nature Methods}}
+  \textbf{\bibinfo{volume}{16}}, \bibinfo{pages}{409--412}
+  (\bibinfo{year}{2019}).
+
+\bibitem{Frangieh2020}
+\bibinfo{author}{Frangieh, C.~J.} \emph{et~al.}
+\newblock \bibinfo{title}{{Multi-modal pooled Perturb-CITE-Seq screens in
+  patient models define novel mechanisms of cancer immune evasion}}.
+\newblock \emph{\bibinfo{journal}{bioRxiv}}  (\bibinfo{year}{2020}).
+\newblock \urlprefix\url{doi: https://doi.org/10.1101/2020.09.01.267211}.
+
+\bibitem{Gasperini2020}
+\bibinfo{author}{Gasperini, M.}, \bibinfo{author}{Tome, J.~M.} \&
+  \bibinfo{author}{Shendure, J.}
+\newblock \bibinfo{title}{{Towards a comprehensive catalogue of validated and
+  target-linked human enhancers}}.
+\newblock \emph{\bibinfo{journal}{Nature Reviews Genetics}}
+  (\bibinfo{year}{2020}).
+
+\bibitem{Yang2020}
+\bibinfo{author}{Yang, L.} \emph{et~al.}
+\newblock \bibinfo{title}{{Linking genotypes with multiple phenotypes in
+  single-cell CRISPR screens}}.
+\newblock \emph{\bibinfo{journal}{Genome Biology}}
+  \textbf{\bibinfo{volume}{21}} (\bibinfo{year}{2020}).
+
+\bibitem{Lin2020}
+\bibinfo{author}{Lin, X.}, \bibinfo{author}{Chemparathy, A.},
+  \bibinfo{author}{Russa, M.~L.}, \bibinfo{author}{Daley, T.} \&
+  \bibinfo{author}{Qi, L.~S.}
+\newblock \bibinfo{title}{{Computational Methods for Analysis of Large-Scale
+  CRISPR Screens}}.
+\newblock \emph{\bibinfo{journal}{Annual Review of Biomedical Data Science}}
+  \textbf{\bibinfo{volume}{3}}, \bibinfo{pages}{137--162}
+  (\bibinfo{year}{2020}).
+
+\bibitem{Townes2019}
+\bibinfo{author}{Townes, F.~W.}, \bibinfo{author}{Hicks, S.~C.},
+  \bibinfo{author}{Aryee, M.~J.} \& \bibinfo{author}{Irizarry, R.~A.}
+\newblock \bibinfo{title}{{Feature selection and dimension reduction for
+  single-cell RNA-Seq based on a multinomial model}}.
+\newblock \emph{\bibinfo{journal}{Genome Biology}}
+  \textbf{\bibinfo{volume}{20}}, \bibinfo{pages}{1--16} (\bibinfo{year}{2019}).
+
+\bibitem{Hafemeister2019}
+\bibinfo{author}{Hafemeister, C.} \& \bibinfo{author}{Satija, R.}
+\newblock \bibinfo{title}{{Normalization and variance stabilization of
+  single-cell RNA-seq data using regularized negative binomial regression}}.
+\newblock \emph{\bibinfo{journal}{Genome Biology}}
+  \textbf{\bibinfo{volume}{20}}, \bibinfo{pages}{1--15} (\bibinfo{year}{2019}).
+
+\bibitem{Svensson2020}
+\bibinfo{author}{Svensson, V.}
+\newblock \bibinfo{title}{{Droplet scRNA-seq is not zero-inflated}}.
+\newblock \emph{\bibinfo{journal}{Nature Biotechnology}}
+  \textbf{\bibinfo{volume}{38}}, \bibinfo{pages}{142--150}
+  (\bibinfo{year}{2020}).
+
+\bibitem{Hill2018}
+\bibinfo{author}{Hill, A.~J.} \emph{et~al.}
+\newblock \bibinfo{title}{{On the design of CRISPR-based single-cell molecular
+  screens}}.
+\newblock \emph{\bibinfo{journal}{Nature Methods}}
+  \textbf{\bibinfo{volume}{15}}, \bibinfo{pages}{271--274}
+  (\bibinfo{year}{2018}).
+
+\bibitem{Replogle2020}
+\bibinfo{author}{Replogle, J.~M.} \emph{et~al.}
+\newblock \bibinfo{title}{{Combinatorial single-cell CRISPR screens by direct
+  guide RNA capture and targeted sequencing}}.
+\newblock \emph{\bibinfo{journal}{Nature Biotechnology}}
+  (\bibinfo{year}{2020}).
+
+\bibitem{CetL16}
+\bibinfo{author}{Cand{\`{e}}s, E.}, \bibinfo{author}{Fan, Y.},
+  \bibinfo{author}{Janson, L.} \& \bibinfo{author}{Lv, J.}
+\newblock \bibinfo{title}{{Panning for gold: `model-X' knockoffs for high
+  dimensional controlled variable selection}}.
+\newblock \emph{\bibinfo{journal}{Journal of the Royal Statistical Society:
+  Series B (Statistical Methodology)}} \textbf{\bibinfo{volume}{80}},
+  \bibinfo{pages}{551--577} (\bibinfo{year}{2018}).
+
+\bibitem{Love2014}
+\bibinfo{author}{Love, M.~I.}, \bibinfo{author}{Huber, W.} \&
+  \bibinfo{author}{Anders, S.}
+\newblock \bibinfo{title}{{Moderated estimation of fold change and dispersion
+  for RNA-seq data with DESeq2}}.
+\newblock \emph{\bibinfo{journal}{Genome Biology}}
+  \textbf{\bibinfo{volume}{15}}, \bibinfo{pages}{550} (\bibinfo{year}{2014}).
+
+\bibitem{Qiu2017}
+\bibinfo{author}{Qiu, X.} \emph{et~al.}
+\newblock \bibinfo{title}{{Single-cell mRNA quantification and differential
+  analysis with Census}}.
+\newblock \emph{\bibinfo{journal}{Nature Methods}}
+  \textbf{\bibinfo{volume}{14}}, \bibinfo{pages}{309--315}
+  (\bibinfo{year}{2017}).
+
+\bibitem{Daley2018}
+\bibinfo{author}{Daley, T.~P.} \emph{et~al.}
+\newblock \bibinfo{title}{{CRISPhieRmix: A hierarchical mixture model for
+  CRISPR pooled screens}}.
+\newblock \emph{\bibinfo{journal}{Genome Biology}}
+  \textbf{\bibinfo{volume}{19}}, \bibinfo{pages}{1--13} (\bibinfo{year}{2018}).
+
+\bibitem{GTExPilot}
+\bibinfo{author}{Ardlie, K.~G.} \emph{et~al.}
+\newblock \bibinfo{title}{{The Genotype-Tissue Expression (GTEx) pilot
+  analysis: Multitissue gene regulation in humans}}.
+\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{348}},
+  \bibinfo{pages}{648--660} (\bibinfo{year}{2015}).
+
+\bibitem{Andersson2014}
+\bibinfo{author}{Andersson, R.} \emph{et~al.}
+\newblock \bibinfo{title}{{An atlas of active enhancers across human cell types
+  and tissues}}.
+\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{507}},
+  \bibinfo{pages}{455--461} (\bibinfo{year}{2014}).
+
+\bibitem{Fishilevich2017}
+\bibinfo{author}{Fishilevich, S.} \emph{et~al.}
+\newblock \bibinfo{title}{{GeneHancer: genome-wide integration of enhancers and
+  target genes in GeneCards}}.
+\newblock \emph{\bibinfo{journal}{Database : the journal of biological
+  databases and curation}} \textbf{\bibinfo{volume}{2017}},
+  \bibinfo{pages}{1--17} (\bibinfo{year}{2017}).
+
+\bibitem{Robins2001}
+\bibinfo{author}{Robins, J.~M.} \& \bibinfo{author}{Rotnitzky, A.}
+\newblock \bibinfo{title}{{Comment on the Bickel and Kwon article, "Inference
+  for semiparametric models: Some questions and an answer"}}.
+\newblock \emph{\bibinfo{journal}{Statistica Sinica}}
+  \textbf{\bibinfo{volume}{11}}, \bibinfo{pages}{920--936}
+  (\bibinfo{year}{2001}).
+
+\bibitem{VanderLaan2003}
+\bibinfo{author}{van~der Laan, M.~J.} \& \bibinfo{author}{Robins, J.~M.}
+\newblock \emph{\bibinfo{title}{{Unified methods for censored longitudinal data
+  and causality}}} (\bibinfo{publisher}{Springer-Verlag}, \bibinfo{address}{New
+  York}, \bibinfo{year}{2003}).
+
+\bibitem{Katsevich2020a}
+\bibinfo{author}{Katsevich, E.} \& \bibinfo{author}{Ramdas, A.}
+\newblock \bibinfo{title}{{A theoretical treatment of conditional independence
+  testing under Model-X}}.
+\newblock \emph{\bibinfo{journal}{arXiv}}  (\bibinfo{year}{2020}).
+\newblock \urlprefix\url{http://arxiv.org/abs/2005.05506}.
+\newblock \eprint{2005.05506}.
+
+\bibitem{Li2015}
+\bibinfo{author}{Li, W.} \emph{et~al.}
+\newblock \bibinfo{title}{{Quality control, modeling, and visualization of
+  CRISPR screens with MAGeCK-VISPR}}.
+\newblock \emph{\bibinfo{journal}{Genome Biology}}
+  \textbf{\bibinfo{volume}{16}} (\bibinfo{year}{2015}).
+
+\bibitem{Zamanighomi2019}
+\bibinfo{author}{Zamanighomi, M.} \emph{et~al.}
+\newblock \bibinfo{title}{{GEMINI: A variational Bayesian approach to identify
+  genetic interactions from combinatorial CRISPR screens}}.
+\newblock \emph{\bibinfo{journal}{Genome Biology}}
+  \textbf{\bibinfo{volume}{20}}, \bibinfo{pages}{1--10} (\bibinfo{year}{2019}).
+
+\bibitem{Hsu2018}
+\bibinfo{author}{Hsu, J.} \emph{et~al.}
+\newblock \bibinfo{title}{{CRISPR-SURF: discovering regulatory elements by
+  deconvolution of CRISPR tiling screen data}}.
+\newblock \emph{\bibinfo{journal}{Nature Methods}}
+  \textbf{\bibinfo{volume}{15}}, \bibinfo{pages}{990--992}
+  (\bibinfo{year}{2018}).
+
+\bibitem{XSEDE}
+\bibinfo{author}{Towns, J.} \emph{et~al.}
+\newblock \bibinfo{title}{{XSEDE: Accelerating Scientific Discovery}}.
+\newblock \emph{\bibinfo{journal}{Computing in Science {\&} Engineering}}
+  \textbf{\bibinfo{volume}{16}}, \bibinfo{pages}{62--74}
+  (\bibinfo{year}{2014}).
+
+\bibitem{Bridges}
+\bibinfo{author}{Nystrom, N.~A.}, \bibinfo{author}{Levine, M.~J.},
+  \bibinfo{author}{Roskies, R.~Z.} \& \bibinfo{author}{Scott, J.~R.}
+\newblock \bibinfo{title}{{Bridges: A Uniquely Flexible HPC Resource for New
+  Communities and Data Analytics}}.
+\newblock In \emph{\bibinfo{booktitle}{Proceedings of the 2015 XSEDE
+  Conference: Scientific Advancements Enabled by Enhanced
+  Cyberinfrastructure}}, XSEDE '15, \bibinfo{pages}{30:1----30:8}
+  (\bibinfo{publisher}{ACM}, \bibinfo{address}{New York, NY, USA},
+  \bibinfo{year}{2015}).
+
+\bibitem{Liu2020}
+\bibinfo{author}{Liu, M.}, \bibinfo{author}{Katsevich, E.},
+  \bibinfo{author}{Ramdas, A.} \& \bibinfo{author}{Janson, L.}
+\newblock \bibinfo{title}{{Fast and Powerful Conditional Randomization Testing
+  via Distillation}}.
+\newblock \emph{\bibinfo{journal}{arXiv}}  (\bibinfo{year}{2020}).
+\newblock \urlprefix\url{https://arxiv.org/abs/2006.03980}.
+
+\bibitem{FR01}
+\bibinfo{author}{Finner, H.} \& \bibinfo{author}{Roters, M.}
+\newblock \bibinfo{title}{{On the false discovery rate and expected type I
+  errors}}.
+\newblock \emph{\bibinfo{journal}{Biometrical Journal}}
+  \textbf{\bibinfo{volume}{43}}, \bibinfo{pages}{985--1005}
+  (\bibinfo{year}{2001}).
+
+\bibitem{Dunham2012}
+\bibinfo{author}{Dunham, I.} \emph{et~al.}
+\newblock \bibinfo{title}{{An integrated encyclopedia of DNA elements in the
+  human genome}}.
+\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{489}},
+  \bibinfo{pages}{57--74} (\bibinfo{year}{2012}).
+
+\bibitem{Rao2014}
+\bibinfo{author}{Rao, S.~S.} \emph{et~al.}
+\newblock \bibinfo{title}{{A 3D map of the human genome at kilobase resolution
+  reveals principles of chromatin looping}}.
+\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{159}},
+  \bibinfo{pages}{1665--1680} (\bibinfo{year}{2014}).
+
+\end{thebibliography}
