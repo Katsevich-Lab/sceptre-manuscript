@@ -146,6 +146,22 @@ df = original_results %>%
 df1 = df %>% filter(old_rejected) %>% mutate(group = "old_rejections")
 df2 = df %>% filter(new_rejected) %>% mutate(group = "new_rejections")
 
+rbind(
+  df1 %>% 
+    filter(TSS_dist <= 0) %>% 
+    summarise(`Mean distance (kb)` = mean(TSS_dist)/1000, 
+              `Median distance (kb)` = median(TSS_dist)/1000) %>%
+    mutate(method = "Original"),
+  df2 %>% 
+    filter(TSS_dist <= 0) %>% 
+    summarise(`Mean distance (kb)` = mean(TSS_dist)/1000, `Median distance (kb)` = median(TSS_dist)/1000) %>%
+    mutate(method = "SCEPTRE")
+) %>%
+  gather(metric, measure, -method) %>%
+  spread(method, measure) %>% 
+  kable(format = "latex", booktabs = TRUE, escape = FALSE, linesep = "",digits = 1,
+        col.names = c("", "Original", "SCEPTRE"))
+
 p = rbind(df1, df2) %>%
   filter(TSS_dist <= 0) %>%
   mutate(group = factor(group, 
@@ -163,7 +179,7 @@ p = rbind(df1, df2) %>%
                      legend.title = element_blank(),
                      legend.position = c(0.2,0.8)) 
 plot(p)
-ggsave(filename = sprintf("%s/Figure5/TSS_dist_histogram.pdf", figures_dir), plot = p, device = "pdf",
+ggsave(filename = sprintf("%s/Figure4/Figure4d.pdf", figures_dir), plot = p, device = "pdf",
        width = 4.5, height = 3)
 
 # e: HI-C interaction frequency comparison

@@ -2,7 +2,6 @@ source("load_data_for_plotting.R")
 source("../katsevich2020/R/plotting_functs.R")
 
 # QQ plot of Gasperini NTC p-values
-
 ci = 0.95
 subsampling_factor = 250
 p = original_results %>%
@@ -32,8 +31,6 @@ plot(p)
 # QQ plot of Xie ARL15 p-values
 
 
-
-
 # Dispersion estimation
 
 KS_pvals = original_results %>% 
@@ -47,6 +44,7 @@ df = disp_table %>%
   mutate(disp_shrunk = disp_coeffs[1] + disp_coeffs[2]/mu) %>% 
   inner_join(KS_pvals, by = "gene_id") %>%
   mutate(KS_pval_adj = p.adjust(KS_pval, "fdr"))
+num_genes = nrow(df)
 p = df %>% arrange(desc(KS_pval)) %>% mutate(KS_pval = ifelse(KS_pval < 1e-5, 1e-5, KS_pval)) %>% 
   ggplot() + geom_point(aes(x = mu, y = disp_raw, colour = KS_pval)) + 
   geom_point(aes(x = mu, y = disp_raw), size = 4, shape = 21, data = df %>% filter(KS_pval < 0.05/num_genes)) + 
@@ -64,6 +62,7 @@ p = df %>% arrange(desc(KS_pval)) %>% mutate(KS_pval = ifelse(KS_pval < 1e-5, 1e
                      legend.background = element_rect(fill = "transparent", colour = NA))
 plot(p)
 
+# confounding for Xie
 covariates_xie$guide_count = rowSums(grna_indicator_matrix_xie)
 p = covariates_xie %>% 
   mutate(total_umis = 10^(log_n_umis)) %>%
@@ -82,3 +81,5 @@ p = covariates_xie %>%
                      panel.border = element_blank(), 
                      axis.line = element_line())
 plot(p)
+
+# confounding for Gasperini

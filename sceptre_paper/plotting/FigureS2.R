@@ -54,5 +54,5 @@ plot(p3)
 # combine the panels
 p = grid.arrange(p0, p1, p2, p3, nrow = 2)
 plot(p)
-ggsave(filename = sprintf("%s/FigureS6.png", figures_dir), plot = p, device = "png", 
+ggsave(filename = sprintf("%s/FigureS2/FigureS2a-d.png", figures_dir), plot = p, device = "png", 
        width = 6.5, height = 6.5)

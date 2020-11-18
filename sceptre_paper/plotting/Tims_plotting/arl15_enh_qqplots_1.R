@@ -52,4 +52,3 @@ p <- qq_data %>%
                      geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), lwd = 0.2, data = arrow_coords, arrow = arrow(length=unit(0.2,"cm")), inherit.aes = FALSE, col = "grey40")
 saveRDS(object = p, file = paste0(offsite_dir, "/figures/arl15_qqplot.rds"))
 ggsave(filename = paste0(offsite_dir, "/figures/arl15_enh_qqplot.pdf"), plot = p, scale = 1, width = 4.5, height = 3)
-
