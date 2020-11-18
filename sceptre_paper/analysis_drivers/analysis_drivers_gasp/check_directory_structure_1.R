@@ -8,7 +8,7 @@ for (package in packages) suppressPackageStartupMessages(library(package, charac
 # Hardcode the directories to create.
 sub_dirs <- c(create_parent_directories("data/gasperini/raw"), create_parent_directories("data/gasperini/precomp/gRNA"), "data/gasperini/precomp/gene", "data/gasperini/processed",
   create_parent_directories("data/functional"), "data/functional/HIC", "data/functional/ChIP-seq", "data/functional/GeneHancer",
-  create_parent_directories("results/gasperini/sceptre"), "results/gasperini/negative_binomial",
+  create_parent_directories("results/gasperini/sceptre"), "results/gasperini/negative_binomial", "results/gasperini/enrichment",
   "figures", create_parent_directories("logs/gasperini")) %>% unique()
 
 dirs_to_create <- paste0(offsite_dir, "/", sub_dirs)
