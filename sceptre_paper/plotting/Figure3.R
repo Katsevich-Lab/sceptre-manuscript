@@ -5,7 +5,7 @@
 #######################################################
 
 # collate the NTC p-values of four methods
-df_NTC = rbind(resampling_results %>% 
+df_NTC = rbind(resampling_results %>%
                  filter(site_type == "NTC", method == "conditional_randomization") %>%
                  select(gene_id, grna_group, corrected_pvalue_st) %>% 
                  rename(pvalue = corrected_pvalue_st) %>%

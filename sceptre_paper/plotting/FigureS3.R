@@ -1,6 +1,6 @@
 #######################################################
 #
-# Reproduce Figure S8 from Katsevich and Roeder (2020).
+# Reproduce Figure S3 from Katsevich and Roeder (2020).
 #
 #######################################################
 
@@ -21,4 +21,4 @@ p = paired_fractions %>%
         axis.line = element_line()
   )
 plot(p)
-ggsave(plot = p, filename = sprintf("%s/figures/FigureS8.pdf", base_dir), width = 7, height = 4)
+ggsave(plot = p, filename = sprintf("%s/figures/FigureS3/FigureS3.pdf", base_dir), width = 7, height = 4)
