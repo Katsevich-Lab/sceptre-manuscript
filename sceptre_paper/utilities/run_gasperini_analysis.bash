@@ -3,9 +3,9 @@
 # This bash script runs the Gasperini data analysis. The code is commented to increase ease of adoption and use. It is assumed that this bash file is being executed from within the utilities directory.
 
 # Set the machine.
-machine=uberduo
+machine=local
 n_processors=3
-precomputation_complete=TRUE
+precomputation_complete=FALSE
 
 # Obtain the filepaths to the code and "offsite" directories
 code_dir=$(bash get_file_paths.bash $machine code)
@@ -34,7 +34,7 @@ echo Perform quality control.
 parameter_file=$code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"/sceptre_function_args.R
 
 echo Run the sceptre analysis at scale.
-sceptre_at_scale_bash_dir=$code_dir"/sceptre_package/sceptre_at_scale"
+# sceptre_at_scale_bash_dir=$code_dir"/sceptre_package/sceptre_at_scale"
 bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors $precomputation_complete
 
 echo Run the negative binomial regression at scale.
@@ -46,3 +46,4 @@ echo Process the results for enrichment analysis.
 # Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"preprocess_result_file_5.R $code_dir $offsite_dir
 
 echo Perform the enrichment analysis.
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"run_enrichment_analysis_6.R $code_dir $offsite_dir

@@ -35,7 +35,7 @@ gRNAgroup_pair_table_filename <- "GSE120861_gene_gRNAgroup_pair_table.at_scale.t
 # list of gRNA groups used
 gRNA_groups_filename <- "GSE120861_grna_groups.at_scale.txt"
 
-# Monocle Cell Data Set object with all data
+# Monocle Cell Data Set object with all gRNA data
 cds_filename <- "GSE120861_at_scale_screen.cds.rds"
 
 # Expression data
@@ -67,41 +67,38 @@ supplementary_table_file <- "https://www.cell.com/cms/10.1016/j.cell.2018.11.029
 download.file(supplementary_table_file, paste0(raw_data_dir_gasp, "/Gasperini_TableS2.xlsx"))
 
 ####################
-# Download HI-C data (currently deactivated)
+# Download HI-C data (from Gene's dropbox and NCBI)
 ####################
+HIC_dir <- paste0(offsite_dir, "/data/functional/HIC")
+HIC_loc <- paste0(HIC_dir, "/GSE63525_K562_Arrowhead_domainlist.txt")
+download.file(url = "https://www.dropbox.com/sh/65twliq3qt78ex0/AABpoTxeQHJNbG7TsKELmuEwa/data/raw/HIC/GSE63525_K562_Arrowhead_domainlist.txt?dl=1", destfile = HIC_loc)
 
-if (FALSE) {
-  # URL of data
-  functional_data_dir <- paste0(offsite_dir, "/data/functional")
-  remote <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE63525&format=file&file="
-  TADs_filename <- "GSE63525_K562_Arrowhead_domainlist.txt"
-  contact_matrices_dirname <- "GSE63525_K562_intrachromosomal_contact_matrices"
-  
-  # download TADs file, if necessary
-  dest <- paste0(functional_data_dir, "/HIC/", TADs_filename)
-  if (!file.exists(dest)) {
-    cat(paste0("Downloading ",TADs_filename, "\n"))
-    download.file(paste0(remote, TADs_filename, ".gz"),
-                  paste0(dest, ".gz"))
-    gunzip(paste0(dest, ".gz"))
-  }
-  
-  # download contact matrices, if necessary
-  dest <- paste0(functional_data_dir, "/HIC/", contact_matrices_dirname)
-  if (!dir.exists(dest)) {
-    cat(paste0("Downloading ", contact_matrices_dirname, "\n"))
-    download.file(paste0(remote, contact_matrices_dirname, ".tar.gz"),
-                  paste0(dest, ".tar.gz"))
-    untar(paste0(dest, ".tar.gz"))
-  }
+remote <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE63525&format=file&file="
+contact_matrices_dirname <- "GSE63525_K562_intrachromosomal_contact_matrices"
+if(!dir.exists(paste0(HIC_dir, "/" , contact_matrices_dirname))) {
+  cat(sprintf("Downloading %s...\n", contact_matrices_dirname))
+  download.file(sprintf("%s%s.tar.gz", remote, contact_matrices_dirname),
+                sprintf("%s/%s.tar.gz", HIC_dir, contact_matrices_dirname))
+  gunzip(sprintf("%s/%s.tar.gz", HIC_dir, contact_matrices_dirname))
+  untar(tarfile = sprintf("%s/%s.tar", HIC_dir, contact_matrices_dirname), exdir = sprintf("%s/%s", HIC_dir, contact_matrices_dirname))
 }
-########################
-# Download ChIP-seq data
-########################
 
-# Available courtesy of Shendure Lab at
-# https://drive.google.com/drive/folders/177djZEEPV-udBkdqOtdjjV061O7s8dKj;
-# original data can be downloaded at https://www.encodeproject.org/.
+########################
+# Download ChIP-seq data (likewise from Gene's dropbox)
+########################
+chip_seq_files <- c("BRD4", "DPF2", "EP300", "GATA2", "H3K27ac", "RNF2", "TAL1", "TBL1XR1")
+urls <- c("https://www.dropbox.com/sh/65twliq3qt78ex0/AABu0Vgsj4Wf-8dijc_mIDssa/data/raw/ChIP-seq/BRD4.bed?dl=1",
+          "https://www.dropbox.com/sh/65twliq3qt78ex0/AACLMKyUAsNFudCTHwZpu0eja/data/raw/ChIP-seq/DPF2.bed?dl=1",
+          "https://www.dropbox.com/sh/65twliq3qt78ex0/AAAsMLrZLkEf6Q5T0wTSmiLwa/data/raw/ChIP-seq/EP300.bed?dl=1",
+          "https://www.dropbox.com/sh/65twliq3qt78ex0/AADtl80uTvunTt1CNUd_4lUra/data/raw/ChIP-seq/GATA2.bed?dl=1",
+          "https://www.dropbox.com/sh/65twliq3qt78ex0/AABnS8MAk4-gBljbWG1fpgGJa/data/raw/ChIP-seq/H3K27ac.bed?dl=1",
+          "https://www.dropbox.com/sh/65twliq3qt78ex0/AAAGRES3MsckonN8ZAwr_8jYa/data/raw/ChIP-seq/RNF2.bed?dl=1",
+          "https://www.dropbox.com/sh/65twliq3qt78ex0/AACIaHcTumi85sUGqmkH78Gsa/data/raw/ChIP-seq/TAL1.bed?dl=1",
+          "https://www.dropbox.com/sh/65twliq3qt78ex0/AADVYs4mozwjTGB2IbRHE1LKa/data/raw/ChIP-seq/TBL1XR1.bed?dl=1")
+dest_locs <- paste0(offsite_dir, "/data/functional/ChIP-seq/", chip_seq_files, ".bed")
+for (i in 1:length(chip_seq_files)) {
+  download.file(url = urls[i], destfile = dest_locs[i])
+}
 
 ##########################
 # Download GeneHancer data
