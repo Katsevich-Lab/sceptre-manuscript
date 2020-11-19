@@ -87,6 +87,10 @@ if(!dir.exists(paste0(HIC_dir, "/" , contact_matrices_dirname))) {
 # Download ChIP-seq data (likewise from Gene's dropbox)
 ########################
 chip_seq_files <- c("BRD4", "DPF2", "EP300", "GATA2", "H3K27ac", "RNF2", "TAL1", "TBL1XR1")
+chip_seq_file_location <- "bit.ly/SCEPTRE/raw/ChIP-seq"
+download.file(url = sprintf("%s/BRD4.bed?dl=1", chip_seq_file_location), destfile = "./test")
+download.file(url = urls[i], destfile = dest_locs[i])
+
 urls <- c("https://www.dropbox.com/sh/65twliq3qt78ex0/AABu0Vgsj4Wf-8dijc_mIDssa/data/raw/ChIP-seq/BRD4.bed?dl=1",
           "https://www.dropbox.com/sh/65twliq3qt78ex0/AACLMKyUAsNFudCTHwZpu0eja/data/raw/ChIP-seq/DPF2.bed?dl=1",
           "https://www.dropbox.com/sh/65twliq3qt78ex0/AAAsMLrZLkEf6Q5T0wTSmiLwa/data/raw/ChIP-seq/EP300.bed?dl=1",
