@@ -16,7 +16,7 @@ qq_data <- simulation_results %>%
          facet_label = factor(x = as.character(dataset_id), levels = c("2", "1", "3", "4"), labels = c("Correct model", "Dispersion too large", "Dispersion too small", "Zero inflation")),
          method = factor(x = as.character(method), levels = c("sceptre", "negative_binomial", "scMAGeCK"), labels = c("SCEPTRE", "Fixed dispersion NB", "scMAGeCK")))
 
-p <- qq_data %>%
+p_a <- qq_data %>%
   ggplot(aes(x = expected, col = method, y = pvalue, ymin = clower, ymax = cupper)) +
   geom_ribbon(alpha = 0.2, color = NA) +
   geom_abline(intercept = 0, slope = 1) +
@@ -66,7 +66,7 @@ for (i in 1:length(sorted_methods_rightmost_pnt)) {
 annotation_df <- filter(qq_data, gene == filter(resampling_results_xie, gene_names == "ARL15") %>% pull(gene_id) %>% as.character())
 arrow_coords <- tibble(x1 = 4e-4, x2 = annotation_df$expected + 1e-5, y1 = 1e-8, y2 = annotation_df$pvalue)
 
-p <- qq_data %>%
+p_e <- qq_data %>%
   ggplot(aes(x = expected, y = pvalue, group = method, ymin = clower, ymax = cupper)) +
   geom_point(aes(color = method), size = 1, alpha = 0.5) +
   geom_ribbon(alpha = 0.2) +
@@ -85,6 +85,7 @@ p <- qq_data %>%
   annotate(geom = "text", x = 10e-4, y = 1e-8, label = "ARL15", col = "firebrick3") +
   geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), lwd = 0.2, data = arrow_coords, arrow = arrow(length=unit(0.2,"cm")), inherit.aes = FALSE, col = "grey40")
 
+# 
 
 if (FALSE) {
 # collate the NTC p-values of four methods

@@ -29,12 +29,8 @@ paired_fractions = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_paired_e
 disp_coeffs = as.numeric(readRDS(sprintf("%s/data/gasperini/processed/disp_coefficients.rds", offsite_dir)))
 
 # dispersion table (mean expressions and dispersion estimates for each gene)
-<<<<<<< HEAD
 disp_table = read.fst(sprintf("%s/data/gasperini/processed/disp_table.fst", offsite_dir)) %>% as_tibble()
 
 # additional items
 ci <- 0.95
 plot_colors <- c(gasperini_nb = "red", hf_nb = "violet", fixed_dispersion_nb = "darkslategray4", sceptre = "royalblue4", hypergeometric = "turquoise3", scMAGeCK = "magenta4")
-=======
-disp_table = read.fst(sprintf("%s/data/gasperini/processed/disp_table.fst", offsite_dir)) %>% as_tibble()
->>>>>>> 0eb5fe180f8149fdbfeac19983d2f2596dceac86
