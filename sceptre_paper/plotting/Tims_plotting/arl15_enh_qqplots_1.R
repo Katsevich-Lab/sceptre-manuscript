@@ -10,7 +10,6 @@ p_vals_hypergeo <- paste0(processed_dir, "/xie_p_values.rds") %>% readRDS() %>% 
 p_vals_hypergeo <- p_vals_hypergeo[names(p_vals_hypergeo) %in% p_vals_sceptre$gene_id]
 to_plot <- tibble(method = rep(x = c("SCEPTRE", "NB regression", "Hypergeometric"), each = length(p_vals_hypergeo)) %>% factor(), p_value = c(p_vals_sceptre$p_value, p_vals_nb$p_value, set_names(p_vals_hypergeo, NULL) ), gene = c(as.character(p_vals_sceptre$gene_id), as.character(p_vals_nb$gene_id), names(p_vals_hypergeo)))
 
-ci <- 0.95
 truncate_thresh <- 1e-9
 qq_data <- to_plot %>%
   rename(pvalue = p_value) %>%

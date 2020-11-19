@@ -1,4 +1,5 @@
-offsite_dir = "/Users/ekatsevi/Dropbox (Penn)/project-files/sceptre_files"
+offsite_dir <- if (is.na(args[2])) "/Volumes/tims_new_drive/research/sceptre_files" else args[2]
+manuscript_figure_dir <- paste0(code_dir, "/sceptre_paper/manuscript/figures")
 
 # Gasperini results
 original_results_gasp = read_tsv(sprintf("%s/data/gasperini/raw/GSE120861_all_deg_results.at_scale.txt", offsite_dir))
@@ -29,3 +30,7 @@ disp_coeffs = as.numeric(readRDS(sprintf("%s/data/gasperini/processed/disp_coeff
 
 # dispersion table (mean expressions and dispersion estimates for each gene)
 disp_table = read.fst(sprintf("%s/data/gasperini/processed/disp_table.fst", offsite_dir)) %>% as_tibble()
+
+# additional items
+ci <- 0.95
+plot_colors <- c(gasperini_nb = "red", hf_nb = "violet", fixed_dispersion_nb = "darkslategray4", sceptre = "royalblue4", hypergeometric = "turquoise3", scMAGeCK = "magenta4")

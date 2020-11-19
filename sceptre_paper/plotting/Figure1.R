@@ -1,5 +1,6 @@
-source("load_data_for_plotting.R")
-source("../katsevich2020/R/plotting_functs.R")
+args <- commandArgs(trailingOnly = TRUE)
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper" else args[1]
+source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
 
 # QQ plot of Gasperini NTC p-values
 ci = 0.95

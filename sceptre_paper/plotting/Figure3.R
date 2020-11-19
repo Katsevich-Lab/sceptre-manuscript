@@ -1,9 +1,92 @@
-#######################################################
-#
 # Reproduce Figure 3 from Katsevich and Roeder (2020).
-#
-#######################################################
+args <- commandArgs(trailingOnly = TRUE)
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper" else args[1]
+require(katsevich2020)
+source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
 
+# subfigure a: simulation results
+truncate_thresh <- 1e-7
+qq_data <- simulation_results %>%
+  group_by(method, dataset_id) %>%
+  mutate(r = rank(p_value, ties.method = "first"), expected = ppoints(n())[r],
+         clower = qbeta(p=(1-ci)/2, shape1 = r, shape2 = n()+1-r),
+         cupper = qbeta(p=(1+ci)/2, shape1 = r, shape2 = n()+1-r)) %>%
+  ungroup() %>%
+  mutate(pvalue = ifelse(p_value < truncate_thresh, truncate_thresh, p_value),
+         facet_label = factor(x = as.character(dataset_id), levels = c("2", "1", "3", "4"), labels = c("Correct model", "Dispersion too large", "Dispersion too small", "Zero inflation")),
+         method = factor(x = as.character(method), levels = c("sceptre", "negative_binomial", "scMAGeCK"), labels = c("SCEPTRE", "Fixed dispersion NB", "scMAGeCK")))
+
+p <- qq_data %>%
+  ggplot(aes(x = expected, col = method, y = pvalue, ymin = clower, ymax = cupper)) +
+  geom_ribbon(alpha = 0.2, color = NA) +
+  geom_abline(intercept = 0, slope = 1) +
+  geom_point(size = 1, alpha = 0.5) +
+  xlab("Expected null p-value") +
+  ylab("Observed p-value") +
+  scale_colour_manual(values = setNames(plot_colors[c("sceptre", "fixed_dispersion_nb", "scMAGeCK")], NULL), name = "Method") +
+  guides(color = guide_legend(override.aes = list(alpha = 1))) +
+  scale_x_continuous(trans = revlog_trans(base = 10)) +
+  scale_y_continuous(trans = revlog_trans(base = 10)) +
+  facet_wrap(.~facet_label, nrow = 1) +
+  theme_bw() + theme(
+    panel.spacing.x = unit(1.25, "lines"),
+    plot.title = element_text(hjust = 0.5),
+    strip.background = element_blank(),
+    strip.text = element_text(size = 10),
+    panel.grid = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line() ,
+    legend.position = "none")
+
+# subfigure d: arl15 results
+resampling_results_xie <- resampling_results_xie %>% filter(enh_names == "ARL15-enh")
+likelihood_results_xie <- filter(likelihood_results_xie, gRNA_id == as.character(resampling_results_xie$gRNA_id[1]))
+p_vals_hypergeo <- original_results_xie %>% pluck("arl15_enh")
+p_vals_hypergeo <- p_vals_hypergeo[names(p_vals_hypergeo) %in% resampling_results_xie$gene_id]
+to_plot <- tibble(method = rep(x = c("SCEPTRE", "Hafemeister NB", "Hypergeometric"), each = length(p_vals_hypergeo)) %>% factor(), p_value = c(resampling_results_xie$p_value, likelihood_results_xie$p_value, set_names(p_vals_hypergeo, NULL)), gene = c(as.character(resampling_results_xie$gene_id), as.character(likelihood_results_xie$gene_id), names(p_vals_hypergeo)))
+
+truncate_thresh <- 1e-9
+qq_data <- to_plot %>%
+  rename(pvalue = p_value) %>%
+  group_by(method) %>%
+  mutate(r = rank(pvalue), expected = ppoints(n())[r],
+         clower = qbeta(p=(1-ci)/2, shape1 = r, shape2 = n()+1-r),
+         cupper = qbeta(p=(1+ci)/2, shape1 = r, shape2 = n()+1-r)) %>% ungroup()
+
+min_expected_p <- min(qq_data$expected)
+sorted_methods_rightmost_pnt <- filter(qq_data, expected == min_expected_p) %>% arrange(pvalue) %>% pull(method) %>% as.character()
+qq_data <- mutate(qq_data, pvalue = ifelse(pvalue <= truncate_thresh, truncate_thresh, pvalue))
+for (i in 1:length(sorted_methods_rightmost_pnt)) {
+  curr_method <- sorted_methods_rightmost_pnt[i]
+  shift <- (i - 1) * 1e-9 * 3/4
+  curr_p <- qq_data[qq_data$method == curr_method & qq_data$expected == min_expected_p, "pvalue"] %>% pull()
+  qq_data[qq_data$method == curr_method & qq_data$expected == min_expected_p, "pvalue"] <- curr_p + shift
+}
+
+annotation_df <- filter(qq_data, gene == filter(resampling_results_xie, gene_names == "ARL15") %>% pull(gene_id) %>% as.character())
+arrow_coords <- tibble(x1 = 4e-4, x2 = annotation_df$expected + 1e-5, y1 = 1e-8, y2 = annotation_df$pvalue)
+
+p <- qq_data %>%
+  ggplot(aes(x = expected, y = pvalue, group = method, ymin = clower, ymax = cupper)) +
+  geom_point(aes(color = method), size = 1, alpha = 0.5) +
+  geom_ribbon(alpha = 0.2) +
+  geom_abline(intercept = 0, slope = 1) +
+  scale_colour_manual(values = setNames(plot_colors[c("hypergeometric", "hf_nb", "sceptre")], NULL), name = "Method") +
+  xlab("Expected null p-value") +
+  ylab("Observed p-value") +
+  guides(color = guide_legend(override.aes = list(alpha = 1))) +
+  scale_x_continuous(trans = revlog_trans(base = 10)) +
+  scale_y_continuous(trans = revlog_trans(base = 10)) +
+  theme_bw() + theme(legend.position = c(0.25,0.8), text = element_text(size = 12),
+                     legend.background = element_rect(fill = "transparent", colour = NA),
+                     panel.grid = element_blank(),
+                     panel.border = element_blank(),
+                     axis.line = element_line()) +
+  annotate(geom = "text", x = 10e-4, y = 1e-8, label = "ARL15", col = "firebrick3") +
+  geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), lwd = 0.2, data = arrow_coords, arrow = arrow(length=unit(0.2,"cm")), inherit.aes = FALSE, col = "grey40")
+
+
+if (FALSE) {
 # collate the NTC p-values of four methods
 df_NTC = rbind(resampling_results %>%
                  filter(site_type == "NTC", method == "conditional_randomization") %>%
@@ -273,3 +356,4 @@ p = arrangeGrob(p0, p1,p2,p3, nrow=2)
 figures_dir = "/home/ekatsevi/Dropbox/Research/Projects/gene-enhancer/manuscript/figures"
 ggsave(filename = sprintf("%s/Figure3/Figure3_new.png", figures_dir), plot = p, device = "png",
        width = 7, height = 6.5)
+}
