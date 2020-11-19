@@ -178,11 +178,10 @@ run_scMaGECK_analysis <- function(expression_matrix, gRNA_indic_matrix) {
   Xmat = mat_for_single_reg[[1]]
   Ymat = mat_for_single_reg[[2]]
   LAMBDA <- 0.01
-  Amat_pm_lst = getsolvedmatrix_with_permutation_cell_label(Xmat, Ymat, lambda = LAMBDA, npermutation = 500)
+  Amat_pm_lst = getsolvedmatrix_with_permutation_cell_label(Xmat, Ymat, lambda = LAMBDA, npermutation = 1000)
   Amat_pval = Amat_pm_lst[[2]]
   return(Amat_pval)
 }
-
 
 
 #' Run scMAGeCK simulation

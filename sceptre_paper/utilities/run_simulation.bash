@@ -20,7 +20,8 @@ echo Generate the simulation data.
 Rscript $code_dir"/sceptre_paper/simulations/"generate_data_1.R $offsite_dir
 
 echo Run the various methods on the various simulated datasets.
-methods=(sceptre negative_binomial scMAGeCK)
+# methods=(sceptre negative_binomial scMAGeCK)
+methods=(scMAGeCK)
 datasets=(1 2 3 4)
 for i in "${datasets[@]}"
 do
