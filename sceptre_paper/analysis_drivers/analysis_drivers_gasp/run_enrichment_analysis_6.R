@@ -2,7 +2,7 @@ args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/" else args[1]
 require(plyranges)
 require(GenomicRanges)
-require(katsevich2020)
+require(sceptre)
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/file_paths_to_dirs.R"))
 
 # Define a couple directories
@@ -10,9 +10,8 @@ results_dir_enrichment <- paste0(offsite_dir, "/results/gasperini/enrichment")
 functional_data_dir <- paste0(offsite_dir, "/data/functional/")
 
 # Read in the association results
-original_results = paste0(processed_dir, "/original_results.fst") %>% read.fst()
-resampling_results = paste0(results_dir, "/resampling_results.fst") %>% read.fst()
-original_results <- filter(original_results, pair_id %in% resampling_results$pair_id)
+original_results <- paste0(processed_dir, "/original_results.fst") %>% read.fst()
+resampling_results <- paste0(results_dir, "/resampling_results.fst") %>% read.fst()
 
 # ChIP-seq enrichment analysis
 
@@ -134,12 +133,12 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
     filter(site_type == "DHS", quality_rank_grna == "top_two") %>%
     select(chr, gene_id, target_gene.start, target_gene.stop, TSS,
            target_site, target_site.start, target_site.stop, rejected) %>%
-    rename(rejected_old = rejected) %>%
+    dplyr::rename(rejected_old = rejected) %>%
     left_join(resampling_results %>%
                 filter(site_type == "DHS",
                        quality_rank_grna == "top_two") %>%
                 select(gene_id,  target_site, rejected) %>%
-                rename(rejected_new = rejected),
+                dplyr::rename(rejected_new = rejected),
               by = c("gene_id", "target_site"))
 
   all_enhancers = all_pairs %>% select(target_site, chr, target_site.start, target_site.stop) %>% unique()
