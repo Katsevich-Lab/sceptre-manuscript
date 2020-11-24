@@ -7,6 +7,7 @@
 plot_skew_t_gene_gRNA(
   gene_id,
   gRNA_id,
+  interval = c(-4, 4),
  
     sceptre_function_args = "/Users/timbarry/Box/SCEPTRE/sceptre_paper/sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R",
   offsite_dir = "/Volumes/tims_new_drive/research/sceptre_files"

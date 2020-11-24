@@ -1,11 +1,13 @@
-#######################################################
-#
 # Reproduce Figure S1 from Katsevich and Roeder (2020).
-#
-#######################################################
+args <- commandArgs(trailingOnly = TRUE)
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper" else args[1]
+require(katsevich2020)
+require(ggrepel)
+source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
+figS1_dir <- paste0(manuscript_figure_dir, "/FigureS1")
 
 # a: dispersion estimation
-KS_pvals = original_results %>% 
+KS_pvals = original_results_gasp %>% 
   filter(site_type == "NTC") %>% 
   group_by(gene_id, outlier_gene) %>% 
   summarise(KS_pval = ks.test(pvalue.empirical, "punif")$p.value) %>%
@@ -16,6 +18,8 @@ df = disp_table %>%
   inner_join(KS_pvals, by = "gene_id") %>%
   mutate(KS_pval_adj = p.adjust(KS_pval, "fdr"))
 problematic_genes = df %>% filter(KS_pval_adj < 0.1) %>% pull(gene_id)
+
+num_genes <- original_results_gasp$gene_id %>% unique() %>% length()
 p = df %>% arrange(desc(KS_pval)) %>% mutate(KS_pval = ifelse(KS_pval < 1e-5, 1e-5, KS_pval)) %>% 
   mutate(outlier_gene = factor(outlier_gene, levels = c(FALSE, TRUE), 
                                labels = c("Non-\"outlier\" gene", "\"Outlier\" gene"))) %>%
@@ -36,18 +40,18 @@ p = df %>% arrange(desc(KS_pval)) %>% mutate(KS_pval = ifelse(KS_pval < 1e-5, 1e
                      legend.title = element_text(size = 12),
                      legend.background = element_rect(fill = "transparent", colour = NA))
 plot(p)
-ggsave(filename = sprintf("%s/figures/FigureS1/FigureS1a.png", base_dir), plot = p, device = "png",
+ggsave(filename = sprintf("%s/FigureS1a.png", figS1_dir), plot = p, device = "png",
        width = 7, height = 5)
 
 # b-d: undercorrection + overcorrection
 
-thresh_old = original_results %>%
+thresh_old = original_results_gasp %>%
   filter(site_type == "DHS", pvalue.empirical.adjusted <= 0.1) %>%
   summarise(max(pvalue.empirical)) %>%
   pull()
 undercorrection_gene = "ENSG00000124575"
 overcorrection_gene = "ENSG00000146963"
-df = original_results %>% 
+df = original_results_gasp %>% 
   filter((gene_id == undercorrection_gene & (site_type == "NTC" | (site_type == "DHS" & beta < 0))) |
            (gene_id == overcorrection_gene & site_type == "NTC")) %>% 
   # mutate(pvalue.empirical = ifelse(site_type == "NTC", null_ecdf(pvalue.raw), pvalue.empirical)) %>%
@@ -69,7 +73,7 @@ df = original_results %>%
                                   levels = c("LUC7L2", "HIST1H1D"))) %>%
   ungroup() %>%
   select(gene_short_name, grna_group, grna_group_name, site_type, pvalue_type, pvalue, expected, clower, cupper)
-hline_data = original_results %>% 
+hline_data = original_results_gasp %>% 
   filter(gene_id == overcorrection_gene, site_type == "selfTSS") %>% 
   select(pvalue.raw, pvalue.empirical, gene_short_name) %>% 
   gather(pvalue_type, pvalue, -gene_short_name) %>%
@@ -134,5 +138,5 @@ p = df %>%
                      panel.border = element_blank(), 
                      axis.line = element_line())
 plot(p)
-ggsave(filename = sprintf("%s/figures/FigureS1/FigureS1b-d.pdf", base_dir), plot = p, device = "pdf",
+ggsave(filename = sprintf("%s/FigureS1b-d.pdf", figS1_dir), plot = p, device = "pdf",
        width = 6, height = 6)

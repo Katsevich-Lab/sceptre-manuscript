@@ -4,7 +4,7 @@
 \alias{plot_skew_t}
 \title{Plot skew-t}
 \usage{
-plot_skew_t(resampled_zvalues, original_zvalue, dp)
+plot_skew_t(resampled_zvalues, original_zvalue, dp, interval = c(-4, 4))
 }
 \arguments{
 \item{resampled_zvalues}{the set of resampled z-values}

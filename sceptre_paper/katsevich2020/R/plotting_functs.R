@@ -35,11 +35,12 @@ revlog_trans <- function(base = exp(1)) {
 #' gene_id <- "ENSG00000008256"
 #' gRNA_id <- "ACTB_TSS"
 #' plot_skew_t_gene_gRNA(gene_id, gRNA_id)
-plot_skew_t_gene_gRNA <- function(gene_id, gRNA_id, sceptre_function_args = "/Users/timbarry/Box/SCEPTRE/sceptre_paper/sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R", offsite_dir = "/Volumes/tims_new_drive/research/sceptre_files") {
+plot_skew_t_gene_gRNA <- function(gene_id, gRNA_id, interval = c(-4,4), sceptre_function_args = "/Users/timbarry/Box/SCEPTRE/sceptre_paper/sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R", offsite_dir = "/Volumes/tims_new_drive/research/sceptre_files") {
   info_pack <- get_all_data_for_gene_gRNA(gene_id, gRNA_id, sceptre_function_args, offsite_dir)
   sceptre_res <- run_sceptre_using_precomp(expressions = info_pack$expressions, gRNA_indicators = info_pack$gRNA_indicators, gRNA_precomp = info_pack$gRNA_precomp, gene_precomp_size = info_pack$gene_precomp_size, gene_precomp_offsets = info_pack$gene_precomp_offsets, B = 500,seed = 1234, reduced_output = FALSE)
-  p <- plot_skew_t(resampled_zvalues = sceptre_res$resampled_z_values, original_zvalue = sceptre_res$z_value, dp = sceptre_res$skew_t_mle)
-  return(list(plot = p, p_val = sceptre_res$p_value, skew_t_fit_success = sceptre_res$skew_t_fit_success))
+  p <- plot_skew_t(resampled_zvalues = sceptre_res$resampled_z_values, original_zvalue = sceptre_res$z_value, dp = sceptre_res$skew_t_mle, interval = interval)
+  out <- list(sceptre_res = sceptre_res, plot = p)
+  return(out)
 }
 
 
@@ -50,8 +51,9 @@ plot_skew_t_gene_gRNA <- function(gene_id, gRNA_id, sceptre_function_args = "/Us
 #' @param dpv the skew-t fit MLE
 #'
 #' @return a ggplot object containing the plot
-plot_skew_t <- function(resampled_zvalues, original_zvalue, dp) {
-  z = seq(-4, 4, length.out = 1000)
+#' @export
+plot_skew_t <- function(resampled_zvalues, original_zvalue, dp, interval = c(-4,4)) {
+  z = seq(interval[1], interval[2], length.out = 1000)
   df_curves = tibble(z = z, fitted = dst(x = z, dp = dp), gaussian = dnorm(z)) %>%
     gather("curve", "y", fitted, gaussian) %>%
     mutate(curve = factor(curve, levels = c("fitted","gaussian"), labels = c("Conditional\nrandomization","Negative\nbinomial")))
@@ -62,7 +64,7 @@ plot_skew_t <- function(resampled_zvalues, original_zvalue, dp) {
   p <- ggplot() +
     geom_histogram(aes(x = z, y = ..density..),
                    data = tibble(z = resampled_zvalues),
-                   boundary = 0, colour = "black", fill = "lightgray", binwidth = 0.5) +
+                   boundary = 0, colour = "black", fill = "lightgray", bins = 15) +
     geom_line(aes(x = z, y = y, group = curve, colour = curve, linetype = curve), data = df_curves) +
     geom_vline(xintercept = original_zvalue, colour = "firebrick3", linetype = "solid") +
     geom_ribbon(aes(x = z, ymin = lower, ymax = upper), fill = "darkorchid2", alpha = 0.5, data = df_ribbon) +
@@ -70,7 +72,7 @@ plot_skew_t <- function(resampled_zvalues, original_zvalue, dp) {
     scale_linetype_manual(values = c("solid", "dashed"), name = "Null distribution") +
     scale_y_continuous(expand = c(0,0)) +
     xlab("Negative binomial z-value") + theme_bw() +
-    theme(legend.position = c(0.85,0.8),
+    theme(legend.position = c(0.85, 0.8),
           legend.background = element_rect(fill = "transparent", colour = NA),
           plot.title = element_text(hjust = 0.5, size = 11),
           panel.grid = element_blank(),
