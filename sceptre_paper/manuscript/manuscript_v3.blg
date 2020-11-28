@@ -1,127 +1,135 @@
-This is BibTeX, Version 0.99d (TeX Live 2020)
-Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+This is BibTeX, Version 0.99d (TeX Live 2018)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: manuscript_v3.aux
 The style file: naturemag.bst
 Database file #1: library.bib
-Repeated entry---line 324 of file library.bib
+Repeated entry---line 346 of file library.bib
  : @article{Replogle2020
  :                      ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 1736 of file library.bib
+Repeated entry---line 1758 of file library.bib
  : @article{Svensson2020
  :                      ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 2199 of file library.bib
+Repeated entry---line 2221 of file library.bib
  : @article{Hsu2018
  :                 ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 2313 of file library.bib
+Repeated entry---line 2335 of file library.bib
  : @article{Norman2019
  :                    ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 4929 of file library.bib
+Repeated entry---line 4951 of file library.bib
  : @article{Dixit2016
  :                   ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 5024 of file library.bib
+Repeated entry---line 5046 of file library.bib
  : @article{Hafemeister2019
  :                         ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 5462 of file library.bib
+Repeated entry---line 5484 of file library.bib
  : @article{Gasperini2019
  :                       ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 5864 of file library.bib
+Repeated entry---line 5886 of file library.bib
  : @article{Zamanighomi2019
  :                         ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 6850 of file library.bib
+Repeated entry---line 6872 of file library.bib
  : @article{Daley2018
  :                   ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 7080 of file library.bib
+Repeated entry---line 7102 of file library.bib
  : @article{Xie2019
  :                 ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 7266 of file library.bib
+Repeated entry---line 7288 of file library.bib
  : @article{Adamson2016
  :                     ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 7588 of file library.bib
+Repeated entry---line 7610 of file library.bib
  : @article{Jaitin2016
  :                    ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 8109 of file library.bib
+Repeated entry---line 8131 of file library.bib
  : @article{Li2015
  :                ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 8312 of file library.bib
+Repeated entry---line 8334 of file library.bib
  : @article{Townes2019
  :                    ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 8749 of file library.bib
+Repeated entry---line 8771 of file library.bib
  : @article{Qiu2017
  :                 ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 9119 of file library.bib
+Repeated entry---line 9141 of file library.bib
  : @article{Xie2017
  :                 ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 10917 of file library.bib
+Repeated entry---line 10560 of file library.bib
+ : @article{Yang2020
+ :                  ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 10661 of file library.bib
+ : @article{Zhu2019
+ :                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 10939 of file library.bib
  : @article{Hill2018
  :                  ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 11371 of file library.bib
+Repeated entry---line 11393 of file library.bib
  : @article{Gasperini2020
  :                       ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 11409 of file library.bib
+Repeated entry---line 11431 of file library.bib
  : @article{Datlinger2017
  :                       ,
 I'm skipping whatever remains of this entry
-Repeated entry---line 12397 of file library.bib
+Repeated entry---line 12419 of file library.bib
  : @article{Replogle2020
  :                      ,
 I'm skipping whatever remains of this entry
-You've used 37 entries,
+You've used 38 entries,
             2348 wiz_defined-function locations,
-            1227 strings with 28922 characters,
-and the built_in function-call counts, 14829 in all, are:
-= -- 1083
-> -- 368
+            1239 strings with 29207 characters,
+and the built_in function-call counts, 15421 in all, are:
+= -- 1127
+> -- 388
 < -- 0
-+ -- 184
-- -- 92
-* -- 1841
-:= -- 1670
-add.period$ -- 114
-call.type$ -- 37
-change.case$ -- 38
++ -- 194
+- -- 97
+* -- 1922
+:= -- 1731
+add.period$ -- 117
+call.type$ -- 38
+change.case$ -- 39
 chr.to.int$ -- 0
-cite$ -- 37
-duplicate$ -- 1327
-empty$ -- 1360
-format.name$ -- 128
-if$ -- 2941
+cite$ -- 38
+duplicate$ -- 1371
+empty$ -- 1409
+format.name$ -- 134
+if$ -- 3056
 int.to.chr$ -- 0
-int.to.str$ -- 37
-missing$ -- 304
-newline$ -- 196
-num.names$ -- 37
-pop$ -- 214
+int.to.str$ -- 38
+missing$ -- 316
+newline$ -- 201
+num.names$ -- 38
+pop$ -- 221
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 220
+skip$ -- 228
 stack$ -- 0
-substring$ -- 749
-swap$ -- 1302
+substring$ -- 796
+swap$ -- 1355
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 95
-width$ -- 39
-write$ -- 415
-(There were 20 error messages)
+while$ -- 100
+width$ -- 40
+write$ -- 426
+(There were 22 error messages)

@@ -58,6 +58,8 @@ rejected_by_annotated <- n_rejected_annotated[matches]
 my_labs <- n_rejected_annotated[match(c("Neither method", "Both methods", "SCEPTRE only", "Gasperini only"), names(n_rejected))]
 df_a$rejected_by_annotated <- factor(x = rejected_by_annotated, levels = my_labs, labels = my_labs)
 df_a$outlier_gene <- as.logical(df_a$outlier_gene)
+filter(df_a, outlier_gene, new_rejected) %>% pull(gene_id) %>% unique() %>% length()
+filter(df_a, outlier_gene, new_rejected) %>% nrow()
 
 p_a <- ggplot(data = arrange(df_a, rejected_by_annotated), aes(x = old_pvalue, y = new_pvalue,
              color = rejected_by_annotated, label = pair_number, shape = outlier_gene)) + geom_point(alpha = 0.9) +
@@ -183,7 +185,7 @@ p_d <- TF_enrichments %>% arrange(desc(method)) %>%
 p_e <- ggplot() + theme_bw() + ggtitle("eQTL and eRNA validation") + theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank())
 
 # combine plots: option 1
-left_col <- plot_grid(p_a, p_d, align = "v", labels = c("a", "d"), ncol = 1, rel_heights = c(2,1))
-right_col <- plot_grid(p_b, p_c, p_e, align = "vh", labels = c("b", "c", "e"), ncol = 1)
+left_col <- plot_grid(p_a, p_d, align = "v", labels = c("a", "e"), ncol = 1, rel_heights = c(2,1))
+right_col <- plot_grid(p_e, p_b, p_c, align = "vh", labels = c("b", "c", "d"), ncol = 1)
 final_plot <- plot_grid(left_col, right_col, align = "h", ncol = 2, rel_widths = c(1.1,1))
 ggsave(filename = paste0(fig4_dir, "/subfigures_a_thru_e.pdf"), plot = final_plot, device = "pdf", scale = 1, width = 8, height = 8)

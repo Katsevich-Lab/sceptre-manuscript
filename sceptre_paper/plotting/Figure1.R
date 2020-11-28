@@ -65,6 +65,8 @@ vjust <- 3
 # Subfigure b
 gasp_confounding_df <- covariates_gasp %>% summarize(total_umis = ifelse(is.na(lg_total_umis), 0, exp(lg_total_umis)), guide_count = ifelse(is.na(lg_guide_count), 0, exp(lg_guide_count)))
 rho <- cor(log(gasp_confounding_df$total_umis), gasp_confounding_df$guide_count) %>% signif(2)
+cor.test(log(gasp_confounding_df$total_umis), gasp_confounding_df$guide_count)
+
 text_to_add <- paste0("~ rho == ", rho)
 
 p_b <- gasp_confounding_df %>% filter(guide_count > 0, row_number() %% 10 == 0) %>%
@@ -89,6 +91,7 @@ guide_count[is.na(guide_count)] <- 0
 umi_count <- exp(covariates_xie$log_n_umis)
 xie_confounding_df <- tibble(total_umis = umi_count, guide_count = guide_count) %>% filter(guide_count <= 50)
 rho <- cor(xie_confounding_df)[1,2] %>% signif(2)
+cor.test(xie_confounding_df$total_umis, xie_confounding_df$guide_count)
 text_to_add <- paste0("~ rho == ", rho)
 
 p_c <- xie_confounding_df %>% filter(guide_count > 0, row_number() %% 10 == 0) %>%

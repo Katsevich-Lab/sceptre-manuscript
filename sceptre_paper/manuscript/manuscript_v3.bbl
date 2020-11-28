@@ -91,10 +91,10 @@
 
 \bibitem{Yang2020}
 \bibinfo{author}{Yang, L.} \emph{et~al.}
-\newblock \bibinfo{title}{{Linking genotypes with multiple phenotypes in
-  single-cell CRISPR screens}}.
-\newblock \emph{\bibinfo{journal}{Genome Biology}}
-  \textbf{\bibinfo{volume}{21}} (\bibinfo{year}{2020}).
+\newblock \bibinfo{title}{scmageck links genotypes with multiple phenotypes in
+  single-cell crispr screens}.
+\newblock \emph{\bibinfo{journal}{Genome biology}}
+  \textbf{\bibinfo{volume}{21}}, \bibinfo{pages}{1--14} (\bibinfo{year}{2020}).
 
 \bibitem{Lin2020}
 \bibinfo{author}{Lin, X.}, \bibinfo{author}{Chemparathy, A.},
@@ -167,6 +167,16 @@
 \newblock \emph{\bibinfo{journal}{Nature Methods}}
   \textbf{\bibinfo{volume}{14}}, \bibinfo{pages}{309--315}
   (\bibinfo{year}{2017}).
+
+\bibitem{Zhu2019}
+\bibinfo{author}{Zhu, A.}, \bibinfo{author}{Srivastava, A.},
+  \bibinfo{author}{Ibrahim, J.~G.}, \bibinfo{author}{Patro, R.} \&
+  \bibinfo{author}{Love, M.~I.}
+\newblock \bibinfo{title}{Nonparametric expression analysis using inferential
+  replicate counts}.
+\newblock \emph{\bibinfo{journal}{Nucleic Acids Research}}
+  \textbf{\bibinfo{volume}{47}}, \bibinfo{pages}{e105--e105}
+  (\bibinfo{year}{2019}).
 
 \bibitem{Daley2018}
 \bibinfo{author}{Daley, T.~P.} \emph{et~al.}
