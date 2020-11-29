@@ -170,7 +170,7 @@ p_e <- ggplot(data = to_plot, mapping = aes(x = bulk_pval, y = sceptre_pval, col
   annotate(geom = "text", x = 1e-12, y = 1e-14, label = "ARL15", col = "firebrick3")
 
 # Legend
-ex <- tibble(x = 1:5, y = 1:5, Method = c("SCEPTRE", "Monocle NB", "Hafemeister NB", "Virtual FACS", "scMAGeCK")) %>% mutate(Method = factor(x = Method, levels = c("SCEPTRE", "Monocle NB", "Hafemeister NB", "Virtual FACS", "scMAGeCK"), labels = c("SCEPTRE", "Monocle NB", "Hafemeister NB", "Virtual FACS", "scMAGeCK")))
+ex <- tibble(x = 1:5, y = 1:5, Method = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")) %>% mutate(Method = factor(x = Method, levels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK"), labels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")))
 p_vert <- ggplot(data = ex, mapping = aes(x = x, y = y, col = Method)) + geom_point() + scale_colour_manual(values = setNames(plot_colors[c("sceptre", "gasperini_nb", "hf_nb", "hypergeometric", "scMAGeCK")], NULL), name = "Method") + theme_bw() + theme(legend.title = element_blank())
 legend <- get_legend(plot = p_vert)
 ggsave(plot = legend, filename = paste0(manuscript_figure_dir, "/Figure3/vert_legend.pdf"), width = 1.5, height = 1.5)
