@@ -2,7 +2,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
-packs <- c("future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "ravel")
+packs <- c("future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "katsevich2020")
 for (pack in packs) suppressPackageStartupMessages(library(pack, character.only = TRUE))
 
 ###################
@@ -153,7 +153,7 @@ write.fst(cell_covariate_matrix, paste0(processed_dir, "/cell_covariate_matrix.f
 ##############
 bulk_info <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/bulk_rna_info.xlsx"), sheet = 3) %>% select(library_name = Library.Name, gRNA = sgRNA, region = Region, biological_duplicate = Biological.Duplicate)
 bulk_info_arl15_enh <- slice(bulk_info, 1:25)
-bulk_info_myb_enh3 <- slice(bulk_info, 26:49) 
+bulk_info_myb_enh3 <- slice(bulk_info, 26:49)
 
 bulk_df <- suppressWarnings(read_tsv(file = paste0(raw_data_dir, "/GSE129825_Libraries.FeatureCounts.ARL15_enhancer.txt"), col_types = "ccccciiiiiiiiiiiiiiiiiiiiiiiiii")) %>% rename("PZ788" = "PZ778", "PZ778" = "PZ778_1")
 bulk_df_arl15_enh <- filter(bulk_df, Geneid %in% all_protein_coding_genes)
