@@ -31,3 +31,11 @@ create_parent_directories <- function(s) {
   out <- map(.x = 1:length(dirs), .f = function(i) paste0(dirs[1:i], collapse = "/"))
   return(unlist(out))
 }
+
+check_directories <- function(dirs_to_create) {
+  for (directory in dirs_to_create) {
+    if (!dir.exists(directory)) {
+      dir.create(directory)
+    }
+  }
+}

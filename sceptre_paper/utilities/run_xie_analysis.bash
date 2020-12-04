@@ -24,10 +24,10 @@ echo Initialize the offsite directory structure.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"check_directory_structure_1.R $code_dir $offsite_dir
 
 echo Download the data. Note that one of the downloads must be done manually.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"download_data_2.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"download_data_2.R $code_dir $offsite_dir
 
 echo Pre-process the data.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_process_data_3.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_process_data_3.R $code_dir $offsite_dir
 
 echo Construct model covariate matrix and perform quality control.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R $code_dir $offsite_dir

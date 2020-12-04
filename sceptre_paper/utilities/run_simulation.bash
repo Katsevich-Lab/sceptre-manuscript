@@ -14,7 +14,7 @@ bash build_and_install_package.bash sceptre $machine
 bash build_and_install_package.bash katsevich2020 $machine
 
 # Ensure all simulation folders have been created.
-Rscript $code_dir"/sceptre_paper/simulations/"check_directories_0.R $offsite_dir
+Rscript $code_dir"/sceptre_paper/simulations/"check_directories_0.R $code_dir $offsite_dir
 
 echo Generate the simulation data.
 Rscript $code_dir"/sceptre_paper/simulations/"generate_data_1.R $offsite_dir

@@ -19,31 +19,31 @@ bash build_and_install_package.bash sceptre $machine
 bash build_and_install_package.bash katsevich2020 $machine
 
 echo Initialize the offsite directory structure.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"check_directory_structure_1.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"check_directory_structure_1.R $code_dir $offsite_dir
 
 echo Download the data.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"download_raw_data_2.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"download_raw_data_2.R $code_dir $offsite_dir
 
 echo Pre-process the data.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"pre_process_data_3.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"pre_process_data_3.R $code_dir $offsite_dir
 
 echo Perform quality control.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"perform_quality_control_4.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"perform_quality_control_4.R $code_dir $offsite_dir
 
 # Locate the parameter file
 parameter_file=$code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"/sceptre_function_args.R
 
 echo Run the sceptre analysis at scale.
-# sceptre_at_scale_bash_dir=$code_dir"/sceptre_package/sceptre_at_scale"
+sceptre_at_scale_bash_dir=$code_dir"/sceptre_package/sceptre_at_scale"
 bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors $precomputation_complete
 
 echo Run the negative binomial regression at scale.
 nb_at_scale_bash_dir=$code_dir"/sceptre_paper/nb_regression_at_scale"
-# bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
+bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
 wait
 
 echo Process the results for enrichment analysis.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"preprocess_result_file_5.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"preprocess_result_file_5.R $code_dir $offsite_dir
 
 echo Perform the enrichment analysis.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_gasp/"run_enrichment_analysis_6.R $code_dir $offsite_dir

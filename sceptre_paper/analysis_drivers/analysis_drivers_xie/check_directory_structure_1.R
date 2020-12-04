@@ -10,8 +10,4 @@ sub_dirs <- c(create_parent_directories("data/xie/raw"), create_parent_directori
               create_parent_directories("results/xie/sceptre"), "results/xie/negative_binomial", "results/xie/bulk_rna_seq", "figures", create_parent_directories("logs/xie")) %>% unique()
 
 dirs_to_create <- paste0(offsite_dir, "/", sub_dirs)
-for (directory in dirs_to_create) {
-  if (!dir.exists(directory)) {
-    dir.create(directory)
-  }
-}
+check_directories(dirs_to_create)

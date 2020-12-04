@@ -6,7 +6,7 @@
 
 machine_name=(local ubergenno uberduo hydra bridges)
 
-code_dir=(/Users/timbarry/Box/SCEPTRE/sceptre_paper /home/tbarry2/SCEPTRE /home/tbarry2/SCEPTRE hydra_code_dir /home/timbar/SCEPTRE/sceptre_paper)
+code_dir=(/Users/timbarry/Box/SCEPTRE/SCEPTRE /home/tbarry2/SCEPTRE /home/tbarry2/SCEPTRE hydra_code_dir /home/timbar/SCEPTRE/sceptre_paper)
 
 data_results_dir=(/Volumes/tims_new_drive/research/sceptre_files /raid6/Tim/sceptre_offsite_dir /raid6/Tim/sceptre_offsite_dir hydra_data_dir /pylon5/ms5pidp/timbar/sceptre_files)
 

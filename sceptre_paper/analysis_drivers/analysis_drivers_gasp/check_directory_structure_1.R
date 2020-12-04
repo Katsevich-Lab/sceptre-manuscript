@@ -12,8 +12,4 @@ sub_dirs <- c(create_parent_directories("data/gasperini/raw"), create_parent_dir
   "figures", create_parent_directories("logs/gasperini")) %>% unique()
 
 dirs_to_create <- paste0(offsite_dir, "/", sub_dirs)
-for (directory in dirs_to_create) {
-  if (!dir.exists(directory)) {
-    dir.create(directory)
-  }
-}
+check_directories(dirs_to_create)
