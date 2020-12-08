@@ -1,6 +1,6 @@
-# SCEPTRE <img src="sticker_2.png" align="right" width="170px"/>
+# SCEPTRE <img src="sticker_2.png" align="right" width="200px"/>
 
-SCEPTRE (Analysis of Single Cell Perturbation Screens via Conditional Resampling) is a method for single-cell CRISPR screens. SCEPTRE infers gene-enhancer associations by modeling the stochastic assortment of CRISPR guide RNAs among cells instead of modeling gene expression, thereby remaining valid despite arbitrary misspecification of the gene expression model.
+SCEPTRE (analysis of **s**ingle **c**ell **p**er**t**urbation screens via conditional **r**esampling) is a method for single-cell CRISPR screen analysis. SCEPTRE infers gene-enhancer associations by modeling the stochastic assortment of CRISPR guide RNAs among cells instead of modeling gene expression, thereby remaining valid despite arbitrary misspecification of the gene expression model.
 
 Accompanying paper:
 > *Conditional resampling improves sensitivity and specificity of single cell CRISPR regulatory screens* <br />
