@@ -31,7 +31,7 @@ Git clone the SCEPTRE repository:
 git clone https://github.com/Timothy-Barry/SCEPTRE.git
 ```
 
-Next, navigate to the *sceptre_paper/utilities* directory, open the *run_everything.bash* script, and follow the instructions therein. The *run_everything.bash* script reproduces the entire analysis, from downloading the data and required packages to creating the figures. All analysis results (including intermediate files) are available at bit.ly/SCEPTRE. Parts of the analysis can therefore be reproduced by loading the intermediate results files instead of recomputing them.
+Next, navigate to the *sceptre_paper/utilities* directory, open the *run_everything.bash* script, and follow the instructions therein. The *run_everything.bash* script reproduces the entire analysis, from downloading the data and required packages to creating the figures. All analysis results (including intermediate files) are available at [bit.ly/SCEPTRE](https://bit.ly/SCEPTRE). Parts of the analysis can therefore be reproduced by loading the intermediate results files instead of recomputing them.
 
 The code was executed on two machines running the Unix operating system: a cluster running R version 3.6.1, and a personal computer running R version 4.0.2.
 
@@ -44,5 +44,5 @@ SCEPTRE proceeds one guide RNA (gRNA) and one gene at a time. It uses the z-valu
 </p>
 
 ## Code authors
-- [Tim Baarry](https://timothy-barry.github.io/)
+- [Tim Barry](https://timothy-barry.github.io/)
 - [Eugene Katsevich](https://ekatsevi.github.io/)
