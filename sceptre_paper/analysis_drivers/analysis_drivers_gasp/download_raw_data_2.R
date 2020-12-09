@@ -67,7 +67,7 @@ supplementary_table_file <- "https://www.cell.com/cms/10.1016/j.cell.2018.11.029
 download.file(supplementary_table_file, paste0(raw_data_dir_gasp, "/Gasperini_TableS2.xlsx"))
 
 ####################
-# Download HI-C data (from Gene's dropbox and NCBI)
+# Download HI-C data
 ####################
 HIC_dir <- paste0(offsite_dir, "/data/functional/HIC")
 HIC_loc <- paste0(HIC_dir, "/GSE63525_K562_Arrowhead_domainlist.txt")
@@ -84,7 +84,7 @@ if(!dir.exists(paste0(HIC_dir, "/" , contact_matrices_dirname))) {
 }
 
 ########################
-# Download ChIP-seq data (likewise from Gene's dropbox)
+# Download ChIP-seq data (Note: these data were delivered by the Shendure Lab. We put them into Dropbox so that they are permanently downloadable.)
 ########################
 chip_seq_files <- c("BRD4", "DPF2", "EP300", "GATA2", "H3K27ac", "RNF2", "TAL1", "TBL1XR1")
 chip_seq_file_location <- "bit.ly/SCEPTRE/raw/ChIP-seq"
@@ -103,9 +103,3 @@ dest_locs <- paste0(offsite_dir, "/data/functional/ChIP-seq/", chip_seq_files, "
 for (i in 1:length(chip_seq_files)) {
   download.file(url = urls[i], destfile = dest_locs[i])
 }
-
-##########################
-# Download GeneHancer data
-##########################
-
-# Available online at https://www.genecards.org/
