@@ -1,6 +1,6 @@
 # Download data
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 suppressPackageStartupMessages(library(R.utils))
 
@@ -43,9 +43,9 @@ download.file(url = "https://ars.els-cdn.com/content/image/1-s2.0-S2211124719313
 dest <- paste0(raw_data_dir, "/bulk_rna_info.xlsx")
 download.file(url = "https://ars.els-cdn.com/content/image/1-s2.0-S2211124719313956-mmc3.xlsx", destfile = dest)
 
-# We put the Genes.xls file in Google drive because automatic download did not work. Download from this link. (source: Human protein-coding genes and gene feature statistics in 2019 by Piovesan et al in BMC Research Notes). 
+# We put the Genes.xls file in dropbox because automatic download did not work. Download from this link. (source: Human protein-coding genes and gene feature statistics in 2019 by Piovesan et al in BMC Research Notes). 
 dest <- paste0(raw_data_dir, "/Genes.xlsx")
-download.file(url = "https://doc-0c-48-docs.googleusercontent.com/docs/securesc/njbs04o6ok5oautf8aa0vr10vsh9uq1m/d28vr6jsngqrljapm95kehego46jou0g/1607540850000/15855371786580792779/15855371786580792779/1_6qH8T_m_eX50Ky9y80vQAQwAAKJOP5b?e=download&authuser=0&nonce=dpd6m4u8mbmck&user=15855371786580792779&hash=m61bmqvoj8m9", destfile = dest)
+download.file(url = "https://www.dropbox.com/s/u7dzc4juflgyky4/Genes.xlsx?dl=1", destfile = dest)
 
 ###############################
 # 4. Results from other authors

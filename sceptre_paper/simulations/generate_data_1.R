@@ -1,6 +1,6 @@
 args <- commandArgs(trailingOnly = TRUE)
 suppressPackageStartupMessages(library(sceptre))
-offsite_dir <- if (is.na(args[1])) "/Volumes/tims_new_drive/research/sceptre_files" else args[1]
+offsite_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 simulation_data_dir <- paste0(offsite_dir, "/data/simulations")
 
 # We generate datasets corresponding to 4 settings: no zero inflation with theta = 0.2, 1, 5; and 0.25 zero inflation with theta = 1.

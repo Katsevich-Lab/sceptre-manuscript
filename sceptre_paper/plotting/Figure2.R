@@ -1,6 +1,6 @@
 # Reproduce Figure 2 from Katsevich, Barry, and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 offsite_dir <- if (is.na(args[2])) "/Volumes/tims_new_drive/research/sceptre_files" else args[2]
 fig2_dir <- paste0(code_dir, "/sceptre_paper/manuscript/figures/Figure2")
 require(katsevich2020)

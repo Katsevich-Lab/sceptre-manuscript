@@ -4,7 +4,7 @@
 # must be accessed piecemeal via https://genealacart.genecards.org/.
 ####################################################################
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/file_paths_to_dirs.R"))
 suppressPackageStartupMessages(library(R.utils))
 ################################

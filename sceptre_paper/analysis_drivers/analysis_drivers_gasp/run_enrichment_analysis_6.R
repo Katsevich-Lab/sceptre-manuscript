@@ -1,5 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 require(plyranges)
 require(GenomicRanges)
 require(sceptre)

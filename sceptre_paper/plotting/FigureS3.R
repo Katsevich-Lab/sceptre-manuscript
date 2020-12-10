@@ -1,6 +1,6 @@
 # Reproduce Figure S3 from Katsevich and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/sceptre_paper" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 require(katsevich2020)
 source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
 figS3_dir <- paste0(manuscript_figure_dir, "/FigureS3")
