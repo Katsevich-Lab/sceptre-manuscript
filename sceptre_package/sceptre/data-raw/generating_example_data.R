@@ -5,8 +5,8 @@ code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/file_paths_to_dirs.R"))
 source(paste0(code_dir, "sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R"))
 
-gene_id <- "ENSG00000135390"
-gRNA_id <- "chr12.1893_top_two"
+gene_id <- "ENSG00000164713"
+gRNA_id <- "chr7.3255_top_two"
 # expression data
 expressions <- cell_gene_expression_matrix[,which(ordered_gene_ids == gene_id)]
 gRNA_indics <- read_fst(path = gRNA_indicator_matrix_fp, gRNA_id) %>% pull() %>% as.integer()

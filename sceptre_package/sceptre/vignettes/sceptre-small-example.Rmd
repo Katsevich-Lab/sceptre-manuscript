@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette illustrates the application of SCEPTRE to a small single-cell CRISPR screen dataset. Our data come from the study [A Genome-wide Framework for Mapping Gene Regulation via Cellular Genetic Screens](https://www.cell.com/cell/fulltext/S0092-8674(18)31554-X?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS009286741831554X%3Fshowall%3Dtrue), published by Gasperini et al. in 2019. The authors used CRISPR to perturb candidate enhancers and assessed the impact of these perturbations via scRNA-seq. Our goal in this vignette is to determine the impact of a single perturbation on a single gene, accounting for appropriate technical factors. The gRNA (ID: chr12.1893_top_two) and gene (ID: ENSG00000135390) that we investigate were selected from the set of all perturbations and genes in the Gasperini dataset.
+This vignette illustrates the application of SCEPTRE to a small single-cell CRISPR screen dataset. Our data come from the study [A Genome-wide Framework for Mapping Gene Regulation via Cellular Genetic Screens](https://www.cell.com/cell/fulltext/S0092-8674(18)31554-X?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS009286741831554X%3Fshowall%3Dtrue), published by Gasperini et al. in 2019. The authors used CRISPR to perturb candidate enhancers and assessed the impact of these perturbations via scRNA-seq. Our goal in this vignette is to determine the impact of a single perturbation on a single gene, accounting for appropriate technical factors. The gRNA (ID: chr7.3255_top_two) and gene (ID: ENSG00000164713) that we investigate were selected from the set of all perturbations and genes in the Gasperini dataset.
 
 In our analysis of the Gasperini data in Katsevich et al. 2020, we processed all gene-gRNA pairs simultaneously. This large-scale approach allowed us to (i) regularize the negative binomial regression test statistic by pooling information across genes, and (ii) recycle certain repetitive computations, thereby accelerating program execution. This small-scale example serves as a useful demonstration of SCEPTRE, but it does not reflect how one would apply SCEPTRE in practice. Please see the [Github](https://github.com/Timothy-Barry/SCEPTRE) repository for information on reproducing the large-scale analysis reported in Katsevich et al. 2020.
 
@@ -49,7 +49,7 @@ Next, we run the SCEPTRE algorithm by calling the function *run_sceptre_gRNA_gen
 result <- run_sceptre_gRNA_gene_pair(expressions = expressions, 
                                       gRNA_indicators = gRNA_indicators, 
                                       covariate_matrix = covariate_matrix,
-                                      B = 500,
+                                      B = 1000,
                                       seed = 1234,
                                       reduced_output = FALSE)
 ```
@@ -73,4 +73,4 @@ p <- plot_skew_t(resampled_zvalues = result$resampled_z_values, original_zvalue 
 plot(p)
 ```
 
-Given that our pre-chosen significance threshold of 0.05 exceeds the value of the computed *p*-value (*p* = 0.042), we reject our null hypothesis that the perturbation does not affect gene expression. In practice, when analyzing a large dataset, we would apply a Benjamini-Hochberg correction to all gene-gRNA pairs and use a more conservative threshold to determine significance.
+Given that the value of the computed *p*-value (*p* = 0.21) exceeds our pre-chosen significance threshold of 0.05, we reject our null hypothesis that the perturbation does not affect gene expression. In practice, when analyzing a large dataset, we would apply a Benjamini-Hochberg correction to all gene-gRNA pairs and use a more conservative threshold to determine significance.
