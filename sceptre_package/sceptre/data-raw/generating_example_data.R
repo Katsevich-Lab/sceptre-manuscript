@@ -1,0 +1,18 @@
+# This script generates example data for the SCEPTRE package consisting of one gRNA, one gene, and the covariate matrix. The data are pulled from Gasperini.
+
+args <- commandArgs(trailingOnly = TRUE)
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/file_paths_to_dirs.R"))
+source(paste0(code_dir, "sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R"))
+
+gene_id <- "ENSG00000140400"
+gRNA_id <- "chr15.2442_top_two"
+# expression data
+expressions <- cell_gene_expression_matrix[,which(ordered_gene_ids == gene_id)]
+gRNA_indics <- read_fst(path = gRNA_indicator_matrix_fp, gRNA_id) %>% pull() %>% as.integer()
+# subset according to cell id
+expressions <- expressions[cell_subset]
+gRNA_indicators <- gRNA_indics[cell_subset]
+covariate_matrix <- covariate_matrix[cell_subset,]
+# Save the data
+usethis::use_data(expressions, gRNA_indicators, covariate_matrix)
