@@ -73,4 +73,4 @@ p <- plot_skew_t(resampled_zvalues = result$resampled_z_values, original_zvalue 
 plot(p)
 ```
 
-Given that the value of the computed *p*-value (*p* = 0.21) exceeds our pre-chosen significance threshold of 0.05, we reject our null hypothesis that the perturbation does not affect gene expression. In practice, when analyzing a large dataset, we would apply a Benjamini-Hochberg correction to all gene-gRNA pairs and use a more conservative threshold to determine significance.
+Given that the computed *p*-value (*p* = 0.21) exceeds our pre-chosen significance threshold of 0.05, we retain our null hypothesis that the perturbation does not affect gene expression. In practice, when analyzing a large dataset, we would apply a Benjamini-Hochberg correction to all gene-gRNA pairs and use a more conservative threshold to determine significance.
