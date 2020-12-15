@@ -1,3 +1,5 @@
+#### NOTE: These functions are borrowed from the sctransform package. Credit goes to the authors of sctransform, Christoph Hafemeister and Rahul Satija. We reworked the functions slightly to improve their scalability.
+
 #' Regularize thetas
 #'
 #' @param genes_log_gmean the log-transformed vector of the geometric mean of the gene expressions

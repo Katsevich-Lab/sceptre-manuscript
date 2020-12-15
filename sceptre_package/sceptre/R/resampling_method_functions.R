@@ -127,14 +127,14 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 #' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 #'
-run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL) {
+run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL, reduced_output = TRUE) {
   cat(paste0("Running gRNA precomputation.\n"))
   gRNA_precomp <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)
 
   cat(paste0("Running gene precomputation.\n"))
   gene_precomp <- run_gene_precomputation(expressions, covariate_matrix, gene_precomp_size)
 
-  out <- run_sceptre_using_precomp(expressions = expressions, gRNA_indicators = gRNA_indicators, gRNA_precomp = gRNA_precomp, gene_precomp_size = gene_precomp$gene_precomp_size, gene_precomp_offsets = gene_precomp$gene_precomp_offsets, B = B, seed = seed)
+  out <- run_sceptre_using_precomp(expressions = expressions, gRNA_indicators = gRNA_indicators, gRNA_precomp = gRNA_precomp, gene_precomp_size = gene_precomp$gene_precomp_size, gene_precomp_offsets = gene_precomp$gene_precomp_offsets, B = B, seed = seed, reduced_output = reduced_output)
   return(out)
 }
 

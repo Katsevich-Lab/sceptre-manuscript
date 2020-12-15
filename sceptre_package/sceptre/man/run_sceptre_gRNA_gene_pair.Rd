@@ -10,7 +10,8 @@ run_sceptre_gRNA_gene_pair(
   covariate_matrix,
   gene_precomp_size = NULL,
   B = 500,
-  seed = NULL
+  seed = NULL,
+  reduced_output = TRUE
 )
 }
 \arguments{

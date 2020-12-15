@@ -25,7 +25,7 @@ Run the following code within R.
 
 ```
 library(devtools)
-install_github(repo="Timothy-Barry/SCEPTRE", subdir="sceptre_package")
+install_github(repo="Timothy-Barry/SCEPTRE", subdir="sceptre_package/sceptre")
 ```
 
 Access the [Package manual](https://github.com/Timothy-Barry/sceptre_paper/blob/master/sceptre_0.1.0.pdf) here. **Note**: The package currently is optimized to run the analyses reported in Katsevich et al. 2020. The authors are working to make the package more general and applicable to other datasets. In the meantime, if you would like to use SCEPTRE to analyze your data, please contact Eugene Katsevich at ekatsevi@wharton.upenn.edu.
