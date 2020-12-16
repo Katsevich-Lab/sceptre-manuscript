@@ -24,11 +24,11 @@ SCEPTRE proceeds one guide RNA (gRNA) and one gene at a time. It uses the z-valu
 
 ## Repository contents and organization
 
-The repository contains two high-level directories: [sceptre_package](./sceptre_package) and [sceptre_paper](./sceptre_paper). The [sceptre_package](./sceptre_package) directory contains the `sceptre` R package and some shell scripts to help run `sceptre` at scale on computer clusters. The  [sceptre_paper](./sceptre_paper) directory contains code required to reproduce the analyses reported in Katsevich et al. 2020. Code in [sceptre_paper](./sceptre_paper) relies heavily on code in [sceptre_package](./sceptre_package); by contrast, code in [sceptre_package](./sceptre_package) does not depend at all on code in [sceptre_paper](./sceptre_paper).
+The repository contains two high-level directories: [sceptre_package](./sceptre_package) and [sceptre_paper](./sceptre_paper). The [sceptre_package](./sceptre_package) directory contains the `sceptre` R package and some shell and R scripts to help run `sceptre` at scale on computer clusters. The  [sceptre_paper](./sceptre_paper) directory contains code required to reproduce the analyses reported in Katsevich et al. 2020. Code in [sceptre_paper](./sceptre_paper) relies heavily on code in [sceptre_package](./sceptre_package); by contrast, code in [sceptre_package](./sceptre_package) does not depend at all on code in [sceptre_paper](./sceptre_paper).
 
-* [sceptre_package](./sceptre_package): Contains the `sceptre` package and helper shell scripts.
+* [sceptre_package](./sceptre_package): Contains the `sceptre` package and helper scripts.
   - [sceptre_package/sceptre](./sceptre_package/sceptre): `sceptre` package itself.
-  - [sceptre_package/sceptre_at_scale](./sceptre_package/sceptre_at_scale): Helper shell scripts.
+  - [sceptre_package/sceptre_at_scale](./sceptre_package/sceptre_at_scale): Helper shell and R scripts.
 * [sceptre_paper](./sceptre_paper): Code for reproducing Katsevich et al. 2020.
   - [sceptre_paper/analysis_drivers](./sceptre_paper/analysis_drivers): R scripts for reproducing data analysis.
   - [sceptre_paper/katsevich2020](./sceptre_paper/katsevich2020): Additional R package containing functions called by scripts in [sceptre_paper](./sceptre_paper) directory.

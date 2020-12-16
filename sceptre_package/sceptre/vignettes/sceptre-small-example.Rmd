@@ -43,7 +43,7 @@ head(gRNA_indicators)
 head(covariate_matrix)
 ```
 
-Next, we run the SCEPTRE algorithm by calling the function *run_sceptre_gRNA_gene_pair*. This function returns a *p*-value corresponding to the null hypothesis that the perturbation does not impact gene expression, accounting for the technical factors. This function is for illustration purposes only. When analyzing a large dataset consisting of many gene-gRNA pairs, we would leverage other sceptre functions that more efficiently recycle computation.
+Next, we run the SCEPTRE algorithm by calling the function *run_sceptre_gRNA_gene_pair*. This function returns a *p*-value corresponding to the null hypothesis that the perturbation does not impact gene expression, accounting for the technical factors. This function is for illustration purposes only.
 
 ```{r}
 result <- run_sceptre_gRNA_gene_pair(expressions = expressions, 
