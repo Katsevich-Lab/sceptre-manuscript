@@ -1,11 +1,11 @@
 Package: sceptre
 Type: Package
 Title: Conditional resampling differential expression analyses for pooled CRISPR screens
-Version: 0.1.0
+Version: 1.0.0
 Author: Gene Katsevich, Tim Barry, Kathryn Roeder
 Maintainer: Tim Barry <tbarry2@andrew.cmu.edu>
 Description: This package contains functions for performing differential expression analyses in single-cell pooled CRISPR screens based on conditional resampling.
-License: GPL-3
+License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
