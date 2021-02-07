@@ -63,7 +63,7 @@ filter(df_a, outlier_gene, new_rejected) %>% nrow()
 
 p_a <- ggplot(data = arrange(df_a, rejected_by_annotated), aes(x = old_pvalue, y = new_pvalue,
              color = rejected_by_annotated, label = pair_number, shape = outlier_gene)) + geom_point(alpha = 0.9) +
-  geom_text_repel(colour = "black", force = 0.8, point.padding = 0.1, box.padding = 0.4, size = 4, min.segment.length = 0) +
+  geom_text_repel(colour = "black", force = 0.8, point.padding = 0.1, box.padding = 0.3, size = 3, min.segment.length = 0, max.overlaps = 50) +
   geom_vline(xintercept = thresh_old, linetype = "dashed") + geom_hline(yintercept = thresh_new, linetype = "dashed") +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
   scale_color_manual(values = c("grey60", "darkorchid1",  plot_colors[["sceptre"]], plot_colors[["gasperini_nb"]]), name = "Discovered by") +
@@ -119,11 +119,11 @@ p_b <- rbind(df1, df2) %>%
                         labels = c("SCEPTRE", "Original"))) %>%
   mutate(TSS_dist = TSS_dist/1000) %>%
   filter(TSS_dist >= -300) %>%
-  ggplot(aes(x = TSS_dist, group = group, fill = group)) +
-  geom_histogram(position = position_identity(), alpha = 0.75, bins = 14) +
+  ggplot(aes(x = TSS_dist, group = desc(group), fill = group)) +
+  geom_histogram(position = position_identity(), alpha = 0.75, bins = 14, aes(y = ..density..)) +
   scale_fill_manual(values = c(plot_colors[["sceptre"]], plot_colors[["gasperini_nb"]])) +
   scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0)) +
-  xlab("Enhancer to TSS distance (kb)") + ylab("Count") + ggtitle("Gene-enhancer distances") +
+  xlab("Enhancer to TSS distance (kb)") + ylab("Frequency") + ggtitle("Gene-enhancer distances") +
   theme_bw() + theme(panel.grid = element_blank(),
                      panel.border = element_blank(),
                      axis.line = element_line(),
@@ -147,7 +147,7 @@ p_c <- tibble(x, old_ecdf, new_ecdf) %>%
   mutate(method = factor(method, levels = c("new_ecdf", "old_ecdf"), labels = c("SCEPTRE", "Original"))) %>%
   ggplot(aes(x = x, y = ecdf, group = method, colour = method)) +
   geom_line(lwd = 1.2) + geom_abline(slope = 1, linetype = "dashed") +
-  scale_colour_manual(values = c( plot_colors[["sceptre"]], plot_colors[["gasperini_nb"]]), name = "Loci pairs") + ggtitle("Gene-enhancer TAD pairings")  +
+  scale_colour_manual(values = c( plot_colors[["sceptre"]], plot_colors[["gasperini_nb"]]), name = "Loci pairs") + ggtitle("Gene-enhancer HIC interactions")  +
   xlab("Rank of pair by TAD interaction frequency") +
   ylab("Cumulative fraction of pairs") +
   theme_bw() + theme(legend.position = c(0.15, 0.72),
@@ -168,10 +168,11 @@ p_d <- TF_enrichments %>% arrange(desc(method)) %>%
                      levels = ordered_labs,
                      labels = ordered_labs)) %>%
   ggplot(aes(x = TF, y = enrichment, fill = method)) +
-  geom_col(position = "dodge") +
+  geom_col(position = "dodge", width = 1.25) +
   xlab("ChIP-seq target") + ylab("Enrichment (odds ratio)") + ggtitle("Enhancer ChIP-seq enrichment") +
   scale_fill_manual(values = c(plot_colors[["gasperini_nb"]], plot_colors[["sceptre"]])) +
   scale_y_continuous(expand = c(0, 0)) +
+  geom_hline(yintercept = 1, linetype = "dashed") +
   theme_bw() + coord_flip() + theme(
     legend.position = "none",
     panel.grid = element_blank(),
@@ -185,7 +186,7 @@ p_d <- TF_enrichments %>% arrange(desc(method)) %>%
 p_e <- ggplot() + theme_bw() + ggtitle("eQTL and eRNA validation") + theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank())
 
 # combine plots: option 1
-left_col <- plot_grid(p_a, p_d, align = "v", labels = c("a", "e"), ncol = 1, rel_heights = c(2,1))
-right_col <- plot_grid(p_e, p_b, p_c, align = "vh", labels = c("b", "c", "d"), ncol = 1)
+left_col <- plot_grid(p_a, p_d, align = "v", labels = c("a", "d"), ncol = 1, rel_heights = c(2,1))
+right_col <- plot_grid(p_b, p_c, p_e, align = "vh", labels = c("b", "c", "e"), ncol = 1)
 final_plot <- plot_grid(left_col, right_col, align = "h", ncol = 2, rel_widths = c(1.1,1))
 ggsave(filename = paste0(fig4_dir, "/subfigures_a_thru_e.pdf"), plot = final_plot, device = "pdf", scale = 1, width = 8, height = 8)

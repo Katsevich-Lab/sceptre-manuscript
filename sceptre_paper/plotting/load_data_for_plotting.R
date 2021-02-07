@@ -24,7 +24,7 @@ rejected_pairs_HIC = read_tsv(sprintf("%s/results/gasperini/enrichment/rejected_
 TF_enrichments = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_enrichments.tsv", offsite_dir), 
                           col_types = "ccd")
 paired_fractions = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_paired_enhancer_fractions.tsv", offsite_dir),
-                            col_types = "cidd")
+                            col_types = "cidddd")
 
 # dispersion coefficients alpha_0 and alpha_1 from equation (6) in DESeq2 paper
 disp_coeffs = as.numeric(readRDS(sprintf("%s/data/gasperini/processed/disp_coefficients.rds", offsite_dir)))

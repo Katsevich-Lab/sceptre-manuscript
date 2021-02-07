@@ -14,6 +14,6 @@ verify_all_packages_available(df)
 
 # Create subdirectories
 fig_dir <- "sceptre_paper/manuscript/figures"
-fig_subdirs <- paste0("Figure",  c(as.character(1:4), "S1", "S2", "S3"))
+fig_subdirs <- paste0("Figure",  c(as.character(1:4), "S1", "S2", "S3", "S4"))
 dirs_to_create <- c(paste0(code_dir, create_parent_directories(fig_dir)), paste0(code_dir, fig_dir, "/", fig_subdirs))
 check_directories(dirs_to_create)
