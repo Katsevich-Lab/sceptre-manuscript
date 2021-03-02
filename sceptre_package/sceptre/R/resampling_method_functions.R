@@ -1,19 +1,26 @@
 #' Fit skew-t
 #'
 #' Fits a skew-t distribution on a set of resampled test statistics.
-#' @param t_nulls
+#' @param t_nulls vector of random sampled statistics from null distribution
+#' @param t_star numeric, test statistics
+#' @param side an argument to set test for left-sided, right-sided or both-sided. Default as 'left' and can take 'left', 'right' or 'both'
 #'
 #' @return
 #' A list containing (i) skew_t_fit_success (boolean), (ii) out_p (the p-value), and (iii) skew-t mle (a vector containing the fitted MLEs, NA if fit failed).
 #' @export
 
-fit_skew_t <- function(t_nulls, t_star) {
+fit_skew_t <- function(t_nulls, t_star, side = 'left') {
   p_value_skew_t <- NA
   skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA))
   if (class(skew_t_fit) == "selm") { # If the fit worked,
     dp <- skew_t_fit@param$dp # then extract the parameters.
     if (!any(is.na(dp))) { # If all the fitted parameters are numbers,
-      p_value_skew_t <- pmax(.Machine$double.eps, pst(x = t_star, dp = dp, method = 2, rel.tol = .Machine$double.eps)) # then compute the skew t-based p-value. pst(x = t_star, dp = dp)
+      p_value_skew_t <- switch(side, 
+            'left' = pmax(.Machine$double.eps, pst(x = t_star, dp = dp, method = 2, rel.tol = .Machine$double.eps)), # then compute the skew t-based p-value. pst(x = t_star, dp = dp)
+            'right' = pmax(.Machine$double.eps, 1-pst(x = t_star, dp = dp, method = 2, rel.tol = .Machine$double.eps)), 
+            'both' = pmax(.Machine$double.eps, pst(x=-abs(t_star), dp=dp, method = 2, rel.tol = .Machine$double.eps) + 
+                          (1-pst(x=abs(t_star), dp=dp, method = 2, rel.tol = .Machine$double.eps)))
+          )
     }
   }
   # check if the skew-t fit worked
@@ -22,7 +29,10 @@ fit_skew_t <- function(t_nulls, t_star) {
     out_p <- p_value_skew_t
     skew_t_mle <- dp
   } else {
-    out_p <- mean(c(-Inf, t_nulls) <= t_star)
+    out_p <- switch(side, 
+                    'left' = mean(c(-Inf, t_nulls) <= t_star),
+                    'right' = 1- mean(c(-Inf, t_nulls) <= t_star),
+                    'both' = mean(c(-Inf, t_nulls) <= -abs(t_star)) + 1-mean(c(-Inf, t_nulls) <= abs(t_star)))
     skew_t_mle <- c(xi = NA, omega = NA, alpha = NA, nu = NA)
   }
   return(list(skew_t_fit_success = skew_t_fit_success, out_p = out_p, skew_t_mle = skew_t_mle))
@@ -32,7 +42,7 @@ fit_skew_t <- function(t_nulls, t_star) {
 #'
 #' This function is the workhorse function of the sceptre package. It runs a distilled CRT using a negative binomial test statistic based on an expression vector, a gRNA indicator vector, an offset vector (from the distillation step), gRNA conditional probabilities, an estimate of the negative binomial size parameter, and the number of resampling replicates.
 #'
-#' This currently is a one-tailed, left-sided test. Thus, it is suitable for up-regulatory elements like enhancers and promoters but not down-regulatory elements like silencers.
+#' 
 #'
 #' @param expressions a vector of gene expressions (in UMI counts)
 #' @param gRNA_indicators a vector of gRNA indicators
@@ -41,6 +51,7 @@ fit_skew_t <- function(t_nulls, t_star) {
 #' @param gene_precomp_offsets the pre-computed distillation offsets
 #' @param B the number of resamples to make (default 500)
 #' @param seed an arguement to set.seed; if null, no seed is set
+#' @param side an argument to set test for left-sided, right-sided or both-sided. Default as 'left' and can take 'left', 'right' or 'both'
 #'
 #' @export
 #' @return a p-value of the null hypothesis of no gRNA effect on gene expression
@@ -56,7 +67,7 @@ fit_skew_t <- function(t_nulls, t_star) {
 #' gRNA_precomp <- paste0(gRNA_precomp_dir, "/gRNA_dictionary.fst") %>% read.fst() %>% filter(id == gRNA_id) %>% pull(pod_id) %>% paste0(gRNA_precomp_dir, "/gRNA_precomp_", ., ".fst") %>% read.fst(columns = gRNA_id) %>% pull()
 #' gene_precomp_offsets <- paste0(gene_precomp_dir, "/gene_dictionary.fst") %>% read.fst() %>% filter(id == gene_id) %>% pull(pod_id) %>% paste0(gene_precomp_dir, "/gene_offsets_", ., ".fst") %>% read.fst(columns = gene_id) %>% pull()
 #' run_sceptre_using_precomp(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, 500, 1234)
-run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, reduced_output = TRUE) {
+run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, reduced_output = TRUE, side = 'left') {
   if (!is.null(seed)) set.seed(seed)
 
   # compute the test statistic on the real data
@@ -82,13 +93,13 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
   t_nulls <- resample_B_times(B)
 
   # obtain a p-value
-  skew_t_fit <- fit_skew_t(t_nulls, t_star)
+  skew_t_fit <- fit_skew_t(t_nulls, t_star, side)
 
   # determine if the fit was successful
   if (!skew_t_fit$skew_t_fit_success || length(t_nulls) <= floor(0.95 * B)) { # If the skew-t fit failed, then try again.
     t_nulls_second_set <- resample_B_times(9 * B)
     t_nulls <- c(t_nulls, t_nulls_second_set)
-    skew_t_fit <- fit_skew_t(t_nulls, t_star)
+    skew_t_fit <- fit_skew_t(t_nulls, t_star, side)
   }
 
   # Prepare the output
@@ -115,7 +126,8 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' @param gene_precomp_size (optional) the pre-computed size of the gene NB distribution
 #' @param B number of resamples (default 500)
 #' @param seed (optional) seed to the random number generator
-#'
+#' @param side an argument to set test for left-sided, right-sided or both-sided. Default as 'left' and can take 'left', 'right' or 'both'
+#' 
 #' @return a p-value of the null hypothesis of no gRNA effect on gene expression
 #' @export
 #'
@@ -127,14 +139,15 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 #' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 #'
-run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL, reduced_output = TRUE) {
+run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL, reduced_output = TRUE, side = 'left') {
   cat(paste0("Running gRNA precomputation.\n"))
   gRNA_precomp <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)
 
   cat(paste0("Running gene precomputation.\n"))
   gene_precomp <- run_gene_precomputation(expressions, covariate_matrix, gene_precomp_size)
 
-  out <- run_sceptre_using_precomp(expressions = expressions, gRNA_indicators = gRNA_indicators, gRNA_precomp = gRNA_precomp, gene_precomp_size = gene_precomp$gene_precomp_size, gene_precomp_offsets = gene_precomp$gene_precomp_offsets, B = B, seed = seed, reduced_output = reduced_output)
+  out <- run_sceptre_using_precomp(expressions = expressions, gRNA_indicators = gRNA_indicators, gRNA_precomp = gRNA_precomp, gene_precomp_size = gene_precomp$gene_precomp_size, 
+                                   gene_precomp_offsets = gene_precomp$gene_precomp_offsets, B = B, seed = seed, reduced_output = reduced_output, side = side)
   return(out)
 }
 
