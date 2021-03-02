@@ -13,6 +13,7 @@ activate_sink <- function(log_file_name) {
   sink(stdout(), type = "message")
 }
 
+
 #' @rdname activate_sink
 #' @export
 deactivate_sink <- function() {
@@ -276,10 +277,11 @@ run_gene_precomputation_at_scale_round_2 <- function(pod_id, gene_precomp_dir, c
 #' @param B number of bootstrap resamples (default 500)
 #' @param log_dir (optional) directory in which to sink the log file
 #' @param seed (optional) seed to pass to the randomization algorithm
+#' @param sie (optional, default left) sidedness of test
 #'
 #' @return NULL
 #' @export
-run_gRNA_gene_pair_analysis_at_scale <- function(pod_id, gene_precomp_dir, gRNA_precomp_dir, results_dir, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, regularization_amount, cell_subset, seed, log_dir, B) {
+run_gRNA_gene_pair_analysis_at_scale <- function(pod_id, gene_precomp_dir, gRNA_precomp_dir, results_dir, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, regularization_amount, cell_subset, seed, log_dir, B, side) {
   if (!is.null(log_dir)) activate_sink(paste0(log_dir, "/result_", pod_id, ".Rout"))
 
   results_dict <- read.fst(paste0(results_dir, "/results_dictionary.fst")) %>% filter(pod_id == !!pod_id)
@@ -316,7 +318,7 @@ run_gRNA_gene_pair_analysis_at_scale <- function(pod_id, gene_precomp_dir, gRNA_
     }
 
     # Run the dCRT
-    run_sceptre_using_precomp(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed)
+    run_sceptre_using_precomp(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, side)
   })
 
   # Create and save the result dataframe
@@ -371,7 +373,7 @@ collect_results <- function(results_dir, save_to_disk = TRUE) {
 #' offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
 #' source("/Users/timbarry/Box/SCEPTRE/sceptre_paper/analysis_drivers_xie/sceptre_function_args.R")
 #' r <- run_sceptre_at_scale(gRNA_gene_pairs = gRNA_gene_pairs, cell_gene_expression_matrix = cell_gene_expression_matrix, ordered_gene_ids = ordered_gene_ids, gRNA_indicator_matrix_fp = gRNA_indicator_matrix_fp, covariate_matrix = covariate_matrix, storage_location = storage_location, cell_subset = cell_subset, regularization_amount = regularization_amount, pod_sizes = pod_sizes, seed = seed, B = B, multi_processor = TRUE)
-run_sceptre_at_scale <- function(gRNA_gene_pairs, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, storage_location, cell_subset = NULL, regularization_amount = 3, pod_sizes = c(gene = 100, gRNA = 500, pair = 200), seed = 1234, B = 500, multi_processor = TRUE) {
+run_sceptre_at_scale <- function(gRNA_gene_pairs, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, storage_location, cell_subset = NULL, regularization_amount = 3, pod_sizes = c(gene = 100, gRNA = 500, pair = 200), seed = 1234, B = 500, multi_processor = TRUE, side = "left") {
   # Create offsite directories (if necessary)
   if (length(storage_location) == 1) storage_location <- initialize_directories(storage_location)
   gene_precomp_dir <- storage_location[["gene_precomp_dir"]]
@@ -425,7 +427,7 @@ run_sceptre_at_scale <- function(gRNA_gene_pairs, cell_gene_expression_matrix, o
   # Run the gene-gRNA pair analysis over all pair pods
   cat("Running distilled CRT over gene-gRNA pairs.\n")
   run_big_computation(dicts$n_pods[["pairs"]],
-                      function(i) run_gRNA_gene_pair_analysis_at_scale(i, gene_precomp_dir, gRNA_precomp_dir, results_dir, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, regularization_amount, cell_subset, seed, log_dir, B),
+                      function(i) run_gRNA_gene_pair_analysis_at_scale(i, gene_precomp_dir, gRNA_precomp_dir, results_dir, cell_gene_expression_matrix, ordered_gene_ids, gRNA_indicator_matrix_fp, covariate_matrix, regularization_amount, cell_subset, seed, log_dir, B, side),
                       multi_processor)
 
   # Aggregate and return the results

@@ -12,7 +12,8 @@ run_sceptre_using_precomp(
   gene_precomp_offsets,
   B,
   seed,
-  reduced_output = TRUE
+  reduced_output = TRUE,
+  side = "left"
 )
 }
 \arguments{
@@ -29,15 +30,14 @@ run_sceptre_using_precomp(
 \item{B}{the number of resamples to make (default 500)}
 
 \item{seed}{an arguement to set.seed; if null, no seed is set}
+
+\item{side}{an argument to set test for left-sided, right-sided or both-sided. Default as 'left' and can take 'left', 'right' or 'both'}
 }
 \value{
 a p-value of the null hypothesis of no gRNA effect on gene expression
 }
 \description{
 This function is the workhorse function of the sceptre package. It runs a distilled CRT using a negative binomial test statistic based on an expression vector, a gRNA indicator vector, an offset vector (from the distillation step), gRNA conditional probabilities, an estimate of the negative binomial size parameter, and the number of resampling replicates.
-}
-\details{
-This currently is a one-tailed, left-sided test. Thus, it is suitable for up-regulatory elements like enhancers and promoters but not down-regulatory elements like silencers.
 }
 \examples{
 offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
