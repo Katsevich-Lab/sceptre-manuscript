@@ -1,4 +1,4 @@
-# Reproduce Figure 3 from Katsevich and Roeder (2020).
+# Reproduce Figure 3 from Katsevich, Barry, and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 require(katsevich2020)
@@ -121,6 +121,7 @@ p_c <- qq_data %>% arrange(method) %>% mutate(clower = ifelse(method == "SCEPTRE
                      legend.position = "none") +
   annotate(geom = "text", x = 1.3e-3, y = 1e-7, label = "ARL15", col = "firebrick3") +
   geom_segment(aes(x = x1, y = y1, xend = x2, yend = y2), lwd = 0.2, data = arrow_coords, inherit.aes = FALSE, col = "black")
+
 # subfigure d: gasperini positive controls
 combined_results <- rbind(
   original_results_gasp %>%

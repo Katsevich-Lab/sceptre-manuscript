@@ -11,8 +11,8 @@ run_sceptre_gRNA_gene_pair(
   gene_precomp_size = NULL,
   B = 500,
   seed = NULL,
-  reduced_output = TRUE,
-  side = "left"
+  side = "left",
+  reduced_output = TRUE
 )
 }
 \arguments{

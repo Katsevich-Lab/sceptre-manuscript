@@ -9,7 +9,7 @@
 #' A list containing (i) skew_t_fit_success (boolean), (ii) out_p (the p-value), and (iii) skew-t mle (a vector containing the fitted MLEs, NA if fit failed).
 #' @export
 
-fit_skew_t <- function(t_nulls, t_star, side = 'left') {
+fit_skew_t <- function(t_nulls, t_star, side) {
   p_value_skew_t <- NA
   skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA))
   if (class(skew_t_fit) == "selm") { # If the fit worked,
@@ -67,7 +67,7 @@ fit_skew_t <- function(t_nulls, t_star, side = 'left') {
 #' gRNA_precomp <- paste0(gRNA_precomp_dir, "/gRNA_dictionary.fst") %>% read.fst() %>% filter(id == gRNA_id) %>% pull(pod_id) %>% paste0(gRNA_precomp_dir, "/gRNA_precomp_", ., ".fst") %>% read.fst(columns = gRNA_id) %>% pull()
 #' gene_precomp_offsets <- paste0(gene_precomp_dir, "/gene_dictionary.fst") %>% read.fst() %>% filter(id == gene_id) %>% pull(pod_id) %>% paste0(gene_precomp_dir, "/gene_offsets_", ., ".fst") %>% read.fst(columns = gene_id) %>% pull()
 #' run_sceptre_using_precomp(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, 500, 1234)
-run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, reduced_output = TRUE, side = 'left') {
+run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp, gene_precomp_size, gene_precomp_offsets, B, seed, side = "left", reduced_output = TRUE) {
   if (!is.null(seed)) set.seed(seed)
 
   # compute the test statistic on the real data
@@ -142,7 +142,7 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 #' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
 #'
-run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL, reduced_output = TRUE, side = 'left') {
+run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL, side = "left", reduced_output = TRUE) {
   cat(paste0("Running gRNA precomputation.\n"))
   gRNA_precomp <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)
 

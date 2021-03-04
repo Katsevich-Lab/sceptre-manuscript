@@ -12,8 +12,8 @@ run_sceptre_using_precomp(
   gene_precomp_offsets,
   B,
   seed,
-  reduced_output = TRUE,
-  side = "left"
+  side = "left",
+  reduced_output = TRUE
 )
 }
 \arguments{

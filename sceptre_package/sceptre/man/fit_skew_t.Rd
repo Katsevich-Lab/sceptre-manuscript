@@ -4,7 +4,7 @@
 \alias{fit_skew_t}
 \title{Fit skew-t}
 \usage{
-fit_skew_t(t_nulls, t_star, side = "left")
+fit_skew_t(t_nulls, t_star, side)
 }
 \arguments{
 \item{t_nulls}{vector of random sampled statistics from null distribution}
