@@ -1,6 +1,6 @@
 # Bulk RNA-seq
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/sceptre-manuscript/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 library(edgeR)
 
@@ -33,4 +33,3 @@ p_vals_myb_enh3 <- run_bulk_de(di_myb_enh3)
 
 saveRDS(object = p_vals_arl15_enh, file = paste0(offsite_dir, "/results/xie/bulk_rna_seq/pvals_arl15_enh.rds"))
 saveRDS(object = p_vals_myb_enh3, file = paste0(offsite_dir, "/results/xie/bulk_rna_seq/pvals_myb_enh3.rds"))
-

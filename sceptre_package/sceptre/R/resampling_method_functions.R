@@ -8,7 +8,6 @@
 #' @return
 #' A list containing (i) skew_t_fit_success (boolean), (ii) out_p (the p-value), and (iii) skew-t mle (a vector containing the fitted MLEs, NA if fit failed).
 #' @export
-
 fit_skew_t <- function(t_nulls, t_star, side) {
   p_value_skew_t <- NA
   skew_t_fit <- tryCatch(selm(t_nulls ~ 1, family = "ST"), error = function(e) return(NA))
@@ -41,8 +40,6 @@ fit_skew_t <- function(t_nulls, t_star, side) {
 #' Run sceptre using precomputations for gRNAs and genes.
 #'
 #' This function is the workhorse function of the sceptre package. It runs a distilled CRT using a negative binomial test statistic based on an expression vector, a gRNA indicator vector, an offset vector (from the distillation step), gRNA conditional probabilities, an estimate of the negative binomial size parameter, and the number of resampling replicates.
-#'
-#'
 #'
 #' @param expressions a vector of gene expressions (in UMI counts)
 #' @param gRNA_indicators a vector of gRNA indicators
@@ -141,7 +138,6 @@ run_sceptre_using_precomp <- function(expressions, gRNA_indicators, gRNA_precomp
 #' gRNA_indicators <- (read.fst(gRNA_indicator_matrix_fp, columns = "chr5:54325645-54326045") %>% pull() %>% as.integer())[cell_subset]
 #' covariate_matrix <- if (nrow(covariate_matrix) == 106666) covariate_matrix else covariate_matrix[cell_subset,]
 #' run_sceptre_gRNA_gene_pair(expressions, gRNA_indicators, covariate_matrix)
-#'
 run_sceptre_gRNA_gene_pair <- function(expressions, gRNA_indicators, covariate_matrix, gene_precomp_size = NULL, B = 500, seed = NULL, side = "left", reduced_output = TRUE) {
   cat(paste0("Running gRNA precomputation.\n"))
   gRNA_precomp <- run_gRNA_precomputation(gRNA_indicators, covariate_matrix)
