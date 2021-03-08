@@ -84,7 +84,9 @@ saveRDS(object = genes_in_use_ids, file = paste0(processed_dir, "/ordered_gene_i
 
 # Load the gRNA identification information; we save the regions of ARL15-enh and MYB-enh-1-4.
 enh_targets_df <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/enh_targets.xlsx"), sheet = 1)
-bulk_region_names <- filter(enh_targets_df, gene_names %in% c("ARL15", "MYB")) %>% select(region, region_name = Denoted.Region.Name.used.in.the.paper, targeted_gene = gene_names)
+bulk_region_names <- filter(enh_targets_df, gene_names %in% c("ARL15", "MYB")) %>% 
+  select(region, region_name = Denoted.Region.Name.used.in.the.paper, targeted_gene = gene_names) %>%
+  filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
 saveRDS(object = bulk_region_names, paste0(processed_dir, "/bulk_region_names.rds"))
 
 guide_seqs <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/all_oligos.xlsx"), sheet = 1) %>% rename(hg38_enh_region = "region.pos.(hg38)")
