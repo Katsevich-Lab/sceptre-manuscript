@@ -49,7 +49,6 @@ saveRDS(gRNA.mart, file = paste0(processed_dir, "/gRNA_mart.rds"))
 ###################################
 
 # From Gasperini paper, the distance between gRNA and gene is calculated as (TSS of gene - midpoint of gRNA). 
-# They specifically select the gRNAs that are enhancers, that is, the position of gRNAs is ahead of the position of genes.
 # The selection is performed chr by chr
 chr.select = intersect(levels(gRNA.mart$chr), levels(gene.mart$chr))
 # "chr1"  "chr10" "chr11" "chr12" "chr16" "chr17" "chr18" "chr19" "chr2"  
@@ -64,14 +63,14 @@ for(chr in chr.select){
   gene.pos = gene.mart$start_position[gene.chr.id]
   gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
   distance.temp = sapply(gene.pos, function(x){x - gRNA.pos})
-  temp.id = which(distance.temp < 1000000 & distance.temp > 0, arr.ind = T)  
+  temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)  
   # 1. Distance less than 1MB; 2. gRNA is in the front of gene region
   
   select.gRNA.gene.pair = rbind(select.gRNA.gene.pair, 
                                 data.frame(gene.id = gene.id[gene.chr.id[temp.id[, 2]]], gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   # cat(chr, ' is done! \n')
 }
-# dim(select.gRNA.gene.pair) # 1664 pairs of gene and gRNA
+# dim(select.gRNA.gene.pair) # 3511 pairs of gene and gRNA
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))
 
 
@@ -133,7 +132,7 @@ for(chr in chr.select){
   gene.pos <- tf.gene.mart$start_position[gene.chr.id]
   gRNA.pos <- gRNA.mart$mid_position[gRNA.chr.id]
   distance.temp <- sapply(gene.pos, function(x){x - gRNA.pos})
-  temp.id <- which(distance.temp < 1000000 & distance.temp > 0, arr.ind = T)  
+  temp.id <- which(abs(distance.temp) < 1000000 & distance.temp > 0, arr.ind = T)  
   # 1. Distance less than 1MB; 2. gRNA is in the front of gene region
   
   select.gRNA.tf.pair <- rbind(select.gRNA.tf.pair, 
@@ -142,17 +141,17 @@ for(chr in chr.select){
                                          gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   cat(chr, ' is done! \n')
 }
-#dim(select.gRNA.tf.pair)
-#[1] 366   3
+# dim(select.gRNA.tf.pair)
+# [1] 823   3
 # length(unique(select.gRNA.tf.pair$gRNA.id))
-# includes 226 different gRNA
+# includes 348 different gRNA
 saveRDS(select.gRNA.tf.pair, file = paste0(processed_dir, "/select_gRNA_tf_pair.rds"))
 
 
 ##############################
 # 6. negative control pairs
 ##############################
-### gRNA that are not close to a transcription factor, pair with the set of genes on different chormosomes.
+### gRNA that are not close to any transcription factor, pair with the set of genes on different chormosomes.
 
 chr.select <- intersect(tf.gene.mart$chr, gRNA.mart$chr)  
 num.neg.pair = NULL
@@ -177,3 +176,8 @@ for(chr in chr.select){
 }
 saveRDS(neg.control.pair, file = paste0(processed_dir, '/neg_control_pair.rds'))
 saveRDS(num.neg.pair, file = paste0(processed_dir, '/num_neg_pair.rds'))
+
+# dim(neg.control.pair)
+# [1] 971755      3
+# length(unique(neg.control.pair$gRNA.id))
+# [1] 170
