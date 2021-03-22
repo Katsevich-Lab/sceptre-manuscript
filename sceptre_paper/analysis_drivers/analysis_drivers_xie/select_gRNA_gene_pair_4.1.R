@@ -2,6 +2,10 @@ args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1] 
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
+# load packages 
+library(fst)
+library(dplyr)
+library(biomaRt)
 
 # Both gene ID and gRNA position are get from GRCh 38. 
 
@@ -12,7 +16,6 @@ gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 594
 gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist
 # The gene ID is from GENCODE, which is not excatly the same as ENSEMBL ID. The part before [.] is the same as ENSEMBL ID.
 
-library(biomaRt)
 ensembl <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
 ensembl.37 <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", GRCh = 37)
 
@@ -60,17 +63,23 @@ select.gRNA.gene.pair = NULL
 for(chr in chr.select){
   gene.chr.id = which(gene.mart$chr == chr)
   gRNA.chr.id = which(gRNA.mart$chr == chr)
-  gene.pos = gene.mart$start_position[gene.chr.id]
+  gene.pos.start = gene.mart$start_position[gene.chr.id]
+  gene.pos.end = gene.mart$end_position[gene.chr.id]
+  gene.tss = gene.pos.start
+  gene.tss[gene.mart$strand == -1] = gene.pos.end[gene.mart$strand == -1]
   gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
-  distance.temp = sapply(gene.pos, function(x){x - gRNA.pos})
-  temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)  
-  # 1. Distance less than 1MB; 2. gRNA is in the front of gene region
-  
+  #distance.start.temp = sapply(gene.pos.start, function(x){x - gRNA.pos})
+  #distance.end.temp = sapply(gene.tss, function(x){gRNA.pos - x})
+  #temp.id = rbind(which(distance.start.temp < 1000000 & distance.start.temp > 0, arr.ind = T),
+  #which(distance.end.temp < 1000000 & distance.end.temp > 0, arr.ind = T))
+  distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
+  temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)
   select.gRNA.gene.pair = rbind(select.gRNA.gene.pair, 
                                 data.frame(gene.id = gene.id[gene.chr.id[temp.id[, 2]]], gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   # cat(chr, ' is done! \n')
 }
-# dim(select.gRNA.gene.pair) # 3511 pairs of gene and gRNA
+dim(select.gRNA.gene.pair)
+# 3530 pairs of gene and gRNA
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))
 
 
@@ -117,7 +126,7 @@ undefine.id <- which(is.na(tf.match))
 # [1]    6    8   17  202  203  204  205  214 1579 1631 1653 1666 1773
 # Some of them are pseudogenes and do not make sense. We leave them first
 
-tf.gene.mart <- temp[tf.match, ]
+tf.gene.mart = temp[tf.match[!is.na(tf.match)], ]
 tf.gene.mart$chr <- paste0('chr', tf.gene.mart$chromosome_name)
 saveRDS(tf.gene.mart, file = paste0(processed_dir, "/tf_gene_mart.rds"))
 
@@ -127,22 +136,26 @@ chr.select <- intersect(tf.gene.mart$chr, gRNA.mart$chr)  # 17 chromosome inters
 select.gRNA.tf.pair <- NULL
 
 for(chr in chr.select){
-  gene.chr.id <- which(tf.gene.mart$chr == chr)
-  gRNA.chr.id <- which(gRNA.mart$chr == chr)
-  gene.pos <- tf.gene.mart$start_position[gene.chr.id]
-  gRNA.pos <- gRNA.mart$mid_position[gRNA.chr.id]
-  distance.temp <- sapply(gene.pos, function(x){x - gRNA.pos})
-  temp.id <- which(abs(distance.temp) < 1000000 & distance.temp > 0, arr.ind = T)  
+  gene.chr.id = which(tf.gene.mart$chr == chr)
+  gRNA.chr.id = which(gRNA.mart$chr == chr)
+  gene.pos.start = tf.gene.mart$start_position[gene.chr.id]
+  gene.pos.end = tf.gene.mart$end_position[gene.chr.id]
+  gene.strand = tf.gene.mart$strand[gene.chr.id]
+  gene.tss = gene.pos.start
+  gene.tss[gene.strand == -1] = gene.pos.end[gene.strand == -1]
+  gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
+  distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
+  temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)  
   # 1. Distance less than 1MB; 2. gRNA is in the front of gene region
   
-  select.gRNA.tf.pair <- rbind(select.gRNA.tf.pair, 
+  select.gRNA.tf.pair = rbind(select.gRNA.tf.pair, 
                               data.frame(ensembl.gene.id = tf.gene.mart$ensembl_gene_id[gene.chr.id[temp.id[, 2]]], 
                                          hgnc_symbol = tf.gene.mart$hgnc_symbol[gene.chr.id[temp.id[, 2]]], 
                                          gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   cat(chr, ' is done! \n')
 }
-# dim(select.gRNA.tf.pair)
-# [1] 823   3
+#dim(select.gRNA.tf.pair)
+#[1] 849   3
 # length(unique(select.gRNA.tf.pair$gRNA.id))
 # includes 348 different gRNA
 saveRDS(select.gRNA.tf.pair, file = paste0(processed_dir, "/select_gRNA_tf_pair.rds"))
@@ -159,20 +172,25 @@ neg.control.pair <- NULL
 for(chr in chr.select){
   tf.chr.id <- which(tf.gene.mart$chr == chr)
   gRNA.chr.id <- which(gRNA.mart$chr == chr)
-  tf.pos <- tf.gene.mart$start_position[tf.chr.id]
+  tf.pos.start <- tf.gene.mart$start_position[tf.chr.id]
+  tf.pos.end <- tf.gene.mart$end_position[tf.chr.id]
+  tf.strand <- tf.gene.mart$strand[tf.chr.id]
+  tf.tss <- tf.pos.start
+  tf.tss[tf.strand == -1] <- tf.pos.end[tf.strand == -1]
+  
   gRNA.pos <- gRNA.mart$mid_position[gRNA.chr.id]
-  distance.temp <- sapply(tf.pos, function(x){x - gRNA.pos})
-  temp.gRNA = gRNA.id[gRNA.chr.id[which(rowSums(abs(distance.temp) > 1000000) == length(tf.pos))]]
+  distance.temp <- sapply(tf.tss, function(x){x - gRNA.pos})
+  temp.gRNA = gRNA.id[gRNA.chr.id[which(rowSums(abs(distance.temp) > 1000000) == length(tf.tss))]]
   # Distance greater than 1MB
-  temp.gene.ensembl = gene.ensembl.id[gene.mart$chr != chr]
-  temp.hgnc = gene.mart$hgnc_symbol[gene.mart$chr != chr]
+  temp.gene.ensembl = gene.ensembl.id[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select) ]
+  temp.hgnc = gene.mart$hgnc_symbol[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select)]
   
   neg.control.pair <- rbind(neg.control.pair, 
                             data.frame(gRNA.id = rep(temp.gRNA, length(temp.gene.ensembl)), 
                                        gene.ensembl.id = rep(temp.gene.ensembl, each = length(temp.gRNA)), 
                                        gene.hgnc.id = rep(temp.hgnc, each = length(temp.gRNA))))
   num.neg.pair = rbind(num.neg.pair, data.frame(chr = chr, gRNA = length(temp.gRNA), gene = length(temp.gene.ensembl)))
-  #cat(chr, 'have',  length(temp.gRNA), 'gRNAs.', length(temp.gene.ensembl), ' genes not in ', chr, '. Done! \n')
+  cat(chr, 'have',  length(temp.gRNA), 'gRNAs.', length(temp.gene.ensembl), ' genes not in ', chr, '. Done! \n')
 }
 saveRDS(neg.control.pair, file = paste0(processed_dir, '/neg_control_pair.rds'))
 saveRDS(num.neg.pair, file = paste0(processed_dir, '/num_neg_pair.rds'))
