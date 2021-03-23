@@ -53,7 +53,7 @@ saveRDS(gRNA.mart, file = paste0(processed_dir, "/gRNA_mart.rds"))
 
 # From Gasperini paper, the distance between gRNA and gene is calculated as (TSS of gene - midpoint of gRNA). 
 # The selection is performed chr by chr
-chr.select = intersect(levels(gRNA.mart$chr), levels(gene.mart$chr))
+chr.select = intersect(gRNA.mart$chr, gene.mart$chr)
 # "chr1"  "chr10" "chr11" "chr12" "chr16" "chr17" "chr18" "chr19" "chr2"  
 # "chr20" "chr3"  "chr4"  "chr5"  "chr6"  "chr7"  "chr8"  "chrX" 
 # 17 chromosomes
@@ -182,12 +182,12 @@ for(chr in chr.select){
   distance.temp <- sapply(tf.tss, function(x){x - gRNA.pos})
   temp.gRNA = gRNA.id[gRNA.chr.id[which(rowSums(abs(distance.temp) > 1000000) == length(tf.tss))]]
   # Distance greater than 1MB
-  temp.gene.ensembl = gene.ensembl.id[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select) ]
+  temp.gene.ensembl = gene.id[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select) ]
   temp.hgnc = gene.mart$hgnc_symbol[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select)]
   
   neg.control.pair <- rbind(neg.control.pair, 
                             data.frame(gRNA.id = rep(temp.gRNA, length(temp.gene.ensembl)), 
-                                       gene.ensembl.id = rep(temp.gene.ensembl, each = length(temp.gRNA)), 
+                                       gene.id = rep(temp.gene.ensembl, each = length(temp.gRNA)), 
                                        gene.hgnc.id = rep(temp.hgnc, each = length(temp.gRNA))))
   num.neg.pair = rbind(num.neg.pair, data.frame(chr = chr, gRNA = length(temp.gRNA), gene = length(temp.gene.ensembl)))
   cat(chr, 'have',  length(temp.gRNA), 'gRNAs.', length(temp.gene.ensembl), ' genes not in ', chr, '. Done! \n')
