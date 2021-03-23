@@ -68,10 +68,6 @@ for(chr in chr.select){
   gene.tss = gene.pos.start
   gene.tss[gene.mart$strand == -1] = gene.pos.end[gene.mart$strand == -1]
   gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
-  #distance.start.temp = sapply(gene.pos.start, function(x){x - gRNA.pos})
-  #distance.end.temp = sapply(gene.tss, function(x){gRNA.pos - x})
-  #temp.id = rbind(which(distance.start.temp < 1000000 & distance.start.temp > 0, arr.ind = T),
-  #which(distance.end.temp < 1000000 & distance.end.temp > 0, arr.ind = T))
   distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
   temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)
   select.gRNA.gene.pair = rbind(select.gRNA.gene.pair, 
@@ -116,8 +112,6 @@ saveRDS(tf.gene.select, file = paste0(processed_dir, "/tf_gene_select.rds"))
 ######################################################
 # 5. Find gRNAs that are pontential enhancers for TF 
 ######################################################
-#temp <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol','chromosome_name','start_position','end_position'), 
-# mart = ensembl, useCache = FALSE)
 ### Find gRNAs that might be potential enhancers
 tf.match.temp <- cbind(match(tf.gene.new$Gene, temp$hgnc_symbol), match(tf.gene.new$Animal.TFDB, temp$ensembl_gene_id))
 tf.match <- tf.match.temp[, 2]
@@ -154,10 +148,6 @@ for(chr in chr.select){
                                          gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   cat(chr, ' is done! \n')
 }
-#dim(select.gRNA.tf.pair)
-#[1] 849   3
-# length(unique(select.gRNA.tf.pair$gRNA.id))
-# includes 348 different gRNA
 saveRDS(select.gRNA.tf.pair, file = paste0(processed_dir, "/select_gRNA_tf_pair.rds"))
 
 
@@ -195,7 +185,19 @@ for(chr in chr.select){
 saveRDS(neg.control.pair, file = paste0(processed_dir, '/neg_control_pair.rds'))
 saveRDS(num.neg.pair, file = paste0(processed_dir, '/num_neg_pair.rds'))
 
-# dim(neg.control.pair)
-# [1] 971755      3
-# length(unique(neg.control.pair$gRNA.id))
-# [1] 170
+##############################################
+# 7. Come up with the list of pairs to analyze
+##############################################
+set.seed(4)
+
+df1_neg_control <- neg.control.pair %>% mutate(gene.hgnc.id = NULL) %>% rename("gRNA_id" = "gRNA.id", "gene_id" = "gene.id") %>% 
+  group_by(gRNA_id) %>% slice_sample(n = 500) %>% mutate(type = "negative_control") %>% ungroup()
+df2_cis_pairs <- select.gRNA.gene.pair %>% rename("gRNA_id" = "gRNA.id", "gene_id" = "gene.id") %>% 
+  mutate(type = "cis")
+bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds"))
+df3_bulk_validation <- expand.grid(gene_id = gene.id, gRNA_id = bulk_regions$region) %>% mutate(type = "bulk_validation")
+
+all_pairs <- rbind(df1_neg_control, df2_cis_pairs, df3_bulk_validation)
+all_pairs_f <- mutate_all(all_pairs, factor)
+
+write_fst(x = all_pairs_f, path = paste0(processed_dir, "/gRNA_gene_pairs.fst")) 

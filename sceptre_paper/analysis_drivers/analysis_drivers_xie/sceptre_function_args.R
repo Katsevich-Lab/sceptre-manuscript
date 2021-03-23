@@ -5,7 +5,7 @@ small_example <- TRUE
 processed_dir <- paste0(offsite_dir, "/data/xie/processed")
 results_dir_negbin <- paste0(offsite_dir, "/results/xie/negative_binomial")
 bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds"))
-gRNA_gene_pairs <- read.fst(paste0(processed_dir, "/gRNA_gene_pairs.fst")) %>% filter(gRNA_id %in% bulk_regions$region)
+gRNA_gene_pairs <- read.fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 covariate_matrix <- read.fst(paste0(processed_dir, "/covariate_model_matrix.fst"))
 cell_gene_expression_matrix <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm
 ordered_gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
