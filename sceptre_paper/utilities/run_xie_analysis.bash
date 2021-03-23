@@ -32,8 +32,8 @@ Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_proc
 echo Construct model covariate matrix and perform quality control.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R $code_dir $offsite_dir
 
-echo Construct model covariate matrix and perform quality control.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_4.1R $code_dir $offsite_dir
+echo Compute gene-gRNA pairs to analyze.
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_4.1.R $code_dir $offsite_dir
 
 # Locate the parameter file
 parameter_file=$code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"sceptre_function_args.R
