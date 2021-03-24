@@ -22,6 +22,6 @@ results_dir <- storage_location[["results_dir"]]
 log_dir <- storage_location[["log_dir"]]
 
 if (small_example) {
-  gRNA_gene_pairs <- slice(gRNA_gene_pairs, 1:20)
+  gRNA_gene_pairs <- slice_sample(gRNA_gene_pairs, n = 20)
   pod_sizes <- c(gene = 2, gRNA = 5, pair = 5)
 }

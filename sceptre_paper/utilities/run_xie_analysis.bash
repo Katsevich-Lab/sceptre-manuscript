@@ -17,23 +17,23 @@ echo Check the availability of the required packages
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"check_packages_0.R $code_dir
 
 # Make sure the sceptre and katsevich2020 packages are up-to-date.
-bash build_and_install_package.bash sceptre $machine
-bash build_and_install_package.bash katsevich2020 $machine
+# bash build_and_install_package.bash sceptre $machine
+# bash build_and_install_package.bash katsevich2020 $machine
 
 echo Initialize the offsite directory structure.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"check_directory_structure_1.R $code_dir $offsite_dir
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"check_directory_structure_1.R $code_dir $offsite_dir
 
 echo Download the data. Note that one of the downloads must be done manually.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"download_data_2.R $code_dir $offsite_dir
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"download_data_2.R $code_dir $offsite_dir
 
 echo Pre-process the data.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_process_data_3.R $code_dir $offsite_dir
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_process_data_3.R $code_dir $offsite_dir
 
 echo Construct model covariate matrix and perform quality control.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R $code_dir $offsite_dir
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R $code_dir $offsite_dir
 
 echo Compute gene-gRNA pairs to analyze.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_4.1.R $code_dir $offsite_dir
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_4.1.R $code_dir $offsite_dir
 
 # Locate the parameter file
 parameter_file=$code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"sceptre_function_args.R
@@ -48,7 +48,7 @@ bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_d
 wait
 
 echo Preprocess the sceptre results for downstream analysis.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_5.R $code_dir $offsite_dir
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_5.R $code_dir $offsite_dir
 
 echo Run bulk RNA-seq analysis.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"bulk_validation_6.R $code_dir $offsite_dir
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"bulk_validation_6.R $code_dir $offsite_dir
