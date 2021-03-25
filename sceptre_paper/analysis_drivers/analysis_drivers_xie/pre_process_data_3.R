@@ -166,7 +166,7 @@ bulk_rnaseq <- list(data = list(arl15_enh = bulk_df_arl15_enh, myb_enh3 = bulk_d
 saveRDS(object = bulk_rnaseq, file = paste0(processed_dir, "/bulk_RNAseq.rds"))
 
 #############################
-# Xie hypergeometric p-values
+# Xie hypergeometric p-values for ARL15 and MYB-3
 #############################
 
 suppressPackageStartupMessages(library(R.matlab))
