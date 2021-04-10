@@ -55,3 +55,16 @@ download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancer
 
 dest <- paste0(raw_data_dir, "/hypergeometric_pvals_myb3_down.mat")
 download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/chr6-135323137-135323537-down_log-pval.mat?raw=true", destfile = dest)
+
+###### Virtual FACS (This part should goes after we have the list of gRNA names)
+gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
+gRNA_id = as.character(unique(gRNA.gene.pair$gRNA_id))
+gRNA.fname = sort(str_replace(gRNA_id, ':', '-'))
+
+for(i in 1:length(gRNA.fname)){
+  dest = paste0(raw_data_dir, '/', gRNA.fname[i], '-down_log-pval.mat')
+  download.file(url = paste0('https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/', 
+                             gRNA.fname[i], '-down_log-pval.mat?raw=true'), 
+                destfile = dest)
+}
+
