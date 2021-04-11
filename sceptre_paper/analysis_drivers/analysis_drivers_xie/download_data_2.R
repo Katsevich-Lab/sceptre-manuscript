@@ -68,3 +68,16 @@ for(i in 1:length(gRNA.fname)){
                 destfile = dest)
 }
 
+dest <- paste0(raw_data_dir, "/plot_annotation.txt")
+download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Annotations/plot_annotation.txt?raw=true", destfile = dest)
+dest <- paste0(raw_data_dir, "/plotted_genes.csv")
+download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Annotations/plotted_genes.csv?raw=true", destfile = dest)
+
+dest <- paste0(raw_data_dir, "/Perct_99.9_combined_cutoff.down_genes.mat")
+download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Gene_cutoff/Perct_99.9_combined_cutoff.down_genes.mat?raw=true", destfile = dest)
+
+
+
+
+
+
