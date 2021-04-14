@@ -207,7 +207,30 @@ saveRDS(original_results_xie, file = paste0(processed_dir, '/raw_pval_xie.rds'))
 # This is the matched gRNA.gene.pair
        
                
-               
-               
+#####################################################################
+# Add site_type to resampling and likelihood data frame for Xie data
+#####################################################################
+resampling_results_xie = read.fst(paste0(processed_dir, "/sceptre_all_results.fst")) %>% as_tibble()
+likelihood_results_xie = read.fst(paste0(processed_dir,"/nb_all_results.fst")) %>% as_tibble()
+temp.name = paste0(gRNA.gene.pair$gene_id, '_', gRNA.gene.pair$gRNA_id)
+rs.name = paste0(resampling_results_xie$gene_id, '_', resampling_results_xie$gRNA_id)
+
+temp.type = rep(NA, nrow(gRNA.gene.pair))
+temp.type[match(temp.name[gRNA.gene.pair$type == 'negative_control'], rs.name)] = 'negative_control'
+temp.type[match(temp.name[gRNA.gene.pair$type == 'cis'], rs.name)] = 'cis'
+temp.type[is.na(temp.type)] = 'bulk_validation'
+
+resampling_results_xie$site_type = as.factor(temp.type)
+
+like.name = paste0(likelihood_results_xie$gene_id, '_', likelihood_results_xie$gRNA_id)
+
+temp.type = rep(NA, nrow(gRNA.gene.pair))
+temp.type[match(temp.name[gRNA.gene.pair$type == 'negative_control'], like.name)] = 'negative_control'
+temp.type[match(temp.name[gRNA.gene.pair$type == 'cis'], like.name)] = 'cis'
+temp.type[is.na(temp.type)] = 'bulk_validation'
+likelihood_results_xie$site_type = as.factor(temp.type)
+
+write.fst(resampling_results_xie, paste0(processed_dir, '/resampling_results_xie.fst'), 100)
+write.fst(likelihood_results_xie, paste0(processed_dir, '/likelihood_results_xie.fst'), 100)
                
                
