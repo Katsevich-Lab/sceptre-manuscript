@@ -8,12 +8,18 @@ likelihood_results_gasp = read.fst(sprintf("%s/results/gasperini/negative_binomi
 covariates_gasp = read.fst(sprintf("%s/data/gasperini/processed/cell_covariate_model_matrix.fst", offsite_dir)) %>% as_tibble()
 
 # Xie results
-original_results_xie = readRDS(sprintf("%s/data/xie/processed/xie_p_values.rds", offsite_dir))
-resampling_results_xie = read.fst(sprintf("%s/results/xie/sceptre/all_results_with_names.fst", offsite_dir)) %>% as_tibble()
-likelihood_results_xie = read.fst(sprintf("%s/results/xie/negative_binomial/all_results.fst", offsite_dir)) %>% as_tibble()
+#original_results_xie = readRDS(sprintf("%s/data/xie/processed/xie_p_values.rds", offsite_dir))
+original_results_xie = readRDS(paste0(processed_dir, '/raw_pval_xie.rds')) %>% as_tibble()
+#resampling_results_xie = read.fst(sprintf("%s/results/xie/sceptre/all_results_with_names.fst", offsite_dir)) %>% as_tibble()
+#likelihood_results_xie = read.fst(sprintf("%s/results/xie/negative_binomial/all_results.fst", offsite_dir)) %>% as_tibble()
+resampling_results_xie <- read.fst(paste0(processed_dir, '/resampling_results_xie.fst')) %>% as_tibble()
+likelihood_results_xie <- read.fst(paste0(processed_dir, '/likelihood_results_xie.fst')) %>% as_tibble()
+
 p_vals_bulk <- paste0(offsite_dir, "/results/xie/bulk_rna_seq/pvals_arl15_enh.rds") %>% readRDS() %>% as_tibble() %>% rename(gene_names = gene_id)
 covariates_xie = read.fst(sprintf("%s/data/xie/processed/covariate_model_matrix.fst", offsite_dir)) %>% as_tibble()
 grna_indicator_matrix_xie = read.fst(sprintf("%s/data/xie/processed/grna_indicator_matrix.fst", offsite_dir)) %>% as_tibble()
+
+
 
 # simulation results
 simulation_results = read.fst(sprintf("%s/results/simulations/all_results.fst", offsite_dir)) %>% as_tibble()
