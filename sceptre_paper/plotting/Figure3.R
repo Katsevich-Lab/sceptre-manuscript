@@ -75,6 +75,71 @@ p_b <- df1 %>% filter(-log10(expected) > 2 | row_number() %% subsampling_factor 
 
 # ggsave(filename = paste0(fig3_dir, "/figure3b.pdf"), plot = p_b, device = "pdf", scale = 1, width = 4, height = 3)
 
+# new subfigure c: negative control for Xie data
+df_NTC <- rbind(select(original_results_xie, gene_id, gRNA_id, pvalue = raw_p_val, site_type) %>% mutate(method = "Virtual FACS"),
+                select(resampling_results_xie, gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "SCEPTRE"),
+                select(likelihood_results_xie,  gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "Improved NB")) %>% filter(site_type == "negative_control") %>% mutate_at(.vars = c("gene_id", "gRNA_id", "site_type"), .funs = factor) %>% 
+  mutate(method = factor(x = as.character(method), levels = c("Virtual FACS", "Improved NB", "SCEPTRE"), labels = c("Virtual FACS", "Improved NB", "SCEPTRE"))) %>% arrange(method)
+
+df1_xie <- df_NTC %>%
+  group_by(method) %>%
+  mutate(r = rank(pvalue), expected = ppoints(n())[r],
+         clower = qbeta(p=(1-ci)/2, shape1 = r, shape2 = n()+1-r),
+         cupper = qbeta(p=(1+ci)/2, shape1 = r, shape2 = n()+1-r)) %>%
+  ungroup() %>% mutate()
+
+p_thresh <- 1e-8
+p_xie_neg <- df1_xie %>% filter(-log10(expected) > 0 | row_number() %% subsampling_factor == 0) %>% 
+  mutate(clower = ifelse(method == "SCEPTRE", clower, NA), cupper = ifelse(method == "SCEPTRE", cupper, NA)) %>%
+  mutate(pvalue = ifelse(pvalue < p_thresh, p_thresh, pvalue)) %>%
+  ggplot(aes(x = expected, y = pvalue, group = method, ymin = clower, ymax = cupper)) +
+  geom_point(aes(color = method), size = 1, alpha = 0.5) +
+  geom_ribbon(alpha = 0.2) +
+  geom_abline(intercept = 0, slope = 1) +
+  scale_colour_manual(values = setNames(plot_colors[c("hypergeometric", "hf_nb", "sceptre")], NULL), name = "Method") +
+  scale_x_continuous(trans = revlog_trans(base = 10)) + 
+  scale_y_continuous(trans = revlog_trans(base = 10)) +
+  xlab(expression(paste("Expected null p-value"))) +
+  ylab(expression(paste("Observed p-value"))) +
+  ggtitle("Xie negative control pairs") +
+  theme_bw() + theme(#legend.position = "none",
+                     legend.background = element_rect(fill = "transparent", colour = NA),
+                     legend.title = element_blank(),
+                     panel.grid = element_blank(),
+                     strip.background = element_blank(),
+                     panel.border = element_blank(),
+                     axis.line = element_line(),
+                     plot.title = element_text(hjust = 0.5)) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))
+p_xie_neg 
+#ggsave(filename = paste0(fig3_dir, "/figure_xie_neg.pdf"), plot = p_xie_neg, device = "pdf", scale = 1, width = 5, height = 3)
+
+p_xie_neg_vf  <- df1_xie %>% filter(-log10(expected) > 0 | row_number() %% subsampling_factor == 0) %>%
+  mutate(clower = ifelse(method == "SCEPTRE", clower, NA), cupper = ifelse(method == "SCEPTRE", cupper, NA)) %>%
+  mutate(pvalue = ifelse(pvalue < p_thresh, p_thresh, pvalue)) %>%
+  filter(method == 'Virtual FACS') %>%
+  ggplot(aes(x = expected, y = pvalue, group = method, ymin = clower, ymax = cupper)) +
+  geom_point(aes(color = method), size = 1, alpha = 0.5) +
+  geom_ribbon(alpha = 0.2) +
+  geom_abline(intercept = 0, slope = 1) +
+  scale_colour_manual(values = setNames(plot_colors[c("hypergeometric")], NULL), name = "Method") +
+  scale_x_continuous(trans = revlog_trans(base = 10)) + 
+  scale_y_continuous(trans = revlog_trans(base = 10)) +
+  xlab(expression(paste("Expected null p-value"))) +
+  ylab(expression(paste("Observed p-value"))) +
+  ggtitle("Xie negative control pairs") +
+  theme_bw() + theme(#legend.position = "none",
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.title = element_blank(),
+    panel.grid = element_blank(),
+    strip.background = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(),
+    plot.title = element_text(hjust = 0.5)) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1)))
+ggsave(filename = paste0(fig3_dir, "/figure_xie_neg_vf.pdf"), plot = p_xie_neg_vf, device = "pdf", scale = 1, width = 5, height = 3)
+
+
 # subfigure c: arl15 results
 resampling_results_xie <- resampling_results_xie %>% filter(enh_names == "ARL15-enh")
 likelihood_results_xie <- filter(likelihood_results_xie, gRNA_id == as.character(resampling_results_xie$gRNA_id[1]))
