@@ -1,6 +1,6 @@
 # Pre-process data
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 packs <- c("future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "katsevich2020")
 for (pack in packs) suppressPackageStartupMessages(library(pack, character.only = TRUE))

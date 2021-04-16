@@ -1,4 +1,3 @@
-# Reproduce Figure 3 from Katsevich, Barry, and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/sceptre-manuscript/SCEPTRE/" else args[1]
 require(katsevich2020)

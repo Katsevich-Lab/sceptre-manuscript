@@ -16,6 +16,7 @@ Depends:
     VGAM,
     tidyverse,
     bigstatsr,
+    magrittr
     R (>= 3.5)
 Suggests:
     knitr,
