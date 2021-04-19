@@ -37,6 +37,8 @@ genes_in_use_ids <- all_sequenced_genes_ids[protein_coding_genes_idxes]
 n_genes_in_use <- length(genes_in_use)
 H5Fclose(h5_handle)
 
+saveRDS(all_sequenced_genes_id, file = paste0(raw_data_dir, '/all_sequenced_genes_id.rds'))
+
 # Next, we create a file-backed matrix to store the transpose of the expression matrix
 exp_mat_t <- FBM(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", init = 0, backingfile = paste0(processed_dir, "/expression_matrix_t"), create_bk = TRUE)
 exp_mat_t_metadata <- list(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", backingfile = paste0(processed_dir, "/expression_matrix_t"))
@@ -232,27 +234,3 @@ likelihood_results_xie$site_type = as.factor(temp.type)
 
 write.fst(resampling_results_xie, paste0(processed_dir, '/resampling_results_xie.fst'), 100)
 write.fst(likelihood_results_xie, paste0(processed_dir, '/likelihood_results_xie.fst'), 100)
-               
-####################################
-# Significant Scores for Xie data
-####################################
-gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
-gRNA_id = as.character(unique(gRNA.gene.pair$gRNA_id))
-gRNA.fname = sort(str_replace(gRNA_id, ':', '-'))
-plot_annotation <- read_tsv(paste0(raw_data_dir, "/plot_annotation.txt"), col_names = c("idx", "gene_name", "chr", "pos", "strand", "color_idx", "chr_idx"))
-
-plot_geneidx_df = read.table(paste0(raw_data_dir, '/plotted_genes.csv'), sep = '\t')
-plot_geneidx_df = plot_geneidx_df[-1, 2]
-p99.down = readMat(paste0(raw_data_dir, '/Perct_99.9_combined_cutoff.down_genes.mat'))$matrix[1, ]
-
-ss.down = NULL
-for(i in 1:length(gRNA.fname)){
-  pval_list_down = readMat(paste0(raw_data_dir, '/', gRNA.fname[i], '-down_log-pval.mat'))$matrix[1, ]
-  pval_list_down[is.infinite(pval_list_down)] = 0
-  pval_list_down = - pval_list_down
-  ss.down = cbind(ss.down, (pval_list_down[1:58381] - p99.down)/log(10))
-  cat(i, '\t')
-}
-colnames(ss.down) = sort(gRNA_id)
-rownames(ss.down) = all_sequenced_genes_id[1:58381]
-saveRDS(ss.down, file = paste0(processed_dir, "/ss_down.rds"))
