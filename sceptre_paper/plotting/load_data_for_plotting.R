@@ -17,6 +17,7 @@ resampling_results_xie_cis <- read.fst(sprintf("%s/data/xie/processed/resampling
 likelihood_results_xie <- read.fst(sprintf("%s/data/xie/processed/likelihood_results_xie.fst", offsite_dir)) %>% as_tibble()
 
 p_vals_bulk <- paste0(offsite_dir, "/results/xie/bulk_rna_seq/pvals_arl15_enh.rds") %>% readRDS() %>% as_tibble() %>% rename(gene_names = gene_id)
+p_vals_bulk_myb3_enh3 <- paste0(offsite_dir, "/results/xie/bulk_rna_seq/pvals_myb_enh3.rds") %>% readRDS() %>% as_tibble() %>% rename(gene_names = gene_id)
 covariates_xie = read.fst(sprintf("%s/data/xie/processed/covariate_model_matrix.fst", offsite_dir)) %>% as_tibble()
 grna_indicator_matrix_xie = read.fst(sprintf("%s/data/xie/processed/grna_indicator_matrix.fst", offsite_dir)) %>% as_tibble()
 ss_xie_cis = readRDS(sprintf("%s/data/xie/processed/ss_xie_cis.rds", offsite_dir)) %>% as_tibble()

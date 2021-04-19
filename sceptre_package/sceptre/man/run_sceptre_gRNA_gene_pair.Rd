@@ -11,6 +11,7 @@ run_sceptre_gRNA_gene_pair(
   gene_precomp_size = NULL,
   B = 500,
   seed = NULL,
+  side = "left",
   reduced_output = TRUE
 )
 }
@@ -26,6 +27,8 @@ run_sceptre_gRNA_gene_pair(
 \item{B}{number of resamples (default 500)}
 
 \item{seed}{(optional) seed to the random number generator}
+
+\item{side}{an argument to set test for left-sided, right-sided or both-sided. Default as 'left' and can take 'left', 'right' or 'both'}
 }
 \value{
 a p-value of the null hypothesis of no gRNA effect on gene expression

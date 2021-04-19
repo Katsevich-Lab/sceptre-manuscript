@@ -1,6 +1,6 @@
-# Reproduce Figure 3 from Katsevich and Roeder (2020).
+# Reproduce Figure 3 from Katsevich, Barry, and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/sceptre-manuscript/SCEPTRE/" else args[1]
 require(katsevich2020)
 require(cowplot)
 source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
@@ -115,7 +115,6 @@ p_xie_neg <- df1 %>% filter(-log10(expected) > 0 | row_number() %% subsampling_f
 
 #ggsave(filename = paste0(fig3_dir, "/figure_xie_neg.pdf"), plot = p_xie_neg, device = "pdf", scale = 1, width = 5, height = 3)
 
-
 # subfigure d: gasperini positive controls
 combined_results <- rbind(
   original_results_gasp %>%
@@ -167,6 +166,11 @@ p_e <- ggplot(data = to_plot, mapping = aes(x = bulk_pval, y = sceptre_pval, col
   xlab("Bulk RNA-seq p-value") + ylab("SCEPTRE p-value") + ggtitle("Xie bulk RNA-seq validation") +
   geom_point(mapping = aes(x = bulk_pval, y = sceptre_pval), data = filter(to_plot, is_arl15), size = 2) +
   annotate(geom = "text", x = 1e-12, y = 1e-14, label = "ARL15", col = "firebrick3")
+
+if (FALSE) {
+  require(gap)
+  qqunif(u = p_vals_bulk$p_value, type = "unif", logscale = TRUE, col = "blue", lcol = "red", ci = TRUE, main = "ARL15-enh bulk QQ-plot")
+}
 
 # Legend
 ex <- tibble(x = 1:5, y = 1:5, Method = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")) %>% mutate(Method = factor(x = Method, levels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK"), labels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")))

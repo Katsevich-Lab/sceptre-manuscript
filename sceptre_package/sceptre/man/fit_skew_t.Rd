@@ -4,10 +4,14 @@
 \alias{fit_skew_t}
 \title{Fit skew-t}
 \usage{
-fit_skew_t(t_nulls, t_star)
+fit_skew_t(t_nulls, t_star, side)
 }
 \arguments{
-\item{t_nulls}{}
+\item{t_nulls}{vector of random sampled statistics from null distribution}
+
+\item{t_star}{numeric, test statistics}
+
+\item{side}{an argument to set test for left-sided, right-sided or both-sided. Default as 'left' and can take 'left', 'right' or 'both'}
 }
 \value{
 A list containing (i) skew_t_fit_success (boolean), (ii) out_p (the p-value), and (iii) skew-t mle (a vector containing the fitted MLEs, NA if fit failed).

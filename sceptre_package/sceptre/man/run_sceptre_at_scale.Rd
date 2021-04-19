@@ -16,7 +16,8 @@ run_sceptre_at_scale(
   pod_sizes = c(gene = 100, gRNA = 500, pair = 200),
   seed = 1234,
   B = 500,
-  multi_processor = TRUE
+  multi_processor = TRUE,
+  side = "left"
 )
 }
 \arguments{
