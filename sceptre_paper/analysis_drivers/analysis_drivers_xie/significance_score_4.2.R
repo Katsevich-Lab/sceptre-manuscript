@@ -42,7 +42,7 @@ original_results_xie = do.call('rbind', lapply(1:nrow(gRNA.gene.pair), function(
              site_type = gRNA.gene.pair$type[i])
 }))
 rownames(original_results_xie) = NULL
-saveRDS(original_results_xie, file = paste0(processed_dir, '/raw_pval_xie.rds'))
+saveRDS(original_results_xie, file = paste0(results_dir, '/raw_pval_xie.rds'))
 
 
 dest <- paste0(raw_data_dir, "/plot_annotation.txt")
