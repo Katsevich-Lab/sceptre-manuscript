@@ -8,6 +8,7 @@ library(dplyr)
 library(stringr)
 library(purrr)
 library(reshape2)
+require(readr)
 
 gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
 gRNA_id = as.character(unique(gRNA.gene.pair$gRNA_id))
@@ -68,6 +69,7 @@ for(i in 1:length(gRNA.fname)){
 }
 colnames(ss.down) = sort(gRNA_id)
 rownames(ss.down) = all_sequenced_genes_id[1:58381]
+saveRDS(ss.down, file = paste0(processed_dir, "/ss_down.rds"))
 
 resampling_results_xie_cis = paste0(results_dir, "/resampling_results_xie_cis.fst") %>% read.fst() %>% as_tibble()
 gene_id_cis = unique(resampling_results_xie_cis$gene_id)
@@ -83,4 +85,4 @@ ss_xie_cis = data.frame(gene_id = resampling_results_xie_cis$gene_id,
   
 ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[135]
 ss_xie_cis$reject.down = ss_xie_cis$ss.down >= ss_thres
-saveRDS(ss_xie_cis, file = paste0(processed_dir, '/ss_xie_cis.rds'))
+saveRDS(ss_xie_cis, file = paste0(results_dir, '/ss_xie_cis.rds'))
