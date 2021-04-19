@@ -42,7 +42,7 @@ original_results_xie = do.call('rbind', lapply(1:nrow(gRNA.gene.pair), function(
              site_type = gRNA.gene.pair$type[i])
 }))
 rownames(original_results_xie) = NULL
-saveRDS(original_results_xie, file = paste0(results_dir, '/raw_pval_xie.rds'))
+saveRDS(original_results_xie, file = paste0(processed_dir, '/raw_pval_xie.rds'))
 
 
 dest <- paste0(raw_data_dir, "/plot_annotation.txt")
@@ -71,7 +71,7 @@ colnames(ss.down) = sort(gRNA_id)
 rownames(ss.down) = all_sequenced_genes_id[1:58381]
 saveRDS(ss.down, file = paste0(processed_dir, "/ss_down.rds"))
 
-resampling_results_xie_cis = paste0(results_dir, "/resampling_results_xie_cis.fst") %>% read.fst() %>% as_tibble()
+resampling_results_xie_cis = paste0(processed_dir, "/resampling_results_xie_cis.fst") %>% read.fst() %>% as_tibble()
 gene_id_cis = unique(resampling_results_xie_cis$gene_id)
 idx_temp = match(gene_id_cis, all_sequenced_genes_id)
 
@@ -85,4 +85,4 @@ ss_xie_cis = data.frame(gene_id = resampling_results_xie_cis$gene_id,
   
 ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[135]
 ss_xie_cis$reject.down = ss_xie_cis$ss.down >= ss_thres
-saveRDS(ss_xie_cis, file = paste0(results_dir, '/ss_xie_cis.rds'))
+saveRDS(ss_xie_cis, file = paste0(processed_dir, '/ss_xie_cis.rds'))
