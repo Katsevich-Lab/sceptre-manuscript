@@ -1,6 +1,6 @@
 # Pre-process data
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 packs <- c("future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "katsevich2020")
 for (pack in packs) suppressPackageStartupMessages(library(pack, character.only = TRUE))
@@ -84,7 +84,9 @@ saveRDS(object = genes_in_use_ids, file = paste0(processed_dir, "/ordered_gene_i
 
 # Load the gRNA identification information; we save the regions of ARL15-enh and MYB-enh-1-4.
 enh_targets_df <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/enh_targets.xlsx"), sheet = 1)
-bulk_region_names <- filter(enh_targets_df, gene_names %in% c("ARL15", "MYB")) %>% select(region, region_name = Denoted.Region.Name.used.in.the.paper, targeted_gene = gene_names)
+bulk_region_names <- filter(enh_targets_df, gene_names %in% c("ARL15", "MYB")) %>% 
+  select(region, region_name = Denoted.Region.Name.used.in.the.paper, targeted_gene = gene_names) %>%
+  filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
 saveRDS(object = bulk_region_names, paste0(processed_dir, "/bulk_region_names.rds"))
 
 guide_seqs <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/all_oligos.xlsx"), sheet = 1) %>% rename(hg38_enh_region = "region.pos.(hg38)")
@@ -164,7 +166,7 @@ bulk_rnaseq <- list(data = list(arl15_enh = bulk_df_arl15_enh, myb_enh3 = bulk_d
 saveRDS(object = bulk_rnaseq, file = paste0(processed_dir, "/bulk_RNAseq.rds"))
 
 #############################
-# Xie hypergeometric p-values
+# Xie hypergeometric p-values for ARL15 and MYB-3
 #############################
 
 suppressPackageStartupMessages(library(R.matlab))
