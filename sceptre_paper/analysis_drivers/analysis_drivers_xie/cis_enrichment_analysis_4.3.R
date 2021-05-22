@@ -7,38 +7,11 @@ library(dplyr)
 require(katsevich2020)
 library(fst)
 library(readr)
-
-gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs_full.fst'))
-resampling_results_xie = read.fst(paste0(processed_dir, "/resampling_results_xie.fst")) %>% as_tibble()
-
-resampling_results_xie_cis <- resampling_results_xie %>% group_by(site_type) %>% 
-  mutate(adjusted_pvalue = ifelse(site_type == 'cis', p.adjust(p_value, 'fdr'), NA), 
-         rejected = ifelse(is.na(adjusted_pvalue), FALSE, adjusted_pvalue <= 0.1)) %>%
-  ungroup() %>% filter(site_type == 'cis')
-
-gene.mart = readRDS(paste0(processed_dir, '/gene_mart.rds'))
-gRNA.mart = readRDS(paste0(processed_dir, '/gRNA_mart.rds'))
-
-gene.ensembl.id <- lapply(strsplit(as.character(resampling_results_xie_cis$gene_id), '[.]'), function(x){x[1]}) %>% unlist
-resampling_results_xie_cis = cbind(resampling_results_xie_cis, 
-                                   gene.mart[match(gene.ensembl.id, gene.mart$ensembl_gene_id), 
-                                             c('hgnc_symbol', 'chr', 'strand', 'start_position', 'end_position')])
-resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(gene_short_name = hgnc_symbol, 
-                                                                    target_gene.start = start_position, 
-                                                                    target_gene.stop = end_position)
-resampling_results_xie_cis <- resampling_results_xie_cis %>% mutate(TSS = ifelse(strand > 0, target_gene.start, target_gene.stop))
-resampling_results_xie_cis = cbind(resampling_results_xie_cis, gRNA.mart[match(resampling_results_xie_cis$gRNA_id, gRNA.mart$gRNA_id), 
-                                             c('start_position', 'end_position', 'mid_position')])
-resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(target_site.start = start_position, 
-                                                                    target_site.stop = end_position, 
-                                                                    target_site.mid = mid_position)
-write.fst(resampling_results_xie_cis, paste0(results_dir, "/resampling_results_xie_cis.fst"))
-
-# Define a couple directories
 require(plyranges)
 require(GenomicRanges)
-library(readr)
 library(tidyr)
+
+# Define a couple directories
 results_dir_enrichment <- paste0(offsite_dir, "/results/xie/enrichment")
 functional_data_dir <- paste0(offsite_dir, "/data/functional/")
 
