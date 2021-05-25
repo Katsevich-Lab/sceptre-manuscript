@@ -16,9 +16,10 @@ results_dir_enrichment <- paste0(offsite_dir, "/results/xie/enrichment")
 functional_data_dir <- paste0(offsite_dir, "/data/functional/")
 
 # Read in the association results 
-resampling_results_xie_cis <- paste0(results_dir, "/resampling_results_xie_cis.fst") %>% read.fst()
+resampling_results_xie_cis <- paste0(processed_dir, "/resampling_results_xie_cis.fst") %>% read.fst()
 resampling_results = resampling_results_xie_cis
-ss_xie_cis = readRDS(file = paste0(results_dir, '/ss_xie_cis.rds'))
+
+ss_xie_cis = readRDS(file = paste0(processed_dir, '/ss_xie_cis.rds'))
 original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reject.down') %>% dplyr::rename(rejected = reject.down)
 original_results = cbind(original_results, resampling_results[, c('gene_short_name', 'chr', 'strand', 'target_gene.start', 
                                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
