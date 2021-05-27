@@ -1,5 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE) 
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1] 
+code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1] 
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 # load packages 
@@ -19,17 +19,18 @@ gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlis
 ensembl <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
 ensembl.37 <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", GRCh = 37)
 
-temp <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol','chromosome_name','start_position','end_position'), 
+temp <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol','chromosome_name','start_position','end_position', 'strand'), 
               mart = ensembl, useCache = FALSE)
 gene.mart <- temp[match(gene.ensembl.id, temp$ensembl_gene_id), ]  # Match ensembl id with chromosome positions.
 
 # some gene id is from GRCh37, which has been deleted from CRCh38. We don't want to miss them.
 left_gene <- gene.ensembl.id[is.na(gene.mart$ensembl_gene_id)]
-temp.37 <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol','chromosome_name','start_position','end_position'), 
+temp.37 <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol','chromosome_name','start_position','end_position', 'strand'), 
                 filters = 'ensembl_gene_id', values = left_gene, mart = ensembl.37, useCache = FALSE)
 gene.mart[is.na(gene.mart$ensembl_gene_id), ] <- temp.37
 gene.mart$chr <- as.factor(paste0('chr', gene.mart$chromosome_name))
 saveRDS(gene.mart, file = paste0(processed_dir, "/gene_mart.rds"))
+
 
 ###########################
 # 2. guide RNA positions

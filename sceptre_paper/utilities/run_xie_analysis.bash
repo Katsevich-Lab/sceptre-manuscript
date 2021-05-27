@@ -32,8 +32,8 @@ Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_proc
 echo Construct model covariate matrix and perform quality control.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R $code_dir $offsite_dir
 
-echo Compute gene-gRNA pairs to analyze.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_4.1.R $code_dir $offsite_dir
+echo Determine the gene-gRNA pairs to analyze.
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_5.R $code_dir $offsite_dir
 
 # Locate the parameter file
 parameter_file=$code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"sceptre_function_args.R
@@ -48,7 +48,15 @@ bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_d
 wait
 
 echo Preprocess the sceptre results for downstream analysis.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_5.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_6.R $code_dir $offsite_dir
 
 echo Run bulk RNA-seq analysis.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"bulk_validation_6.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"bulk_validation_7.R $code_dir $offsite_dir
+
+# Xuran's downstream code below
+
+echo Get significance scores.
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"significance_score_8.R $code_dir $offsite_dir
+
+echo Run cis enrichment analysis
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"cis_enrichment_analysis_9.R $code_dir $offsite_dir
