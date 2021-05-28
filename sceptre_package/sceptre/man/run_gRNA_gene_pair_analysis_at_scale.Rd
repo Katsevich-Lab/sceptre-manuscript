@@ -17,7 +17,8 @@ run_gRNA_gene_pair_analysis_at_scale(
   cell_subset,
   seed,
   log_dir,
-  B
+  B,
+  side
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ run_gRNA_gene_pair_analysis_at_scale(
 \item{log_dir}{(optional) directory in which to sink the log file}
 
 \item{B}{number of bootstrap resamples (default 500)}
+
+\item{sie}{(optional, default left) sidedness of test}
 }
 \description{
 Runs the gene-gRRNA pair ananysis across an entire pod of gene-gRNA pairs.

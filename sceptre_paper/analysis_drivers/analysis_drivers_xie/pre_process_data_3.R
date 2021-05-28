@@ -37,6 +37,8 @@ genes_in_use_ids <- all_sequenced_genes_ids[protein_coding_genes_idxes]
 n_genes_in_use <- length(genes_in_use)
 H5Fclose(h5_handle)
 
+saveRDS(all_sequenced_genes_id, file = paste0(raw_data_dir, '/all_sequenced_genes_id.rds'))
+
 # Next, we create a file-backed matrix to store the transpose of the expression matrix
 exp_mat_t <- FBM(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", init = 0, backingfile = paste0(processed_dir, "/expression_matrix_t"), create_bk = TRUE)
 exp_mat_t_metadata <- list(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", backingfile = paste0(processed_dir, "/expression_matrix_t"))
@@ -178,3 +180,31 @@ xie_pfiles <- setNames(paste0(raw_data_dir, c("/hypergeometric_pvals_arl15_down.
 xie_pfiles_r <- xie_pfiles %>% map(readMat) %>% map(extract_p_vals_hypergeo)
 
 saveRDS(object = xie_pfiles_r, file = paste0(processed_dir, c("/xie_p_values.rds")))
+
+               
+#################################
+# Virtual FACS, Xie data 
+#################################
+gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
+gRNA_id = as.character(unique(gRNA.gene.pair$gRNA_id))
+gRNA.fname = sort(str_replace(gRNA_id, ':', '-'))
+
+xie_pfiles = setNames(paste0(raw_data_dir, '/', gRNA.fname, '-down_log-pval.mat'), gRNA_id)
+
+xie_pfiles_r <- xie_pfiles %>% map(readMat) %>% map(extract_p_vals)
+saveRDS(xie_pfiles_r, file = paste0(processed_dir, '/raw_p_val_xie.rds')) # without selection of gRNA-gene pairs in gRNA.gene.pair
+
+xie_pval_mat <-do.call('cbind', xie_pfiles_r)
+colnames(xie_pval_mat) <- gRNA_id
+rownames(xie_pval_mat) <- all_sequenced_genes_ids
+
+original_results_xie = do.call('rbind', lapply(1:nrow(gRNA.gene.pair), function(i){
+  data.frame(gRNA_id = gRNA.gene.pair$gRNA_id[i], 
+             gene_id = gRNA.gene.pair$gene_id[i], 
+             raw_p_val = xie_pval_mat[gRNA.gene.pair$gene_id[i], gRNA.gene.pair$gRNA_id[i]], 
+             site_type = gRNA.gene.pair$type[i])
+}))
+rownames(original_results_xie) = NULL
+saveRDS(original_results_xie, file = paste0(processed_dir, '/raw_pval_xie.rds'))
+# This is the matched gRNA.gene.pair
+ 
