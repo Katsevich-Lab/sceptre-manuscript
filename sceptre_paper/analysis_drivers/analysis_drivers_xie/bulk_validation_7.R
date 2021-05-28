@@ -1,13 +1,15 @@
 # Bulk RNA-seq
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/sceptre-manuscript/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 library(edgeR)
+library(tidyverse)
+library(fst)
 
 gene_names_in_use <- paste0(results_dir, "/all_results_with_names.fst") %>% read.fst() %>% filter(enh_names == "ARL15-enh") %>% pull(gene_names) %>% unique() %>% as.character()
 
 get_data_info <- function(enh_name) {
-  bulk_data <- paste0(processed_dir, "/bulk_RNAseq.rds") %>% readRDS() %>% pluck("data", enh_name) %>% select(-Chr, -Start, -End, -Strand, -Length) %>% filter(Geneid %in% gene_names_in_use)
+  bulk_data <- paste0(processed_dir, "/bulk_RNAseq.rds") %>% readRDS() %>% pluck("data", enh_name) %>% dplyr::select(-Chr, -Start, -End, -Strand, -Length) %>% filter(Geneid %in% gene_names_in_use)
   bulk_info <- paste0(processed_dir, "/bulk_RNAseq.rds") %>% readRDS() %>% pluck("info", enh_name)
   return(list(bulk_data = bulk_data, bulk_info = bulk_info))
 }
