@@ -1,6 +1,6 @@
 # Download data
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 suppressPackageStartupMessages(library(R.utils))
 
@@ -56,11 +56,9 @@ download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancer
 dest <- paste0(raw_data_dir, "/hypergeometric_pvals_myb3_down.mat")
 download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/chr6-135323137-135323537-down_log-pval.mat?raw=true", destfile = dest)
 
-
 ############
 # 5. TF info
 ############
 
 dest <- paste0(raw_data_dir, "/TF_human.csv")
 download.file(url = "https://www.dropbox.com/s/yva35ufl4yypr4t/TF_human.csv?dl=1", destfile = dest)
-=======
