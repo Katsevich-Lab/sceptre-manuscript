@@ -1,6 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
-library(katsevich2020)
+code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 p_vals_sceptre <- paste0(results_dir, "/all_results.fst") %>% read.fst()
