@@ -9,7 +9,7 @@ covariates_gasp = read.fst(sprintf("%s/data/gasperini/processed/cell_covariate_m
 
 # Xie results
 original_results_xie = readRDS(sprintf("%s/data/xie/processed/raw_pval_xie.rds", offsite_dir)) %>% as_tibble()
-resampling_results_xie_prev = read.fst(sprintf("%s/results/xie/sceptre/all_results_with_names.fst", offsite_dir)) %>% as_tibble()
+resampling_results_xie_with_names = read.fst(sprintf("%s/results/xie/sceptre/all_results_with_names.fst", offsite_dir)) %>% as_tibble()
 likelihood_results_xie = read.fst(sprintf("%s/results/xie/negative_binomial/all_results.fst", offsite_dir)) %>% as_tibble()
 resampling_results_xie <- read.fst(sprintf("%s/results/xie/sceptre/all_results.fst", offsite_dir)) %>% as_tibble()
 resampling_results_xie_cis <- read.fst(sprintf("%s/results/xie/sceptre/resampling_results_xie_cis.fst", offsite_dir)) %>% as_tibble()
