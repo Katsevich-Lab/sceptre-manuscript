@@ -71,16 +71,15 @@ colnames(ss.down) = sort(gRNA_id)
 rownames(ss.down) = all_sequenced_genes_id[1:58381]
 saveRDS(ss.down, file = paste0(processed_dir, "/ss_down.rds"))
 
-resampling_results_xie_cis = paste0(processed_dir, "/resampling_results_xie_cis.fst") %>% read.fst() %>% as_tibble()
-gene_id_cis = unique(resampling_results_xie_cis$gene_id)
+gene_id_cis = unique(gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 'cis'])
 idx_temp = match(gene_id_cis, all_sequenced_genes_id)
 
 SS.down.cis = ss.down[idx_temp, ]
 
 m.gene.id = match(resampling_results_xie_cis$gene_id, rownames(SS.down.cis))
 m.gRNA.id = match(resampling_results_xie_cis$gRNA_id, colnames(SS.down.cis))
-ss_xie_cis = data.frame(gene_id = resampling_results_xie_cis$gene_id, 
-                        gRNA_id = resampling_results_xie_cis$gRNA_id, 
+ss_xie_cis = data.frame(gene_id = gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 'cis'],  
+                        gRNA_id = gRNA.gene.pair$gRNA_id[gRNA.gene.pair$type == 'cis'],
                         ss.down = SS.down.cis[cbind(m.gene.id, m.gRNA.id)])
   
 ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[135]
