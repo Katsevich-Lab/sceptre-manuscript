@@ -76,8 +76,8 @@ idx_temp = match(gene_id_cis, all_sequenced_genes_id)
 
 SS.down.cis = ss.down[idx_temp, ]
 
-m.gene.id = match(resampling_results_xie_cis$gene_id, rownames(SS.down.cis))
-m.gRNA.id = match(resampling_results_xie_cis$gRNA_id, colnames(SS.down.cis))
+m.gene.id = match(gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 'cis'], rownames(SS.down.cis))
+m.gRNA.id = match(gRNA.gene.pair$gRNA_id[gRNA.gene.pair$type == 'cis'], colnames(SS.down.cis))
 ss_xie_cis = data.frame(gene_id = gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 'cis'],  
                         gRNA_id = gRNA.gene.pair$gRNA_id[gRNA.gene.pair$type == 'cis'],
                         ss.down = SS.down.cis[cbind(m.gene.id, m.gRNA.id)])
