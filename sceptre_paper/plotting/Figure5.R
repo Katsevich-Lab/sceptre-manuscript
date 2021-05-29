@@ -1,3 +1,6 @@
+=======
+# code goes here!
+
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
