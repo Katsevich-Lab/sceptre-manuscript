@@ -76,7 +76,7 @@ p_b <- df1 %>% filter(-log10(expected) > 2 | row_number() %% subsampling_factor 
 # ggsave(filename = paste0(fig3_dir, "/figure3b.pdf"), plot = p_b, device = "pdf", scale = 1, width = 4, height = 3)
 
 # new subfigure c: negative control for Xie data
-gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs_full.fst')) %>% as_tibble()
+gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst')) %>% as_tibble()
 df_NTC <- rbind(select(original_results_xie, gene_id, gRNA_id, pvalue = raw_p_val, site_type) %>% mutate(method = "Virtual FACS"),
                 select(resampling_results_xie, gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "SCEPTRE"),
                 select(likelihood_results_xie,  gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "Improved NB")) %>% filter(site_type == "negative_control") %>% mutate_at(.vars = c("gene_id", "gRNA_id", "site_type"), .funs = factor) %>% 
@@ -144,8 +144,8 @@ p_d <- combined_results %>%
 
 # subfigure e: bulk RNA-seq confirmation
 p_vals_bulk <- mutate(p_vals_bulk, rejected_bulk = p_value_adj < 0.1)
-resampling_results_xie_prev <- resampling_results_xie_prev %>% filter(enh_names == "ARL15-enh")
-resampling_results_xie_for_bulk <- resampling_results_xie_prev %>% select(p_value, gene_names) %>% 
+resampling_results_xie_with_names <- resampling_results_xie_with_names %>% filter(enh_names == "ARL15-enh")
+resampling_results_xie_for_bulk <- resampling_results_xie_with_names %>% select(p_value, gene_names) %>% 
   mutate(p_value_adj = p.adjust(p_value, method = "BH"), rejected_sceptre = p_value_adj < 0.1)
 to_plot <- inner_join(p_vals_bulk, resampling_results_xie_for_bulk, by = "gene_names") %>% 
   rename(bulk_pval_adj = p_value_adj.x, bulk_pval = p_value.x, sceptre_pval_adj = p_value_adj.y, sceptre_pval = p_value.y) %>% 
