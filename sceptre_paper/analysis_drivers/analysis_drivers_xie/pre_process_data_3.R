@@ -37,6 +37,8 @@ genes_in_use_ids <- all_sequenced_genes_ids[protein_coding_genes_idxes]
 n_genes_in_use <- length(genes_in_use)
 H5Fclose(h5_handle)
 
+saveRDS(all_sequenced_genes_id, file = paste0(raw_data_dir, '/all_sequenced_genes_id.rds'))
+
 # Next, we create a file-backed matrix to store the transpose of the expression matrix
 exp_mat_t <- FBM(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", init = 0, backingfile = paste0(processed_dir, "/expression_matrix_t"), create_bk = TRUE)
 exp_mat_t_metadata <- list(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", backingfile = paste0(processed_dir, "/expression_matrix_t"))
