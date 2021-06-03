@@ -1,14 +1,14 @@
-args <- commandArgs(trailingOnly = TRUE) 
-code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1] 
+args <- commandArgs(trailingOnly = TRUE)
+code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
-require(readxl)
+library(readxl)
 library(dplyr)
-require(katsevich2020)
+library(katsevich2020)
 library(fst)
 library(readr)
-require(plyranges)
-require(GenomicRanges)
+library(plyranges)
+library(GenomicRanges)
 library(tidyr)
 
 # create cis file for resampling results for Xie data
@@ -18,26 +18,25 @@ pair.temp = paste0(gRNA.gene.pair$gRNA_id, '+', gRNA.gene.pair$gene_id)
 all.temp = paste0(resampling_results_xie$gRNA_id, '+', resampling_results_xie$gene_id)
 resampling_results_xie$site_type = gRNA.gene.pair$type[match(all.temp, pair.temp)]
 
-resampling_results_xie_cis <- resampling_results_xie %>% group_by(site_type) %>% 
-  mutate(adjusted_pvalue = ifelse(site_type == 'cis', p.adjust(p_value, 'fdr'), NA), 
+resampling_results_xie_cis <- resampling_results_xie %>% group_by(site_type) %>%
+  mutate(adjusted_pvalue = ifelse(site_type == 'cis', p.adjust(p_value, 'fdr'), NA),
          rejected = ifelse(is.na(adjusted_pvalue), FALSE, adjusted_pvalue <= 0.1)) %>%
   ungroup() %>% filter(site_type == 'cis')
 
 gene.mart = readRDS(paste0(processed_dir, '/gene_mart.rds'))
-gRNA.mart = readRDS(paste0(processed_dir, '/gRNA_mart.rds'))
 
 gene.ensembl.id <- lapply(strsplit(as.character(resampling_results_xie_cis$gene_id), '[.]'), function(x){x[1]}) %>% unlist
-resampling_results_xie_cis = cbind(resampling_results_xie_cis, 
-                                   gene.mart[match(gene.ensembl.id, gene.mart$ensembl_gene_id), 
+resampling_results_xie_cis = cbind(resampling_results_xie_cis,
+                                   gene.mart[match(gene.ensembl.id, gene.mart$ensembl_gene_id),
                                              c('hgnc_symbol', 'chr', 'strand', 'start_position', 'end_position')])
-resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(gene_short_name = hgnc_symbol, 
-                                                                    target_gene.start = start_position, 
+resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(gene_short_name = hgnc_symbol,
+                                                                    target_gene.start = start_position,
                                                                     target_gene.stop = end_position)
 resampling_results_xie_cis <- resampling_results_xie_cis %>% mutate(TSS = ifelse(strand > 0, target_gene.start, target_gene.stop))
-resampling_results_xie_cis = cbind(resampling_results_xie_cis, gRNA.mart[match(resampling_results_xie_cis$gRNA_id, gRNA.mart$gRNA_id), 
+resampling_results_xie_cis = cbind(resampling_results_xie_cis, gRNA.mart[match(resampling_results_xie_cis$gRNA_id, gRNA.mart$gRNA_id),
                                              c('start_position', 'end_position', 'mid_position')])
-resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(target_site.start = start_position, 
-                                                                    target_site.stop = end_position, 
+resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(target_site.start = start_position,
+                                                                    target_site.stop = end_position,
                                                                     target_site.mid = mid_position)
 write.fst(resampling_results_xie_cis, paste0(results_dir, "/resampling_results_xie_cis.fst"))
 
@@ -45,13 +44,13 @@ write.fst(resampling_results_xie_cis, paste0(results_dir, "/resampling_results_x
 results_dir_enrichment <- paste0(offsite_dir, "/results/xie/enrichment")
 functional_data_dir <- paste0(offsite_dir, "/data/functional/")
 
-# Read in the association results 
+# Read in the association results
 resampling_results_xie_cis <- paste0(results_dir, "/resampling_results_xie_cis.fst") %>% read.fst()
 resampling_results = resampling_results_xie_cis
 
 ss_xie_cis = readRDS(file = paste0(processed_dir, '/ss_xie_cis.rds'))
 original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reject.down') %>% dplyr::rename(rejected = reject.down)
-original_results = cbind(original_results, resampling_results[, c('gene_short_name', 'chr', 'strand', 'target_gene.start', 
+original_results = cbind(original_results, resampling_results[, c('gene_short_name', 'chr', 'strand', 'target_gene.start',
                                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
                                                                   'target_site.mid')])
 
@@ -79,7 +78,7 @@ if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.t
     chipseq_data[[TF]] = data
   }
   chipseq_data = do.call("rbind", chipseq_data)
-  
+
   # extract which enhancers are paired to genes in original and new analyses
   df_cand_enhancers = original_results %>%
     #filter(site_type == "cis") %>%
@@ -94,16 +93,16 @@ if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.t
                  summarise(rejected_new = any(rejected)),
                by = "gRNA_id") %>%
     unique() %>%
-    mutate(rejected_new_unique = rejected_new & !rejected_old, 
+    mutate(rejected_new_unique = rejected_new & !rejected_old,
            rejected_old_unique = rejected_old & !rejected_new)
-  
+
   # GRanges object for chipseq data
   gr_chipseq <- GRanges(
     seqnames = chipseq_data$chrom,
     ranges = IRanges(start = chipseq_data$chromStart, end = chipseq_data$chromEnd),
     score = chipseq_data$signalValue,
     TF = chipseq_data$TF)
-  
+
   # GRanges object for candidate enhancers
   gr_cand = GRanges(
     seqnames = df_cand_enhancers$chr,
@@ -113,14 +112,14 @@ if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.t
     rejected_new_unique = df_cand_enhancers$rejected_new_unique,
     rejected_old_unique = df_cand_enhancers$rejected_old_unique,
     gRNA_id = df_cand_enhancers$gRNA_id)
-  
+
   # Split chipseq data into quintiles
   gr_chipseq_quintiles = gr_chipseq %>%
     subsetByOverlaps(gr_cand) %>%
     group_by(TF) %>%
     mutate(quintile = 1+floor((2-1e-10)*percent_rank(score))) %>%
     ungroup()
-  
+
   # Compute which quintile each candidate enhancer falls into
   assign_quintiles = function(TF) {
     join_overlap_left(gr_cand, gr_chipseq_quintiles %>%
@@ -131,7 +130,7 @@ if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.t
   }
   TFs = chipseq_data %>% pull(TF) %>% unique()
   gr_cand_overlaps = do.call("c", lapply(TFs, assign_quintiles))
-  
+
   # compute paired fractions in each quintile
   paired_fractions = gr_cand_overlaps %>%
     group_by(TF, quintile) %>%
@@ -141,7 +140,7 @@ if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.t
               rejected_new_unique = mean(rejected_new_unique)) %>%
     as_tibble()
   write_tsv(paired_fractions, sprintf("%s/TF_paired_enhancer_fractions.tsv", results_dir_enrichment))
-  
+
   # compute odds ratios for old and new methods
   old_enrichments = sapply(important_TFs, function(TF){
     enrichment = gr_cand_overlaps %>%
@@ -179,9 +178,9 @@ if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.t
       fisher.test()
     c(enrichment$estimate, enrichment$conf.int)
   })
-  
-  
-  TF_enrichments = tibble(TF = important_TFs, old_enrichments = old_enrichments[1, ], new_enrichments = new_enrichments[1, ], 
+
+
+  TF_enrichments = tibble(TF = important_TFs, old_enrichments = old_enrichments[1, ], new_enrichments = new_enrichments[1, ],
                           old_unique_enrichments = old_unique_enrichments[1, ], new_unique_enrichments = new_unique_enrichments[1, ]) %>%
     gather(method, enrichment, -TF) %>%
     mutate(method = factor(method,
@@ -199,7 +198,7 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
   domains = read_tsv(sprintf("%sHIC/GSE63525_K562_Arrowhead_domainlist.txt", functional_data_dir),
                      col_types = "ciiciicddddd") %>%
     mutate(chr1 = sprintf("chr%s", chr1), chr2 = sprintf("chr%s", chr2))
-  
+
   all_pairs = original_results %>%
     #filter(site_type == "cis") %>%
     select(chr, gene_id, target_gene.start, target_gene.stop, TSS,
@@ -210,28 +209,28 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
                 select(gene_id,  gRNA_id, rejected) %>%
                 dplyr::rename(rejected_new = rejected),
               by = c("gene_id", "gRNA_id"))
-  
+
   all_enhancers = all_pairs %>% select(gRNA_id, chr, target_site.start, target_site.stop) %>% unique()
   all_genes = all_pairs %>% select(gene_id, chr, target_gene.start, target_gene.stop, TSS) %>% unique()
-  
+
   gr_enhancers = GRanges(
     seqnames = all_enhancers$chr,
     ranges = IRanges(start = all_enhancers$target_site.start, end = all_enhancers$target_site.stop),
     gRNA_id = all_enhancers$gRNA_id)
-  
+
   gr_genes = GRanges(
     seqnames = all_genes$chr,
     ranges = IRanges(start = all_genes$target_gene.start, end = all_genes$target_gene.stop),
     gene_id = all_genes$gene_id)
-  
+
   gr_domains <- GRanges(
     seqnames = domains$chr1,
     ranges = IRanges(start = domains$x1, end = domains$x2),
     domain_id = 1:nrow(domains))
-  
+
   gr_genes = gr_genes %>% join_overlap_left(gr_domains)
   gr_enhancers = gr_enhancers %>% join_overlap_left(gr_domains)
-  
+
   rejected_pairs = all_pairs %>% filter(rejected_old | rejected_new)
   num_rejected_pairs = nrow(rejected_pairs)
   TAD_left = integer(num_rejected_pairs)
@@ -257,14 +256,14 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
   }
   rejected_pairs$TAD_left = TAD_left
   rejected_pairs$TAD_right = TAD_right
-  
+
   quality = "MAPQG0"
   resolution = 5000
   resolution_name = "5kb"
   chrs = rejected_pairs %>% filter(!is.na(TAD_left)) %>% pull(chr) %>% unique() %>% sort()
   rejected_pairs_chr_list = vector("list", length(chrs))
   names(rejected_pairs_chr_list) = chrs
-  
+
   for (chr in chrs) {
     cat(sprintf("Working on %s...\n", chr))
     cat(sprintf("Reading HI-C data...\n"))
@@ -272,27 +271,27 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
                                 functional_data_dir, resolution_name, chr, quality, chr, resolution_name),
                         col_names = c("Start1", "Start2", "count"),
                         col_types = "iid")
-    
+
     KRnorm = read_tsv(sprintf("%s/HIC/GSE63525_K562_intrachromosomal_contact_matrices/K562/%s_resolution_intrachromosomal/%s/%s/%s_%s.KRnorm",
                               functional_data_dir,resolution_name,chr,quality,chr,resolution_name),
                       col_names = "normalization", col_types = "d") %>%
       pull()
-    
+
     rejected_pairs_chr = rejected_pairs %>%
       filter(chr == !!chr, !is.na(TAD_left)) %>%
       mutate(enhancer = 0.5*(target_site.start + target_site.stop)) %>%
       select(enhancer, TSS, TAD_left, TAD_right, gene_id, gRNA_id, rejected_old, rejected_new) %>%
       mutate_at(c("enhancer", "TSS", "TAD_left", "TAD_right"), ~floor(./resolution)+1)
-    
+
     observed_normalized = observed %>%
       mutate(Start1 = Start1/resolution+1,
              Start2 = Start2/resolution+1,
              score = count/(KRnorm[Start1]*KRnorm[Start2])) %>%
       select(Start1, Start2, score)
-    
+
     num_rejected_pairs = nrow(rejected_pairs_chr)
     score_ranks = numeric(num_rejected_pairs)
-    
+
     for (idx in 1:num_rejected_pairs) {
       cat(sprintf("Working on rejected pair %d out of %d...\n", idx, num_rejected_pairs))
       enhancer = rejected_pairs_chr$enhancer[idx]
@@ -317,9 +316,9 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
     rm(observed)
     gc()
   }
-  
+
   rejected_pairs_chr = do.call("rbind", rejected_pairs_chr_list)
-  
+
   rejected_pairs = rejected_pairs %>%
     left_join(rejected_pairs_chr %>%
                 select(gene_id, gRNA_id, score_rank),
