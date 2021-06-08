@@ -25,7 +25,7 @@ all_sequenced_genes_id <- readRDS(paste0(raw_data_dir, '/all_sequenced_genes_id.
 xie_pfiles = setNames(paste0(raw_data_dir, '/', gRNA.fname, '-down_log-pval.mat'), gRNA_id)
 extract_p_vals = function(p_mat){
   p_vals <- exp(p_mat$matrix[1, ])
-  names(p_vals) <- all_sequenced_genes_ids  #actually this should be provided in download_data_2.R
+  names(p_vals) <- all_sequenced_genes_id  #actually this should be provided in download_data_2.R
   return(p_vals)
 }
 xie_pfiles_r <- xie_pfiles %>% map(readMat) %>% map(extract_p_vals)
@@ -33,7 +33,7 @@ saveRDS(xie_pfiles_r, file = paste0(processed_dir, '/raw_p_val_xie.rds')) # with
 
 xie_pval_mat <-do.call('cbind', xie_pfiles_r)
 colnames(xie_pval_mat) <- gRNA_id
-rownames(xie_pval_mat) <- all_sequenced_genes_ids
+rownames(xie_pval_mat) <- all_sequenced_genes_id
 
 original_results_xie = do.call('rbind', lapply(1:nrow(gRNA.gene.pair), function(i){
   data.frame(gRNA_id = gRNA.gene.pair$gRNA_id[i], 
