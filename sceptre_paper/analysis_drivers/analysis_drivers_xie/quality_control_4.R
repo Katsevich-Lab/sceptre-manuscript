@@ -1,5 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 # First, save the model covariate matrix
@@ -19,8 +19,7 @@ gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 exp_mat <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm()
 gene_expression_p <- big_apply(exp_mat, function(X, ind) colMeans(X[,ind] >= 1)) %>% unlist()
 highly_expressed_genes <- gene_ids[which(gene_expression_p >= 0.08)] %>% unique()
-gRNA_gene_pairs <- expand_grid(gene_id = highly_expressed_genes, gRNA_id = gRNA_id) %>% mutate(gene_id = factor(gene_id), gRNA_id = factor(gRNA_id))
-write.fst(gRNA_gene_pairs, paste0(processed_dir, "/gRNA_gene_pairs.fst"))
+saveRDS(object = highly_expressed_genes, file = paste0(processed_dir, "/highly_expressed_genes.rds"))
 
 # Finally, partition the cells into exploratory and validation sets
 set.seed(1234)

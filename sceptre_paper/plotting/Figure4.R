@@ -190,3 +190,4 @@ left_col <- plot_grid(p_a, p_d, align = "v", labels = c("a", "d"), ncol = 1, rel
 right_col <- plot_grid(p_b, p_c, p_e, align = "vh", labels = c("b", "c", "e"), ncol = 1)
 final_plot <- plot_grid(left_col, right_col, align = "h", ncol = 2, rel_widths = c(1.1,1))
 ggsave(filename = paste0(fig4_dir, "/subfigures_a_thru_e.pdf"), plot = final_plot, device = "pdf", scale = 1, width = 8, height = 8)
+
