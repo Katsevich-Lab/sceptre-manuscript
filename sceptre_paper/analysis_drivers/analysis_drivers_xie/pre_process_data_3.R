@@ -2,7 +2,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1]
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
-packs <- c("future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "katsevich2020")
+packs <- c("future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "katsevich2020", "magrittr")
 for (pack in packs) suppressPackageStartupMessages(library(pack, character.only = TRUE))
 
 ###################
@@ -37,7 +37,7 @@ genes_in_use_ids <- all_sequenced_genes_ids[protein_coding_genes_idxes]
 n_genes_in_use <- length(genes_in_use)
 H5Fclose(h5_handle)
 
-saveRDS(all_sequenced_genes_id, file = paste0(raw_data_dir, '/all_sequenced_genes_id.rds'))
+saveRDS(all_sequenced_genes_ids, file = paste0(raw_data_dir, '/all_sequenced_genes_id.rds'))
 
 # Next, we create a file-backed matrix to store the transpose of the expression matrix
 exp_mat_t <- FBM(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", init = 0, backingfile = paste0(processed_dir, "/expression_matrix_t"), create_bk = TRUE)

@@ -23,7 +23,7 @@ bash build_and_install_package.bash katsevich2020 $machine
 echo Initialize the offsite directory structure.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"check_directory_structure_1.R $code_dir $offsite_dir
 
-echo Download the data. Note that one of the downloads must be done manually.
+echo Download the data.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"download_data_2.R $code_dir $offsite_dir
 
 echo Pre-process the data.
