@@ -44,6 +44,8 @@ write.fst(resampling_results_xie_cis, paste0(results_dir, "/resampling_results_x
 # Define a couple directories
 results_dir_enrichment <- paste0(offsite_dir, "/results/xie/enrichment")
 functional_data_dir <- paste0(offsite_dir, "/data/functional/")
+if (!dir.exists(results_dir_enrichment)) dir.create(results_dir_enrichment)
+if (!dir.exists(functional_data_dir)) dir.create(functional_data_dir)
 
 # Read in the association results
 resampling_results_xie_cis <- paste0(results_dir, "/resampling_results_xie_cis.fst") %>% read.fst()
