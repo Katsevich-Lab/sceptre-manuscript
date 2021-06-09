@@ -1,4 +1,4 @@
-offsite_dir <- if (is.na(args[2])) "/Volumes/tims_new_drive/research/sceptre_files" else args[2]
+offsite_dir <- if (is.na(args[2])) "/Volumes/tims_new_drive/research/sceptre_files/" else args[2]
 manuscript_figure_dir <- paste0(code_dir, "/sceptre_paper/manuscript/figures")
 
 # Gasperini results
@@ -19,6 +19,7 @@ all.temp = paste0(gRNA.gene.pair$gRNA_id, '+', gRNA.gene.pair$gene_id)
 new.temp = paste0(likelihood_results_xie$gRNA_id, '+', likelihood_results_xie$gene_id)
 likelihood_results_xie = likelihood_results_xie[match(all.temp, new.temp), ]
 likelihood_results_xie$site_type = gRNA.gene.pair$type
+new.temp = paste0(resampling_results_xie$gRNA_id, '+', resampling_results_xie$gene_id)
 resampling_results_xie = resampling_results_xie[match(all.temp, new.temp), ]
 resampling_results_xie$site_type = gRNA.gene.pair$type
 
@@ -35,7 +36,7 @@ simulation_results = read.fst(sprintf("%s/results/simulations/all_results.fst", 
 # enrichment results Gasperini
 rejected_pairs_HIC = read_tsv(sprintf("%s/results/gasperini/enrichment/rejected_pairs_HIC.tsv", offsite_dir),
                               col_types = "cciiiciilliid")
-TF_enrichments = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_enrichments.tsv", offsite_dir), 
+TF_enrichments = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_enrichments.tsv", offsite_dir),
                           col_types = "ccd")
 paired_fractions = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_paired_enhancer_fractions.tsv", offsite_dir),
                             col_types = "cidddd")
@@ -43,11 +44,10 @@ paired_fractions = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_paired_e
 # enrichment results Xie
 rejected_pairs_HIC_xie <- read_tsv(sprintf("%s/results/xie/enrichment/rejected_pairs_HIC.tsv", offsite_dir),
                               col_types = "cciiiciilliid") %>% as_tibble()
-TF_enrichments_xie = read_tsv(sprintf("%s/results/xie/enrichment/TF_enrichments.tsv", offsite_dir), 
-                          col_types = "ccd") %>% as_tibble()
+TF_enrichments_xie = read_tsv(sprintf("%s/results/xie/enrichment/TF_enrichments.tsv", offsite_dir),
+                              col_types = "ccddd") %>% as_tibble()
 paired_fractions_xie = read_tsv(sprintf("%s/results/xie/enrichment/TF_paired_enhancer_fractions.tsv", offsite_dir),
                             col_types = "cidddd") %>% as_tibble()
-
 
 # dispersion coefficients alpha_0 and alpha_1 from equation (6) in DESeq2 paper
 disp_coeffs = as.numeric(readRDS(sprintf("%s/data/gasperini/processed/disp_coefficients.rds", offsite_dir)))

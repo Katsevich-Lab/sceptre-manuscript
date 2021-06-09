@@ -1,6 +1,6 @@
 # Reproduce Figure 3 from Katsevich, Barry, and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/sceptre-manuscript/SCEPTRE/" else args[1]
+code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1]
 require(katsevich2020)
 require(cowplot)
 source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
@@ -72,13 +72,13 @@ p_b <- df1 %>% filter(-log10(expected) > 2 | row_number() %% subsampling_factor 
                      axis.line = element_line(),
                      plot.title = element_text(hjust = 0.5)) +
   guides(colour = guide_legend(override.aes = list(alpha = 1)))
-
 # ggsave(filename = paste0(fig3_dir, "/figure3b.pdf"), plot = p_b, device = "pdf", scale = 1, width = 4, height = 3)
 
 # new subfigure c: negative control for Xie data
+
 df_NTC <- rbind(select(original_results_xie, gene_id, gRNA_id, pvalue = raw_p_val, site_type) %>% mutate(method = "Virtual FACS"),
                 select(resampling_results_xie, gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "SCEPTRE"),
-                select(likelihood_results_xie,  gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "Improved NB")) %>% filter(site_type == "negative_control") %>% mutate_at(.vars = c("gene_id", "gRNA_id", "site_type"), .funs = factor) %>% 
+                select(likelihood_results_xie,  gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "Improved NB")) %>% filter(site_type == "negative_control") %>% mutate_at(.vars = c("gene_id", "gRNA_id", "site_type"), .funs = factor) %>%
   mutate(method = factor(x = as.character(method), levels = c("Virtual FACS", "Improved NB", "SCEPTRE"), labels = c("Virtual FACS", "Improved NB", "SCEPTRE"))) %>% arrange(method)
 
 df1 <- df_NTC %>%
@@ -89,7 +89,7 @@ df1 <- df_NTC %>%
   ungroup() %>% mutate()
 
 p_thresh <- 1e-8
-p_xie_neg <- df1 %>% filter(-log10(expected) > 0 | row_number() %% subsampling_factor == 0) %>% 
+p_xie_neg <- df1 %>% filter(-log10(expected) > 0 | row_number() %% subsampling_factor == 0) %>%
   mutate(clower = ifelse(method == "SCEPTRE", clower, NA), cupper = ifelse(method == "SCEPTRE", cupper, NA)) %>%
   mutate(pvalue = ifelse(pvalue < p_thresh, p_thresh, pvalue)) %>%
   ggplot(aes(x = expected, y = pvalue, group = method, ymin = clower, ymax = cupper)) +
@@ -97,7 +97,7 @@ p_xie_neg <- df1 %>% filter(-log10(expected) > 0 | row_number() %% subsampling_f
   geom_ribbon(alpha = 0.2) +
   geom_abline(intercept = 0, slope = 1) +
   scale_colour_manual(values = setNames(plot_colors[c("hypergeometric", "hf_nb", "sceptre")], NULL), name = "Method") +
-  scale_x_continuous(trans = revlog_trans(base = 10)) + 
+  scale_x_continuous(trans = revlog_trans(base = 10)) +
   scale_y_continuous(trans = revlog_trans(base = 10)) +
   xlab(expression(paste("Expected null p-value"))) +
   ylab(expression(paste("Observed p-value"))) +
@@ -111,7 +111,6 @@ p_xie_neg <- df1 %>% filter(-log10(expected) > 0 | row_number() %% subsampling_f
     axis.line = element_line(),
     plot.title = element_text(hjust = 0.5)) +
   guides(colour = guide_legend(override.aes = list(alpha = 1)))
-
 #ggsave(filename = paste0(fig3_dir, "/figure_xie_neg.pdf"), plot = p_xie_neg, device = "pdf", scale = 1, width = 5, height = 3)
 
 # subfigure d: gasperini positive controls
@@ -144,10 +143,10 @@ p_d <- combined_results %>%
 # subfigure e: bulk RNA-seq confirmation
 p_vals_bulk <- mutate(p_vals_bulk, rejected_bulk = p_value_adj < 0.1)
 resampling_results_xie_with_names <- resampling_results_xie_with_names %>% filter(enh_names == "ARL15-enh")
-resampling_results_xie_for_bulk <- resampling_results_xie_with_names %>% select(p_value, gene_names) %>% 
+resampling_results_xie_for_bulk <- resampling_results_xie_with_names %>% select(p_value, gene_names) %>%
   mutate(p_value_adj = p.adjust(p_value, method = "BH"), rejected_sceptre = p_value_adj < 0.1)
-to_plot <- inner_join(p_vals_bulk, resampling_results_xie_for_bulk, by = "gene_names") %>% 
-  rename(bulk_pval_adj = p_value_adj.x, bulk_pval = p_value.x, sceptre_pval_adj = p_value_adj.y, sceptre_pval = p_value.y) %>% 
+to_plot <- inner_join(p_vals_bulk, resampling_results_xie_for_bulk, by = "gene_names") %>%
+  rename(bulk_pval_adj = p_value_adj.x, bulk_pval = p_value.x, sceptre_pval_adj = p_value_adj.y, sceptre_pval = p_value.y) %>%
   mutate(is_arl15 = (gene_names == "ARL15"))
 
 p_e <- ggplot(data = to_plot, mapping = aes(x = bulk_pval, y = sceptre_pval, col = is_arl15)) +
@@ -184,5 +183,5 @@ middle_row <- plot_grid(p_b, p_c, align = "hv", nrow = 1, ncol = 2, labels = c("
 bottom_row <- plot_grid(p_d, p_e, align = "hv", nrow = 1, ncol = 2, labels = c("d", "e"), hjust = -4)
 final_plot <- plot_grid(p_a, middle_row, bottom_row, nrow = 3, labels = c("a", "", ""), hjust = -4, rel_heights = c(0.8, 1, 0.8))
 #save(final_plot, file = 'Figure3_plot.RData')
-ggsave(filename = paste0(manuscript_figure_dir, "/Figure3/subfigures_a_thru_e.pdf"), plot = final_plot, device = "pdf", 
+ggsave(filename = paste0(manuscript_figure_dir, "/Figure3/subfigures_a_thru_e.pdf"), plot = final_plot, device = "pdf",
        scale = 1, width = 7, height = 8)
