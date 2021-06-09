@@ -8,7 +8,7 @@ likelihood_results_gasp = read.fst(sprintf("%s/results/gasperini/negative_binomi
 covariates_gasp = read.fst(sprintf("%s/data/gasperini/processed/cell_covariate_model_matrix.fst", offsite_dir)) %>% as_tibble()
 
 # Xie results
-gRNA.gene.pair = read.fst(sprintf("%s/data/xie/processed/gRNA_gene_pair.fst", offsite_dir)) %>% as_tibble()
+gRNA.gene.pair = read.fst(sprintf("%s/data/xie/processed/gRNA_gene_pairs.fst", offsite_dir)) %>% as_tibble()
 original_results_xie = readRDS(sprintf("%s/data/xie/processed/raw_pval_xie.rds", offsite_dir)) %>% as_tibble()
 resampling_results_xie_with_names = read.fst(sprintf("%s/results/xie/sceptre/all_results_with_names.fst", offsite_dir)) %>% as_tibble()
 likelihood_results_xie = read.fst(sprintf("%s/results/xie/negative_binomial/all_results.fst", offsite_dir)) %>% as_tibble()
