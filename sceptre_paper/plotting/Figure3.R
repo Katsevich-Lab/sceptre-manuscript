@@ -76,7 +76,6 @@ p_b <- df1 %>% filter(-log10(expected) > 2 | row_number() %% subsampling_factor 
 # ggsave(filename = paste0(fig3_dir, "/figure3b.pdf"), plot = p_b, device = "pdf", scale = 1, width = 4, height = 3)
 
 # new subfigure c: negative control for Xie data
-gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst')) %>% as_tibble()
 df_NTC <- rbind(select(original_results_xie, gene_id, gRNA_id, pvalue = raw_p_val, site_type) %>% mutate(method = "Virtual FACS"),
                 select(resampling_results_xie, gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "SCEPTRE"),
                 select(likelihood_results_xie,  gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "Improved NB")) %>% filter(site_type == "negative_control") %>% mutate_at(.vars = c("gene_id", "gRNA_id", "site_type"), .funs = factor) %>% 
