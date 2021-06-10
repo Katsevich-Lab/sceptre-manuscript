@@ -3,6 +3,7 @@ args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 offsite_dir <- if (is.na(args[2])) "/Volumes/tims_new_drive/research/sceptre_files" else args[2]
 fig2_dir <- paste0(code_dir, "/sceptre_paper/manuscript/figures/Figure2")
+require(sceptre)
 require(katsevich2020)
 
 # Select the gene and gRNA to use in the plot
