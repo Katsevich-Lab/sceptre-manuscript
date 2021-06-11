@@ -3,7 +3,7 @@
 # This bash script runs the simulation analysis. It is assumed that the script is being executed from the utilities directory.
 
 # Set the machine.
-machine=local
+machine=uberduo
 
 # Obtain the filepaths to the code and "offsite" directories
 code_dir=$(bash get_file_paths.bash $machine code)
@@ -20,8 +20,7 @@ echo Generate the simulation data.
 Rscript $code_dir"/sceptre_paper/simulations/"generate_data_1.R $offsite_dir
 
 echo Run the various methods on the various simulated datasets.
-# methods=(sceptre negative_binomial scMAGeCK)
-methods=(scMAGeCK)
+methods=(sceptre negative_binomial scMAGeCK)
 datasets=(1 2 3 4)
 for i in "${datasets[@]}"
 do
