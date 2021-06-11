@@ -176,7 +176,7 @@ p_vert <- ggplot(data = ex, mapping = aes(x = x, y = y, col = Method)) + geom_po
 legend <- get_legend(plot = p_vert)
 #ggsave(plot = legend, filename = paste0(manuscript_figure_dir, "/Figure3/vert_legend.pdf"), width = 1.5, height = 1.5)
 library(patchwork)
-p_c <- p_xie_neg + inset_element(legend, left = 0.1, right = 0.4, bottom = 0.45, top = 1)
+p_c <- p_xie_neg + inset_element(legend, left = 0.1, right = 0.4, bottom = 0.45, top = 0.95)
 
 # Arrange figure 3 through cowplot
 middle_row <- plot_grid(p_b, p_c, align = "hv", nrow = 1, ncol = 2, labels = c("b", "c"),  hjust = -4)
