@@ -30,6 +30,10 @@ rejected_by_annotated[resampling_results$rejected*10 + ss_xie_cis$reject.down ==
 rejected_by_annotated[resampling_results$rejected*10 + ss_xie_cis$reject.down == 10] = 'SCEPTRE only'
 rejected_by_annotated[resampling_results$rejected*10 + ss_xie_cis$reject.down == 11] = 'Both methods'
 rejected_by_annotated = factor(rejected_by_annotated, levels = c("Neither method", "Both methods", "SCEPTRE only", "Virtual FACS only"))
+table(rejected_by_annotated)
+#rejected_by_annotated
+#   Neither method      Both methods      SCEPTRE only Virtual FACS only 
+#             3367                84                51                51 
 
 ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[135]
 df_s = data.frame(gene_id = resampling_results$gene_id, gRNA_id = resampling_results$gRNA_id, 
@@ -86,9 +90,9 @@ dist_tab <- rbind(
 ) %>%
   gather(metric, measure, -method) %>%
   spread(method, measure) # %>% kable(format = "latex", booktabs = TRUE, escape = FALSE, linesep = "",digits = 1, col.names = c("", "Original", "SCEPTRE"))
-#                metric  Original   SCEPTRE
-#1   Mean distance (kb) -208.6619 -97.81045
-#2 Median distance (kb)  -58.5065 -40.98050
+#metric  Original  SCEPTRE
+#1   Mean distance (kb) -208.6636 -97.8121
+#2 Median distance (kb)  -58.5065 -40.9805
 
 p_b <- rbind(df1, df2) %>%
   filter(TSS_dist <= 0) %>%
