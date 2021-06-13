@@ -13,13 +13,6 @@ fig5_dir <- paste0(manuscript_figure_dir, "/Figure5")
 ####### subfigure a (Significance Score vs SCEPTRE p-values) #########
 resampling_results <- resampling_results_xie_cis
 original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reject.down') %>% dplyr::rename(rejected = reject.down)
-if(nrow(resampling_results) != nrow(original_results)){
-  ori.temp = paste0(original_results$gRNA_id, '+', original_results$gene_id)
-  res.temp = paste0(resampling_results$gRNA_id, '+', resampling_results$gene_id)
-  com.temp = intersect(ori.temp, res.temp)
-  resampling_results = resampling_results[match(com.temp, res.temp), ]
-  original_results = original_results[match(com.temp, ori.temp), ]
-}
 original_results = cbind(original_results, resampling_results[, c('gene_short_name', 'chr', 'strand', 'target_gene.start', 
                                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
                                                                   'target_site.mid')])
