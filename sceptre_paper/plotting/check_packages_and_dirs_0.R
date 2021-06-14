@@ -3,14 +3,14 @@ code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args
 source(paste0(code_dir, "/sceptre_paper/utilities/verify_all_packages_available.R"))
 require(tidyverse)
 
-# packages <- c("ggpubr", "cowplot")
-# locs <- c("CRAN", "CRAN")
-# github_repo <- c(NA, NA)
-# github_repo_subdir <- c(NA, NA)
+packages <- c("ggpubr", "cowplot", "scales", "mgcv")
+locs <- c("CRAN", "CRAN", "CRAN", "CRAN")
+github_repo <- c(NA, NA, NA, NA)
+github_repo_subdir <- c(NA, NA, NA, NA)
 
 # Verify package availability
-# df <- data.frame(package = packages, loc = locs, github_repo = github_repo, github_repo_subdir = github_repo_subdir)
-# verify_all_packages_available(df)
+df <- data.frame(package = packages, loc = locs, github_repo = github_repo, github_repo_subdir = github_repo_subdir)
+verify_all_packages_available(df)
 
 # Create subdirectories
 fig_dir <- "sceptre_paper/manuscript/figures"
