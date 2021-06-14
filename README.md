@@ -58,7 +58,7 @@ Git clone the SCEPTRE repository:
 git clone https://github.com/Katsevich-Lab/sceptre-manuscript
 ```
 
-Next, navigate to the `sceptre_paper/utilities` directory, open the `run_everything.bash` script, and follow the instructions therein. The `run_everything.bash` script reproduces the entire analysis, from downloading the data to creating the figures. All analysis results (including intermediate files) are available on [Box](https://upenn.box.com/v/sceptre-files). Parts of the analysis therefore can be reproduced by loading the intermediate results files instead of recomputing them.
+Next, navigate to the `sceptre_paper/utilities` directory, open the `run_everything.bash` script, and follow the instructions therein. The `run_everything.bash` script reproduces the entire analysis, from downloading the data to creating the figures. All analysis results (including intermediate files) are available on [Box](https://upenn.box.com/v/sceptre-files-v7). Parts of the analysis therefore can be reproduced by loading the intermediate results files instead of recomputing them.
 
 ## Contributions
 
