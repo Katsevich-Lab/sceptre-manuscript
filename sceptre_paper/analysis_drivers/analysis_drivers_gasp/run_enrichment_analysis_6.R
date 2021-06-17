@@ -2,12 +2,13 @@ args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
 require(plyranges)
 require(GenomicRanges)
-require(sceptre)
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/file_paths_to_dirs.R"))
 
 # Define a couple directories
 results_dir_enrichment <- paste0(offsite_dir, "/results/gasperini/enrichment")
 functional_data_dir <- paste0(offsite_dir, "/data/functional/")
+if (!dir.exists(results_dir_enrichment)) dir.create(results_dir_enrichment)
+if (!dir.exists(functional_data_dir)) dir.create(functional_data_dir)
 
 # Read in the association results
 original_results <- paste0(processed_dir, "/original_results.fst") %>% read.fst()

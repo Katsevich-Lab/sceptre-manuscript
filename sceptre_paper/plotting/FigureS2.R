@@ -1,6 +1,7 @@
 # Reproduce Figure S2 from Katsevich, Barry, and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
 code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+require(sceptre)
 require(katsevich2020)
 require(cowplot)
 source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
@@ -48,16 +49,17 @@ p0 = df %>%
                      axis.line = element_line())
 plot(p0)
 
+scept_funct_args <- paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/sceptre_function_args.R")
 # panel b: NB p-value more significant
-p1 <- plot_skew_t_gene_gRNA(genes_to_plot[3], grnas_to_plot[3], interval = c(-6,6))
+p1 <- plot_skew_t_gene_gRNA(genes_to_plot[3], grnas_to_plot[3], interval = c(-6,6), scept_funct_args)
 p1_plot <- p1$plot + ggtitle("\n") + theme(legend.position = "none")
 
 # panel c: SCEPTRE p-value more significant
-p2 <- plot_skew_t_gene_gRNA(genes_to_plot[2], grnas_to_plot[2], c(-4, 4))
+p2 <- plot_skew_t_gene_gRNA(genes_to_plot[2], grnas_to_plot[2], c(-4, 4), scept_funct_args)
 p2_plot <- p2$plot + xlim(c(-4,4)) + ggtitle("\n") + theme(legend.position = c(.85, .8), legend.background = element_rect(color = "transparent", fill = "transparent"))
 
 # panel d: two p-values about equal
-p3 <- plot_skew_t_gene_gRNA(genes_to_plot[1], grnas_to_plot[1], c(-4,4))
+p3 <- plot_skew_t_gene_gRNA(genes_to_plot[1], grnas_to_plot[1], c(-4,4), scept_funct_args)
 p3_plot <- p3$plot + theme(legend.position = "none") + ggtitle("\n")
 
 # combine the panels

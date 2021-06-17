@@ -14,42 +14,38 @@ library(tidyr)
 # create cis file for resampling results for Xie data
 gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
 resampling_results_xie = read.fst(paste0(results_dir, "/all_results.fst")) %>% as_tibble()
-pair.temp = paste0(gRNA.gene.pair$gRNA_id, '+', gRNA.gene.pair$gene_id)
-all.temp = paste0(resampling_results_xie$gRNA_id, '+', resampling_results_xie$gene_id)
-resampling_results_xie$site_type = gRNA.gene.pair$type[match(all.temp, pair.temp)]
-
-resampling_results_xie_cis <- resampling_results_xie %>% group_by(site_type) %>%
-  mutate(adjusted_pvalue = ifelse(site_type == 'cis', p.adjust(p_value, 'fdr'), NA),
-         rejected = ifelse(is.na(adjusted_pvalue), FALSE, adjusted_pvalue <= 0.1)) %>%
-  ungroup() %>% filter(site_type == 'cis')
+all_results_annotated = read.fst(paste0(results_dir, "/all_results_annotated.fst")) %>% as_tibble()
+resampling_results_xie_cis = all_results_annotated %>% filter(type == 'cis')
 
 gene.mart = readRDS(paste0(processed_dir, '/gene_mart.rds'))
+gRNA.mart = readRDS(paste0(processed_dir, '/gRNA_mart.rds'))
 
 gene.ensembl.id <- lapply(strsplit(as.character(resampling_results_xie_cis$gene_id), '[.]'), function(x){x[1]}) %>% unlist
 resampling_results_xie_cis = cbind(resampling_results_xie_cis,
                                    gene.mart[match(gene.ensembl.id, gene.mart$ensembl_gene_id),
                                              c('hgnc_symbol', 'chr', 'strand', 'start_position', 'end_position')])
-resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(gene_short_name = hgnc_symbol,
+resampling_results_xie_cis <- resampling_results_xie_cis %>% dplyr::rename(gene_short_name = hgnc_symbol,
                                                                     target_gene.start = start_position,
                                                                     target_gene.stop = end_position)
 resampling_results_xie_cis <- resampling_results_xie_cis %>% mutate(TSS = ifelse(strand > 0, target_gene.start, target_gene.stop))
 resampling_results_xie_cis = cbind(resampling_results_xie_cis, gRNA.mart[match(resampling_results_xie_cis$gRNA_id, gRNA.mart$gRNA_id),
                                              c('start_position', 'end_position', 'mid_position')])
-resampling_results_xie_cis <- resampling_results_xie_cis %>% rename(target_site.start = start_position,
+resampling_results_xie_cis <- resampling_results_xie_cis %>% dplyr::rename(target_site.start = start_position,
                                                                     target_site.stop = end_position,
                                                                     target_site.mid = mid_position)
-write.fst(resampling_results_xie_cis, paste0(results_dir, "/resampling_results_xie_cis.fst"))
 
 # Define a couple directories
 results_dir_enrichment <- paste0(offsite_dir, "/results/xie/enrichment")
 functional_data_dir <- paste0(offsite_dir, "/data/functional/")
+if (!dir.exists(results_dir_enrichment)) dir.create(results_dir_enrichment)
+if (!dir.exists(functional_data_dir)) dir.create(functional_data_dir)
 
 # Read in the association results
-resampling_results_xie_cis <- paste0(results_dir, "/resampling_results_xie_cis.fst") %>% read.fst()
 resampling_results = resampling_results_xie_cis
 
 ss_xie_cis = readRDS(file = paste0(processed_dir, '/ss_xie_cis.rds'))
 original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reject.down') %>% dplyr::rename(rejected = reject.down)
+
 original_results = cbind(original_results, resampling_results[, c('gene_short_name', 'chr', 'strand', 'target_gene.start',
                                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
                                                                   'target_site.mid')])

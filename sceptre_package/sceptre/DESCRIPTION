@@ -12,8 +12,8 @@ RoxygenNote: 7.1.1
 Depends:
     fst,
     sn,
-    MASS,
     VGAM,
+    MASS,
     tidyverse,
     bigstatsr,
     magrittr,

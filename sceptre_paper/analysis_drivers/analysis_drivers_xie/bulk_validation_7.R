@@ -6,7 +6,7 @@ library(tidyverse)
 library(fst)
 library(edgeR)
 
-gene_names_in_use <- paste0(results_dir, "/all_results_with_names.fst") %>% read.fst() %>% filter(enh_names == "ARL15-enh") %>% pull(gene_names) %>% unique() %>% as.character()
+gene_names_in_use <- paste0(results_dir, "/all_results_annotated.fst") %>% read.fst() %>% filter(enh_names == "ARL15-enh") %>% pull(gene_names) %>% unique() %>% as.character()
 
 get_data_info <- function(enh_name) {
   bulk_data <- paste0(processed_dir, "/bulk_RNAseq.rds") %>% readRDS() %>% pluck("data", enh_name) %>% dplyr::select(-Chr, -Start, -End, -Strand, -Length) %>% filter(Geneid %in% gene_names_in_use)
