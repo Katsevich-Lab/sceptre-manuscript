@@ -32,6 +32,9 @@ Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_proc
 echo Construct model covariate matrix and perform quality control.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R $code_dir $offsite_dir
 
+echo Create monocole object for monocole NB analysis.
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"create_monocle_object_4.1.R $code_dir $offsite_dir
+
 echo Determine the gene-gRNA pairs to analyze.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_5.R $code_dir $offsite_dir
 
@@ -46,6 +49,11 @@ echo Run the negative binomial regression analysis at scale.
 nb_at_scale_bash_dir=$code_dir"/sceptre_paper/"nb_regression_at_scale
 bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
 wait
+
+echo Run the monocle regression analysis at scale.
+# bash $nb_at_scale_bash_dir/"run_monocle_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
+wait
+
 
 echo Preprocess the sceptre results for downstream analysis.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_6.R $code_dir $offsite_dir

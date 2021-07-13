@@ -6,9 +6,9 @@
 
 machine_name=(local ubergenno uberduo hydra bridges)
 
-code_dir=(/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE /home/tbarry2/sceptre-manuscript /home/tbarry2/sceptre-manuscript hydra_code_dir /home/timbar/SCEPTRE/sceptre_paper)
+code_dir=(/Users/timbarry/research_code/sceptre-manuscript /home/tbarry2/sceptre-manuscript /home/tbarry2/sceptre-manuscript hydra_code_dir /home/timbar/SCEPTRE/sceptre_paper)
 
-data_results_dir=(/Volumes/tims_new_drive/research/sceptre_files /raid6/Tim/sceptre_offsite_dir /raid6/Tim/sceptre_offsite_dir hydra_data_dir /pylon5/ms5pidp/timbar/sceptre_files)
+data_results_dir=(/Users/timbarry/research_offsite/sceptre /raid6/Tim/sceptre_offsite_dir /raid6/Tim/sceptre_offsite_dir hydra_data_dir /pylon5/ms5pidp/timbar/sceptre_files)
 
 scheduler_bool=(false false false false true)
 

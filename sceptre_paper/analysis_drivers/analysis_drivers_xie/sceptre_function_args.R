@@ -7,7 +7,9 @@ results_dir_negbin <- paste0(offsite_dir, "/results/xie/negative_binomial")
 bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds"))
 gRNA_gene_pairs <- read.fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 covariate_matrix <- read.fst(paste0(processed_dir, "/covariate_model_matrix.fst"))
-cell_gene_expression_matrix <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm
+cell_gene_expression_matrix_info <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) 
+cell_gene_expression_matrix_info$backingfile <- paste0(processed_dir, "/expression_matrix")
+cell_gene_expression_matrix <- cell_gene_expression_matrix_info %>% load_fbm
 ordered_gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 gRNA_indicator_matrix_fp <- paste0(processed_dir, "/gRNA_indicator_matrix.fst")
 regularization_amount <- 3
