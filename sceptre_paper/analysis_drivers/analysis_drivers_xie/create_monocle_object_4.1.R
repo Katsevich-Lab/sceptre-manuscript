@@ -5,9 +5,9 @@ source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/pa
 
 # Load the necessary data
 highly_expressed_genes <- readRDS(paste0(processed_dir, "/highly_expressed_genes.rds"))
-gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
-gene_names <- readRDS(paste0(processed_dir, "/ordered_genes.RDS"))
-cell_gene_expression_matrix_info <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) 
+gene_ids <- as.character(readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS")))
+gene_names <- as.character(readRDS(paste0(processed_dir, "/ordered_genes.RDS")))
+cell_gene_expression_matrix_info <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds"))
 cell_gene_expression_matrix_info$backingfile <- paste0(processed_dir, "/expression_matrix")
 cell_gene_expression_matrix <- cell_gene_expression_matrix_info %>% load_fbm
 gRNA_mat <- fst::read_fst(path = paste0(processed_dir, "/gRNA_indicator_matrix.fst"))
