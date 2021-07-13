@@ -51,6 +51,8 @@ cds <- newCellDataSet(cellData = exp_mat,
                       featureData = feature_specific_covariates,
                       expressionFamily = negbinomial.size(),
                       lowerDetectionLimit = 0.5)
+rm(exp_mat); rm(feature_specific_covariates); rm(cell_specific_covariates); rm(global_covariate_matrix); rm(feature_df)
+gc()
 
 # estimate the size factors and dispersions
 cds <- estimateSizeFactors(cds)
