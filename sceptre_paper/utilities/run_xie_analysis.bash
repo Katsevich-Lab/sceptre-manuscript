@@ -3,7 +3,7 @@
 # This script runs the Xie data analysis. It is assumed that this script is being executed from within the utilities directory.
 
 # Set the machine and number of processors.
-machine=hydra
+machine=uberduo
 n_processors=50
 precomputation_complete=FALSE
 
