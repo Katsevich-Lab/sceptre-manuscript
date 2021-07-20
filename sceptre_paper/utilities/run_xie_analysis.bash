@@ -41,6 +41,9 @@ Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_g
 # Locate the parameter file
 parameter_file=$code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"sceptre_function_args.R
 
+##################
+# Big computations
+##################
 echo Run the sceptre analysis at scale.
 sceptre_at_scale_bash_dir=$code_dir"/sceptre_package/sceptre_at_scale"
 bash $sceptre_at_scale_bash_dir/"run_sceptre_at_scale.bash" $sceptre_at_scale_bash_dir $offsite_dir $parameter_file $n_processors $precomputation_complete
@@ -50,10 +53,9 @@ nb_at_scale_bash_dir=$code_dir"/sceptre_paper/"nb_regression_at_scale
 bash $nb_at_scale_bash_dir/"run_nb_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
 wait
 
-echo Run the monocle regression analysis at scale.
-# bash $nb_at_scale_bash_dir/"run_monocle_regression_at_scale.bash" $nb_at_scale_bash_dir $offsite_dir $parameter_file $n_processors
-wait
-
+echo Run the Monocle negative binomial regression analysis at scale.
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"run_monocle_nb_at_scale.R $code_dir $offsite_dir
+##################
 
 echo Preprocess the sceptre results for downstream analysis.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_6.R $code_dir $offsite_dir
