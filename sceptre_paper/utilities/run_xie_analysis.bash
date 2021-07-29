@@ -58,7 +58,7 @@ Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"run_mono
 ##################
 
 echo Preprocess the sceptre results for downstream analysis.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_6.R $code_dir $offsite_dir
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"append_simple_names_results_6_V2.R $code_dir $offsite_dir
 
 echo Run bulk RNA-seq analysis.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"bulk_validation_7.R $code_dir $offsite_dir
