@@ -37,6 +37,6 @@ inb_results_annotated <- annotate_results(p_vals_inb)
 monocle_results_annotated <- annotate_results(p_vals_monocle)
 
 # save the annotated results
-saveRDS(object = sceptre_results_annotated, paste0(results_dir, "/all_results_annotated.fst"))
-saveRDS(object = sceptre_results_annotated, paste0(results_dir_negative_binomial, "/all_results_annotated.fst"))
-saveRDS(object = sceptre_results_annotated, paste0(results_dir_negative_binomial, "/monocle_results_annotated.fst"))
+write_fst(sceptre_results_annotated, paste0(results_dir, "/all_results_annotated.fst"))
+write_fst(inb_results_annotated, paste0(results_dir_negative_binomial, "/all_results_annotated.fst"))
+write_fst(monocle_results_annotated, paste0(results_dir_negative_binomial, "/monocle_results_annotated.fst"))

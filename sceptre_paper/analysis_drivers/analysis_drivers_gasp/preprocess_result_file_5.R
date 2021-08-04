@@ -6,7 +6,15 @@ require(tidyverse)
 require(fst)
 
 # Load the Gasperini results
-original_results_raw <- suppressWarnings(read_tsv(paste0(raw_data_dir, "/GSE120861_all_deg_results.at_scale.txt"), col_types = "cddddddccccciiciiccc"))
+original_results_raw <- suppressWarnings(read_tsv(paste0(raw_data_dir, "/GSE120861_all_deg_results.at_scale.txt"), col_types = "cddddccccccciiciiccc"))
+
+fix_parsing_warning <- function(v) {
+  v[v == "not_applicable"] <- NA
+  as.numeric(p_vals_emp)
+}
+original_results_raw$pvalue.empirical <- fix_parsing_warning(original_results_raw$pvalue.empirical)
+original_results_raw$pvalue.empirical.adjusted <- fix_parsing_warning(original_results_raw$pvalue.empirical.adjusted)
+
 old_pairs <- read_excel(path = paste0(raw_data_dir, "/Gasperini_TableS2.xlsx"), sheet = 3)
 
 get_target_site <- function(grna_group) {
@@ -44,6 +52,7 @@ original_results <- original_results %>%
 write.fst(original_results, paste0(processed_dir, "/original_results.fst"))
 
 # Manipulate the SCEPTRE results
+# write a function to do this.
 sceptre_res <- paste0(results_dir, "/all_results.fst") %>% read.fst()
 resampling_results <- sceptre_res %>% rename(grna_group = gRNA_id) %>% left_join(original_results %>%
                                                              select(chr, pair_id,
