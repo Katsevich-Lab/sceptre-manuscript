@@ -10,7 +10,7 @@ original_results_raw <- suppressWarnings(read_tsv(paste0(raw_data_dir, "/GSE1208
 
 fix_parsing_warning <- function(v) {
   v[v == "not_applicable"] <- NA
-  as.numeric(p_vals_emp)
+  as.numeric(v)
 }
 original_results_raw$pvalue.empirical <- fix_parsing_warning(original_results_raw$pvalue.empirical)
 original_results_raw$pvalue.empirical.adjusted <- fix_parsing_warning(original_results_raw$pvalue.empirical.adjusted)
@@ -52,7 +52,6 @@ original_results <- original_results %>%
 write.fst(original_results, paste0(processed_dir, "/original_results.fst"))
 
 # Manipulate the SCEPTRE results
-# write a function to do this.
 sceptre_res <- paste0(results_dir, "/all_results.fst") %>% read.fst()
 resampling_results <- sceptre_res %>% rename(grna_group = gRNA_id) %>% left_join(original_results %>%
                                                              select(chr, pair_id,
@@ -80,7 +79,11 @@ likelihood_results <- negbin_results %>% rename(grna_group = gRNA_id) %>%
                      gene_id, gene_short_name, target_gene.start, target_gene.stop, TSS, outlier_gene,
                      grna_group, quality_rank_grna, target_site, target_site.start, target_site.stop, site_type),
             by = c("gene_id", "grna_group")) %>%
-  select(chr, pair_id,
+  group_by(site_type, quality_rank_grna) %>%
+  mutate(adjusted_pvalue = ifelse(site_type == "DHS" & quality_rank_grna == "top_two",
+                                  p.adjust(p_value, "fdr"), NA),
+         rejected = ifelse(is.na(adjusted_pvalue), FALSE, adjusted_pvalue <= 0.1)) %>% ungroup() %>%
+  select(chr, pair_id, rejected,
          gene_id, gene_short_name, target_gene.start, target_gene.stop, TSS, outlier_gene,
          grna_group, quality_rank_grna, target_site, target_site.start, target_site.stop, site_type,
          pvalue = p_value)
