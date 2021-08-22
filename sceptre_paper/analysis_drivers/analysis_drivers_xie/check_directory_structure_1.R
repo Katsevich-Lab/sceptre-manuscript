@@ -1,5 +1,7 @@
-args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+# set code dir and offsite dir
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
+
 to_source <- paste0(code_dir, c("/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R", "/sceptre_paper/utilities/verify_all_packages_available.R"))
 for (f_to_source in to_source) source(f_to_source)
 packages <- c("purrr", "stringr")

@@ -1,5 +1,5 @@
-args <- commandArgs(trailingOnly = TRUE) 
-code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1] 
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 # load packages 
@@ -12,7 +12,7 @@ library(biomaRt)
 #####################
 # 1. gene positions 
 #####################
-gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 5947 genes
+gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 5947 genes (now 2437 genes)
 gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist
 # The gene ID is from GENCODE, which is not excatly the same as ENSEMBL ID. The part before [.] is the same as ENSEMBL ID.
 
@@ -76,7 +76,7 @@ for(chr in chr.select){
   # cat(chr, ' is done! \n')
 }
 dim(select.gRNA.gene.pair)
-# 3530 pairs of gene and gRNA
+# 3530 pairs of gene and gRNA (now 1221)
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))
 
 

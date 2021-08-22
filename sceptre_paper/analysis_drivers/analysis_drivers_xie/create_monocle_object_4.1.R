@@ -1,17 +1,15 @@
-# create monocole object using Xie data
-args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/research_code/sceptre-manuscript" else args[1]
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 # Load the necessary data
 highly_expressed_genes <- readRDS(paste0(processed_dir, "/highly_expressed_genes.rds"))
 gene_ids <- as.character(readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS")))
-gene_names <- as.character(readRDS(paste0(processed_dir, "/ordered_genes.RDS")))
 cell_gene_expression_matrix_info <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds"))
 cell_gene_expression_matrix_info$backingfile <- paste0(processed_dir, "/expression_matrix")
 cell_gene_expression_matrix <- cell_gene_expression_matrix_info %>% load_fbm
 gRNA_mat <- fst::read_fst(path = paste0(processed_dir, "/gRNA_indicator_matrix.fst"))
-cell_subset <- readRDS(paste0(processed_dir, "/cell_subsets.rds"))[["all_cells"]]
+cell_subset <- readRDS(paste0(processed_dir, "/cell_subset.rds"))
 covariate_matrix <- read.fst(paste0(processed_dir, "/covariate_model_matrix.fst"))
 
 # Obtain the expression matrix
@@ -24,10 +22,9 @@ global_covariate_matrix <- cbind(covariate_matrix, gRNA_mat)
 
 # obtain the features data frame
 feature_df <- data.frame(id = gene_ids[gene_idxs],
-                         gene_short_name = gene_names[gene_idxs])
+                         gene_short_name = "NA")
 
 # subset exp_mat and global_covariate_matrix according to cell_subset
-global_covariate_matrix <- global_covariate_matrix[cell_subset,]
 exp_mat <- exp_mat[,cell_subset]
 
 # assign column and row names to the data frames and matrices

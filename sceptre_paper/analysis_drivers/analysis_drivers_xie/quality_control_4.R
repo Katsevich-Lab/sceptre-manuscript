@@ -1,29 +1,51 @@
-args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE-manuscript/SCEPTRE/" else args[1]
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
-# First, save the model covariate matrix
-exp_mat_t <- readRDS(paste0(processed_dir, "/exp_mat_t_metadata.rds")) %>% load_fbm()
+#################################################
+# 1. Load gene data; create gene covariate matrix
+#################################################
+barcodes_gene <- readRDS(paste0(processed_dir, "/cell_barcodes_gene.rds"))
+
+# Compute the number of UMIs in each cell
+exp_mat_t <- readRDS(paste0(processed_dir, "/exp_mat_t_metadata.rds")) %>% sceptre::load_fbm()
 n_umis_per_cell <- big_apply(exp_mat_t, function(X, ind) {colSums(X[,ind])}) %>% unlist()
-covariate_matrix <- read.fst(paste0(processed_dir, "/cell_covariate_matrix.fst"))
-covariate_model_matrix <- covariate_matrix %>% mutate(n_umis = n_umis_per_cell) %>% summarize(batch = paste0("batch_", batch) %>% factor, log_n_umis = log(n_umis), log_n_gRNA_umis = log(tot_gRNA_umis))
-write.fst(x = covariate_model_matrix, path = paste0(processed_dir, "/covariate_model_matrix.fst"))
+gene_covariate_matrix <- data.frame(cell_barcode = barcodes_gene, log_n_umis = n_umis_per_cell)
+gene_barcode_original_order <- gene_covariate_matrix$cell_barcode
 
-# Determine which cells will be included in the analysis; for now, we exclude cells with 0 gRNA UMIs
-cell_subset <- which(!is.na(covariate_model_matrix$log_n_gRNA_umis))
-
-# Next, determine which gene-gRNA pairs to analyze
-gRNA_indic_mat <- read.fst(paste0(processed_dir, "/gRNA_indicator_matrix.fst"))
-gRNA_id <- colnames(gRNA_indic_mat)
+# Compute the mean expression of each gene
 gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 exp_mat <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm()
 gene_expression_p <- big_apply(exp_mat, function(X, ind) colMeans(X[,ind] >= 1)) %>% unlist()
-highly_expressed_genes <- gene_ids[which(gene_expression_p >= 0.08)] %>% unique()
-saveRDS(object = highly_expressed_genes, file = paste0(processed_dir, "/highly_expressed_genes.rds"))
+highly_expressed_genes <- gene_ids[which(gene_expression_p >= 0.08)]
 
-# Finally, partition the cells into exploratory and validation sets
-set.seed(1234)
-exploratory_cells <- sample(x = cell_subset, size = floor(length(cell_subset)/2), replace = FALSE) %>% sort()
-validation_cells <- cell_subset[!(cell_subset %in% exploratory_cells)]
-all(sort(c(exploratory_cells, validation_cells)) == cell_subset)
-saveRDS(object = list(exploratory_cells = exploratory_cells, validation_cells = validation_cells, all_cells = cell_subset), file = paste0(processed_dir, "/cell_subsets.rds"))
+##########################################
+# Load gRNA data and gRNA covariate matrix
+##########################################
+gRNA_indic_matrix <- readRDS(paste0(processed_dir, "/gRNA_indicator_matrix_unordered.rds"))
+gRNA_covariate_matrix <- readRDS(paste0(processed_dir, "/cell_covariate_matrix_gRNA.rds"))
+rownames(gRNA_covariate_matrix) <- gRNA_covariate_matrix$cell_barcode
+
+# Intersect the cells
+cells_intersect <- intersect(x = gene_barcode_original_order, gRNA_covariate_matrix$cell_barcode)
+
+# subset the gRNA indicator matrix and covariate matrix appropriately
+gRNA_indic_matrix_sub <- gRNA_indic_matrix[cells_intersect,]
+gRNA_covariate_matrix_sub <- gRNA_covariate_matrix[cells_intersect,]
+
+# get the cell subset ordering
+cell_subset <- match(cells_intersect, gene_barcode_original_order)
+
+################################
+# get the global covariate matrix
+################################
+global_covariate_matrix <- data.frame(log_n_umis = log(n_umis_per_cell[cell_subset]),
+                                      log_n_gRNA_umis = log(gRNA_covariate_matrix_sub$cell_gRNA_umi_counts),
+                                      batch = gRNA_covariate_matrix_sub$batch)
+
+# save
+saveRDS(object = cell_subset, file = paste0(processed_dir, "/cell_subset.rds"))
+fst::write_fst(x = global_covariate_matrix,
+               path = paste0(processed_dir, "/covariate_model_matrix.fst"))
+saveRDS(object = highly_expressed_genes, file = paste0(processed_dir, "/highly_expressed_genes.rds"))
+gRNA_indic_mat <- fst::write_fst(gRNA_indic_matrix_sub, paste0(processed_dir, "/gRNA_indicator_matrix.fst"))

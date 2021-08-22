@@ -1,9 +1,6 @@
 # Load sceptre
 suppressPackageStartupMessages(library(sceptre))
 
-# directory file paths
-offsite_dir <- if (is.na(args[2])) "/Users/timbarry/research_offsite/sceptre" else args[2]
-
 # Define variables for fps to common directories.
 processed_dir <- paste0(offsite_dir, "/data/xie/processed")
 gene_precomp_dir <- paste0(offsite_dir, "/data/xie/precomp/gene")

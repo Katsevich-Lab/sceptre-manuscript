@@ -1,8 +1,10 @@
 # This script verifies that all packages required for the Xie analysis are available.
-args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/sceptre-manuscript/SCEPTRE/" else args[1]
-source(paste0(code_dir, "/sceptre_paper/utilities/verify_all_packages_available.R"))
 
+# set code dir and offsite dir
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
+
+source(paste0(code_dir, "/sceptre_paper/utilities/verify_all_packages_available.R"))
 packages <- c("furrr", "Seurat", "R.matlab", "R.utils", "fst", "sn", "MASS", "VGAM", "tidyverse", "bigstatsr", "openxlsx", "rhdf5", "biomaRt", "sceptre", "katsevich2020")
 locs <- c(rep("CRAN", 11), "Bioc", "biomaRt", rep("github", 2))
 github_repo <- c(rep(NA, 13), "Timothy-Barry/sceptre_paper", "Timothy-Barry/sceptre_paper")

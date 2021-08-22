@@ -1,5 +1,6 @@
 # sceptre function arguments; these arguments should be defined in terms of "offsite_dir"
 # offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
+offsite_dir <- if (is.na(args[2])) .get_config_path("LOCAL_SCEPTRE_DATA_DIR") else args[1]
 small_example <- TRUE
 
 processed_dir <- paste0(offsite_dir, "/data/gasperini/processed")
