@@ -1,5 +1,4 @@
-# sceptre function arguments; these arguments should be defined in terms of "offsite_dir"
-# offsite_dir <- "/Volumes/tims_new_drive/research/sceptre_files"
+# offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 small_example <- FALSE
 
 processed_dir <- paste0(offsite_dir, "/data/xie/processed")
@@ -7,13 +6,13 @@ results_dir_negbin <- paste0(offsite_dir, "/results/xie/negative_binomial")
 bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds"))
 gRNA_gene_pairs <- read.fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 covariate_matrix <- read.fst(paste0(processed_dir, "/covariate_model_matrix.fst"))
-cell_gene_expression_matrix_info <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) 
-cell_gene_expression_matrix_info$backingfile <- paste0(processed_dir, "/expression_matrix")
+cell_gene_expression_matrix_info <- readRDS(paste0(processed_dir, "/exp_mat_sub_metadata.rds")) 
+cell_gene_expression_matrix_info$backingfile <- paste0(processed_dir, "/expression_matrix_sub")
 cell_gene_expression_matrix <- cell_gene_expression_matrix_info %>% load_fbm
 ordered_gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 gRNA_indicator_matrix_fp <- paste0(processed_dir, "/gRNA_indicator_matrix.fst")
 regularization_amount <- 3
-cell_subset <- readRDS(paste0(processed_dir, "/cell_subsets.rds"))[["all_cells"]]
+cell_subset <- seq(1, nrow(cell_gene_expression_matrix))
 seed <- 1234
 B <- 500
 pod_sizes <- c(gene = 100, gRNA = 100, pair = 500)
