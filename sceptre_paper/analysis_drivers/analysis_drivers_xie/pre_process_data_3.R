@@ -96,7 +96,6 @@ code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
-cell_covariate_matrix <- fst::read_fst(paste0(processed_dir, "/cell_covariate_matrix.fst"))
 genes_in_use <- readRDS(paste0(processed_dir, "/ordered_genes.RDS"))
 genes_in_use_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 
