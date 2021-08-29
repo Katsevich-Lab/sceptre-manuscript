@@ -26,3 +26,14 @@ if (small_example) {
   gRNA_gene_pairs <- slice_sample(gRNA_gene_pairs, n = 20)
   pod_sizes <- c(gene = 2, gRNA = 5, pair = 5)
 }
+
+
+# test ARL15-enh against ARL15
+if (FALSE) {
+  expressions <- cell_gene_expression_matrix[, ordered_gene_ids == "ENSG00000185305.10"]
+  indicators <- read_fst(gRNA_indicator_matrix_fp, columns = "chr5:54325645-54326045") %>% dplyr::pull() %>% as.integer()
+  fit <- run_sceptre_gRNA_gene_pair(expressions = expressions,
+                             gRNA_indicators = indicators,
+                             covariate_matrix = covariate_matrix,
+                             B = 500) 
+}

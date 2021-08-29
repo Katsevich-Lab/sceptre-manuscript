@@ -96,83 +96,109 @@ code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
-genes_in_use <- readRDS(paste0(processed_dir, "/ordered_genes.RDS"))
-genes_in_use_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
-
-# Load the gRNA identification information; we save the regions of ARL15-enh and MYB-enh-1-4.
+# Save the bulk region names
 enh_targets_df <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/enh_targets.xlsx"), sheet = 1)
 bulk_region_names <- filter(enh_targets_df, gene_names %in% c("ARL15", "MYB")) %>%
   select(region, region_name = Denoted.Region.Name.used.in.the.paper, targeted_gene = gene_names) %>%
   filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
 saveRDS(object = bulk_region_names, paste0(processed_dir, "/bulk_region_names.rds"))
 
-guide_seqs <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/all_oligos.xlsx"), sheet = 1) %>% rename(hg38_enh_region = "region.pos.(hg38)")
-target_regions <- guide_seqs %>% pull(hg38_enh_region) %>% unique()
-names(target_regions) <- target_regions
+####################################################
+# Next, we create a data frame containing UMI counts
+####################################################
+guide_seqs <- openxlsx::read.xlsx(xlsxFile = paste0(raw_data_dir, "/all_oligos.xlsx"),
+                                  sheet = 1) %>% dplyr::select(hg38_enh_region = "region.pos.(hg38)",
+                                                               spacer_seq = "spacer.sequence")
+weird_spacers <- names(which(table(guide_seqs$spacer_seq) >= 2))
+guide_seqs <- dplyr::filter(guide_seqs, !(spacer_seq %in% weird_spacers))
+all(table(guide_seqs$spacer_seq) == 1); all(table(guide_seqs$hg38_enh_region) == 10)
 
-# Next, we create a data frame containing UMI counts for all targeted putative enhancers
+# get the raw file names
 raw_fs <- list.files(raw_data_dir)
 gRNA_files <- paste0(raw_data_dir, "/", grep(pattern = "sgRNA-enrichment_5K-sgRNAs_Batch", x = raw_fs, value = TRUE))
-batch_lane <- stringr::str_extract(string = gRNA_files, pattern = "Batch_[0-9]_[0-9]") %>%
+
+# get the batch ID of each file
+batch <- stringr::str_extract(string = gRNA_files, pattern = "Batch_[0-9]_[0-9]") %>%
   gsub(pattern = "Batch_", replacement = "")
 
-# Run this part in parallel
-plan(multisession, workers = 10)
-res <- future_map(.x = seq(1L, length(gRNA_files)), .f = function(i) {
+# construct a sparse matrix of gRNA counts for each file
+res <- lapply(X = seq(1L, length(gRNA_files)), FUN = function(i) {
   curr_file <- gRNA_files[i]
-  curr_batch_lane <- batch_lane[i]
+  curr_batch <- batch[i]
   print(paste("Working on file", curr_file))
-  curr_gRNA_count_matrix <- read_tsv(file = curr_file, col_names = c("cell_barcode", "total_read_count", "total_umi_count", "gRNA_spacer_seqs", "read_counts", "umi_counts"), col_types = c("cccccc")) %>% select(cell_barcode, gRNA_spacer_seqs, umi_counts, total_umi_count)
-  cell_barcodes <- pull(curr_gRNA_count_matrix, cell_barcode)
-  # check for duplicates
-  if (any(duplicated(cell_barcodes))) stop("Duplicated barcodes.")
-  cell_barcodes <- paste0(cell_barcodes, "-1_", curr_batch_lane)
+  curr_gRNA_count_matrix <- readr::read_tsv(file = curr_file,
+                                            col_names = c("cell_barcode", "total_read_count", "total_umi_count", "gRNA_spacer_seqs", "read_counts", "umi_counts"),
+                                            col_types = c("cccccc")) %>% dplyr::select(cell_barcode, gRNA_spacer_seqs, umi_counts, total_umi_count)
+  cell_barcodes <- curr_gRNA_count_matrix$cell_barcode
+  # convert to sparse triplet matrix
+  umi_count_list <- lapply(curr_gRNA_count_matrix$umi_counts, function(v) stringr::str_split(v, pattern = ";") %>% unlist() %>% as.integer())
+  gRNA_spacer_seq_list <- lapply(curr_gRNA_count_matrix$gRNA_spacer_seqs, function(v) stringr::str_split(v, pattern = ";") %>% unlist())
+  n_entries_per_cell <- sapply(X = umi_count_list, function(v) length(v))
+  barcode_vector <- rep(x = cell_barcodes, times = n_entries_per_cell)
+  gRNA_spacer_seq_vector <- unlist(gRNA_spacer_seq_list)
+  umi_count_vector <- unlist(umi_count_list)
+  ch_df <- data.frame(barcode = barcode_vector,
+                      spacer_seq = gRNA_spacer_seq_vector,
+                      umi_count = umi_count_vector)
+  # remove all entries with spacer seqs not in the spacer seq list
+  ch_df <- ch_df %>% dplyr::filter(gRNA_spacer_seq_vector %in% guide_seqs$spacer_seq)
+  ordered_barcode_vector <- sort(unique(ch_df$barcode))
   
-  count_matrix_list <- map(target_regions, function(region) {
-    cat(paste0("Working on region ", region, ".\n"))
-    region_spacer_seqs <- filter(guide_seqs, hg38_enh_region == region) %>% pull(spacer.sequence)
-    curr_batch_gRNA_umi_counts <- sapply(X = 1:nrow(curr_gRNA_count_matrix), FUN = function(row_id) {
-      r <- curr_gRNA_count_matrix[row_id,]
-      spacers <- str_split(r$gRNA_spacer_seqs, pattern = ";") %>% unlist()
-      umi_counts <- str_split(r$umi_counts, pattern = ";") %>% unlist() %>% as.integer()
-      umi_locs <- match(x = region_spacer_seqs, table = spacers)
-      curr_counts <- sapply(umi_locs, function(i) if (is.na(i)) 0 else umi_counts[i])
-      names(curr_counts) <- region_spacer_seqs
-      curr_counts
-    }) %>% t() %>% Matrix(sparse = TRUE)
-  })
-  list(cell_barcodes = cell_barcodes, count_matrix_list = count_matrix_list, total_umis = as.integer(curr_gRNA_count_matrix$total_umi_count))
+  spacer_seq_idx <- match(x = ch_df$spacer_seq, guide_seqs$spacer_seq)
+  barcode_idx <- match(x = ch_df$barcode, table = ordered_barcode_vector)
+  
+  m <- Matrix::sparseMatrix(i = spacer_seq_idx,
+                            j = barcode_idx,
+                            x = ch_df$umi_count,
+                            dims = c(length(guide_seqs$spacer_seq),
+                                     length(ordered_barcode_vector)))
+  rownames(m) <- guide_seqs$spacer_seq
+  colnames(m) <- paste0(ordered_barcode_vector, "-1_", curr_batch)
+  # obtain the gRNA UMI counts and cell count
+  curr_gRNA_count_matrix <- as.data.frame(curr_gRNA_count_matrix)
+  rownames(curr_gRNA_count_matrix) <- curr_gRNA_count_matrix$cell_barcode
+  curr_gRNA_count_matrix_sub <- curr_gRNA_count_matrix[ordered_barcode_vector,]
+  umi_counts <- as.integer(curr_gRNA_count_matrix_sub$total_umi_count)
+  n_cells <- length(umi_counts)
+  return(list(m = m, umi_counts = umi_counts, n_cells = n_cells))
 })
 
-gRNA_count_matrix_list <- map(target_regions, function(region) {
-  map(res, function(x) x$count_matrix_list[[region]]) %>% reduce(.f = rbind)
-})
+combined_m <- do.call(what = cbind, args = lapply(res, function(i) i$m))
+all(Matrix::colSums(combined_m) >= 1); all(Matrix::rowSums(combined_m) >= 1)
 
-cell_barcodes <- map(.x = res, .f = function(x) x$cell_barcodes) %>% reduce(.f = c)
-cell_counts <- sapply(X = res, FUN = function(x) length(x$cell_barcodes))
-cell_gRNA_umi_counts <- map(.x = res, function(x) x$total_umis) %>% reduce(.f = c)
+# Finally, perform the grouping operation
+gRNA_matrix_raw <- combined_m
+unique_regions <- unique(guide_seqs$hg38_enh_region)
 
-# We reduce each matrix in the gRNA_count_matrix_list to a single logical vector
-combine_gRNAs_in_group <- function(gRNA_count_matrix) {
-  apply(X = gRNA_count_matrix, MARGIN = 2, FUN = function(column) {
-    v <- sum(column >= 1)
-    U <- sum(column)
-    column/U > 1/v
-  }) %>% apply(MARGIN = 1, FUN = function(r) any(r))
-}
-gRNA_indic_matrix <- map_dfr(gRNA_count_matrix_list, combine_gRNAs_in_group) %>% as.data.frame()
-rownames(gRNA_indic_matrix) <- cell_barcodes
-saveRDS(object = gRNA_indic_matrix, file = paste0(processed_dir, "/gRNA_indicator_matrix_unordered.rds"))
+thresholded_ungrouped_mat <- apply(X = gRNA_matrix_raw, MARGIN = 1, FUN = function(r) {
+  r_nonzero <- r[r >= 1]
+  as.integer(r > mean(r_nonzero))
+}) %>% Matrix::t()
+colnames(thresholded_ungrouped_mat) <- colnames(gRNA_matrix_raw)
 
-# create the cell covariate gRNA matrix
-cell_covariate_matrix <- data.frame(cell_barcode = cell_barcodes,
+thresholded_grouped_mat <- sapply(X = unique_regions, FUN = function(curr_region) {
+  print(curr_region)
+  curr_spacer_seqs <- dplyr::filter(guide_seqs, hg38_enh_region == curr_region) %>%
+    dplyr::pull(spacer_seq)
+  curr_m <- thresholded_ungrouped_mat[curr_spacer_seqs,]
+  apply(X = curr_m, MARGIN = 2, FUN = function(col) max(col))
+}) %>% t()
+
+saveRDS(thresholded_grouped_mat, paste0(processed_dir, "/gRNA_indicator_matrix_unordered.rds"))
+
+
+# compute the cell covariate matrix
+cell_gRNA_umi_counts <- lapply(res, function(i) i$umi_counts) %>% do.call(what = "c", args = .)
+cell_counts <- lapply(res, function(i) i$n_cells) %>% unlist()
+cell_covariate_matrix <- data.frame(cell_barcode = colnames(thresholded_grouped_mat),
                                     cell_gRNA_umi_counts = cell_gRNA_umi_counts,
-                                    batch = rep(batch_lane, times = cell_counts))
+                                    batch = rep(batch, times = cell_counts))
 saveRDS(object = cell_covariate_matrix, file = paste0(processed_dir, "/cell_covariate_matrix_gRNA.rds"))
 
 ##############
 # Bulk RNA-seq
 ##############
+library(openxlsx)
 rm(list=ls())
 code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")

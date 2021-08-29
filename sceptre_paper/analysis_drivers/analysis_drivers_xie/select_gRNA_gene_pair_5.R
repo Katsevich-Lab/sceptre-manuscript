@@ -13,22 +13,29 @@ library(biomaRt)
 # 1. gene positions 
 #####################
 gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 5947 genes (now 2437 genes)
-gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist
-# The gene ID is from GENCODE, which is not excatly the same as ENSEMBL ID. The part before [.] is the same as ENSEMBL ID.
-
-ensembl <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
-ensembl.37 <- useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", GRCh = 37)
-
-temp <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol','chromosome_name','start_position','end_position', 'strand'), 
-              mart = ensembl, useCache = FALSE)
+gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist()
+ensembl <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+ensembl.37 <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", GRCh = 37)
+temp <- biomaRt::getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol', 'chromosome_name',
+                                    'start_position', 'end_position', 'strand'),
+                       mart = ensembl, useCache = FALSE)
 gene.mart <- temp[match(gene.ensembl.id, temp$ensembl_gene_id), ]  # Match ensembl id with chromosome positions.
+gene.mart$original.id <- gene.id
 
 # some gene id is from GRCh37, which has been deleted from CRCh38. We don't want to miss them.
-left_gene <- gene.ensembl.id[is.na(gene.mart$ensembl_gene_id)]
-temp.37 <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol','chromosome_name','start_position','end_position', 'strand'), 
-                filters = 'ensembl_gene_id', values = left_gene, mart = ensembl.37, useCache = FALSE)
-gene.mart[is.na(gene.mart$ensembl_gene_id), ] <- temp.37
+na_gene_mart_idx <- which(is.na(gene.mart$ensembl_gene_id))
+left_gene <- gene.ensembl.id[na_gene_mart_idx]
+temp.37 <- biomaRt::getBM(attributes = c('ensembl_gene_id', 'hgnc_symbol','chromosome_name',
+                                         'start_position', 'end_position', 'strand'),
+                          filters = 'ensembl_gene_id', values = left_gene, mart = ensembl.37, useCache = FALSE)
+gene.mart.left <- temp.37[match(left_gene, temp.37$ensembl_gene_id),]
+gene.mart.left$original.id <- gene.id[na_gene_mart_idx]
+
+# finally, remove the NA entries, and combine gene.mart and gene.mart.left
+gene.mart <- na.omit(gene.mart); gene.mart.left <- na.omit(gene.mart.left)
+gene.mart <- rbind(gene.mart, gene.mart.left)
 gene.mart$chr <- as.factor(paste0('chr', gene.mart$chromosome_name))
+row.names(gene.mart) <- NULL
 saveRDS(gene.mart, file = paste0(processed_dir, "/gene_mart.rds"))
 
 
@@ -72,7 +79,8 @@ for(chr in chr.select){
   distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
   temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)
   select.gRNA.gene.pair = rbind(select.gRNA.gene.pair, 
-                                data.frame(gene.id = gene.id[gene.chr.id[temp.id[, 2]]], gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
+                                data.frame(gene.id = gene.mart$original.id[gene.chr.id[temp.id[, 2]]],
+                                           gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   # cat(chr, ' is done! \n')
 }
 dim(select.gRNA.gene.pair)
@@ -202,3 +210,11 @@ all_pairs <- rbind(df1_neg_control, df2_cis_pairs, df3_bulk_validation)
 all_pairs_f <- mutate_all(all_pairs, factor)
 
 write_fst(x = all_pairs_f, path = paste0(processed_dir, "/gRNA_gene_pairs.fst")) 
+
+########################################################################################
+# Sanity check: for a few cis pairs, verify the gene and gRNA are on the same chromosome
+########################################################################################
+set.seed(4)
+test_df <- dplyr::filter(all_pairs_f, type == "cis") %>% dplyr::sample_n(5) %>% dplyr::arrange(gene_id)
+test_df_genes <- lapply(strsplit(as.character(test_df$gene_id), '[.]'), function(x){x[1]}) %>% unlist()
+dplyr::filter(gene.mart, ensembl_gene_id %in% test_df_genes) %>% dplyr::arrange(ensembl_gene_id) # OK

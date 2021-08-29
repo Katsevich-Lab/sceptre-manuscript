@@ -30,7 +30,7 @@ rownames(gRNA_covariate_matrix) <- gRNA_covariate_matrix$cell_barcode
 cells_intersect <- intersect(x = gene_barcode_original_order, gRNA_covariate_matrix$cell_barcode)
 
 # subset the gRNA indicator matrix and covariate matrix appropriately
-gRNA_indic_matrix_sub <- gRNA_indic_matrix[cells_intersect,]
+gRNA_indic_matrix_sub <- as.data.frame(gRNA_indic_matrix[,cells_intersect] %>% t())
 gRNA_covariate_matrix_sub <- gRNA_covariate_matrix[cells_intersect,]
 
 # get the cell subset ordering
