@@ -88,6 +88,12 @@ dim(select.gRNA.gene.pair)
 # 3530 pairs of gene and gRNA (now 1221)
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))
 
+### sanity check: are the genes and gRNAs on the same chromosome?
+test_pairs <- select.gRNA.gene.pair %>% dplyr::sample_n(5) %>% dplyr::arrange(gene.id)
+test_pairs_genes <- lapply(strsplit(as.character(test_pairs$gene.id), '[.]'), function(x){x[1]}) %>% unlist()
+dplyr::filter(gene.mart, ensembl_gene_id %in% test_pairs_genes) %>% dplyr::arrange(ensembl_gene_id) %>% dplyr::select(ensembl_gene_id, chromosome_name)
+(select.gRNA.gene.pair %>% dplyr::distinct() %>% nrow()) == nrow(select.gRNA.gene.pair) # check uniqueness of rows
+
 
 ####### Select transcription factor(TF) and their potiential enhancer
 ##############################
@@ -115,7 +121,7 @@ match.temp = cbind(match(gene.mart$hgnc_symbol, tf.gene.new$Gene), match(gene.ma
 # We match genes by their HGNC name and ENSEMBL name
 match.temp = match.temp[rowSums(is.na(match.temp)) < 2, ]  # Remove genes that are not matched with HGNC name or ENSEMBL name
 
-tf.gene.select = as.character(tf.gene$Gene[match.temp[, 1]])    # 406 genes
+tf.gene.select = as.character(tf.gene$Gene[match.temp[, 1]])    # 5 genes
 saveRDS(tf.gene.select, file = paste0(processed_dir, "/tf_gene_select.rds"))
 
 
@@ -169,7 +175,7 @@ saveRDS(select.gRNA.tf.pair, file = paste0(processed_dir, "/select_gRNA_tf_pair.
 chr.select <- intersect(tf.gene.mart$chr, gRNA.mart$chr)
 num.neg.pair = NULL
 neg.control.pair <- NULL
-for(chr in chr.select){
+for (chr in chr.select) {
   tf.chr.id <- which(tf.gene.mart$chr == chr)
   gRNA.chr.id <- which(gRNA.mart$chr == chr)
   tf.pos.start <- tf.gene.mart$start_position[tf.chr.id]
@@ -182,15 +188,17 @@ for(chr in chr.select){
   distance.temp <- sapply(tf.tss, function(x){x - gRNA.pos})
   temp.gRNA = gRNA.id[gRNA.chr.id[which(rowSums(abs(distance.temp) > 1000000) == length(tf.tss))]]
   # Distance greater than 1MB
-  temp.gene.ensembl = gene.id[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select) ]
+  # temp.gene.ensembl = gene.id[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select) ]
+  temp.gene.ensembl = gene.mart$original.id[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select) ]
   temp.hgnc = gene.mart$hgnc_symbol[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select)]
 
   neg.control.pair <- rbind(neg.control.pair,
                             data.frame(gRNA.id = rep(temp.gRNA, length(temp.gene.ensembl)),
-                                       gene.id = rep(temp.gene.ensembl, each = length(temp.gRNA)),
-                                       gene.hgnc.id = rep(temp.hgnc, each = length(temp.gRNA))))
+                                       gene.id = rep(temp.gene.ensembl, each = length(temp.gRNA))
+                                       #,gene.hgnc.id = rep(temp.hgnc, each = length(temp.gRNA))
+                                       ))
   num.neg.pair = rbind(num.neg.pair, data.frame(chr = chr, gRNA = length(temp.gRNA), gene = length(temp.gene.ensembl)))
-  cat(chr, 'have',  length(temp.gRNA), 'gRNAs.', length(temp.gene.ensembl), ' genes not in ', chr, '. Done! \n')
+  cat(chr, 'have', length(temp.gRNA), 'gRNAs.', length(temp.gene.ensembl), ' genes not in ', chr, '. Done! \n')
 }
 saveRDS(neg.control.pair, file = paste0(processed_dir, '/neg_control_pair.rds'))
 saveRDS(num.neg.pair, file = paste0(processed_dir, '/num_neg_pair.rds'))
@@ -219,3 +227,4 @@ set.seed(4)
 test_df <- dplyr::filter(all_pairs_f, type == "cis") %>% dplyr::sample_n(5) %>% dplyr::arrange(gene_id)
 test_df_genes <- lapply(strsplit(as.character(test_df$gene_id), '[.]'), function(x){x[1]}) %>% unlist()
 dplyr::filter(gene.mart, ensembl_gene_id %in% test_df_genes) %>% dplyr::arrange(ensembl_gene_id) # OK
+
