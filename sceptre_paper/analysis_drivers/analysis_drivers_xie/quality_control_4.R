@@ -44,15 +44,20 @@ global_covariate_matrix <- data.frame(log_n_umis = log(n_umis_per_cell[cell_subs
                                       batch = gRNA_covariate_matrix_sub$batch)
 
 # save
-saveRDS(object = cell_subset, file = paste0(processed_dir, "/cell_subset.rds"))
+# create a new directory, "analysis_ready" to store all data in analysis-ready format.
+analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
+
 fst::write_fst(x = global_covariate_matrix,
-               path = paste0(processed_dir, "/covariate_model_matrix.fst"))
-saveRDS(object = highly_expressed_genes, file = paste0(processed_dir, "/highly_expressed_genes.rds"))
-gRNA_indic_mat <- fst::write_fst(gRNA_indic_matrix_sub, paste0(processed_dir, "/gRNA_indicator_matrix.fst"))
+               path = paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
+saveRDS(object = highly_expressed_genes, file = paste0(analysis_ready_dir, "/highly_expressed_genes.rds"))
+gRNA_indic_mat <- fst::write_fst(gRNA_indic_matrix_sub, paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
 
 ###############################################
 # save subsetted cell-by-gene expression matrix
 ###############################################
+
+if (!dir.exists(analysis_ready_dir)) dir.create(path = analysis_ready_dir, recursive = TRUE)
+
 gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 exp_mat <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm()
 exp_mat_mem <- exp_mat[,seq(1, ncol(exp_mat))]
@@ -61,11 +66,12 @@ exp_mat_sub_disk <- FBM(nrow = nrow(exp_mat_sub),
                         ncol = ncol(exp_mat_sub),
                         type = "unsigned short",
                         init = 0,
-                        backingfile = paste0(processed_dir, "/expression_matrix_sub"),
+                        backingfile = paste0(analysis_ready_dir, "/expression_matrix_sub"),
                         create_bk = TRUE)
 exp_mat_sub_disk[1:nrow(exp_mat_sub), 1:ncol(exp_mat_sub)] <- exp_mat_sub
 exp_mat_sub_metadata <- list(nrow = nrow(exp_mat_sub),
                              ncol = ncol(exp_mat_sub),
                              type = "unsigned short",
-                             backingfile = paste0(processed_dir, "/expression_matrix_sub"))
-saveRDS(object = exp_mat_sub_metadata, paste0(processed_dir, "/exp_mat_sub_metadata.rds"))
+                             backingfile = paste0(analysis_ready_dir, "/expression_matrix_sub"))
+saveRDS(object = exp_mat_sub_metadata, paste0(analysis_ready_dir, "/exp_mat_sub_metadata.rds"))
+
