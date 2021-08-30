@@ -50,7 +50,7 @@ if (!dir.exists(analysis_ready_dir)) dir.create(path = analysis_ready_dir, recur
 
 fst::write_fst(x = global_covariate_matrix,
                path = paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
-saveRDS(object = highly_expressed_genes, file = paste0(analysis_ready_dir, "/highly_expressed_genes.rds"))
+saveRDS(object = highly_expressed_genes, file = paste0(processed_dir, "/highly_expressed_genes.rds"))
 gRNA_indic_mat <- fst::write_fst(gRNA_indic_matrix_sub, paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
 
 ###############################################
