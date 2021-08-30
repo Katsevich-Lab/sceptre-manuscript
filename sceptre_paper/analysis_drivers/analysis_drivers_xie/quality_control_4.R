@@ -46,6 +46,7 @@ global_covariate_matrix <- data.frame(log_n_umis = log(n_umis_per_cell[cell_subs
 # save
 # create a new directory, "analysis_ready" to store all data in analysis-ready format.
 analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
+if (!dir.exists(analysis_ready_dir)) dir.create(path = analysis_ready_dir, recursive = TRUE)
 
 fst::write_fst(x = global_covariate_matrix,
                path = paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
@@ -55,9 +56,6 @@ gRNA_indic_mat <- fst::write_fst(gRNA_indic_matrix_sub, paste0(analysis_ready_di
 ###############################################
 # save subsetted cell-by-gene expression matrix
 ###############################################
-
-if (!dir.exists(analysis_ready_dir)) dir.create(path = analysis_ready_dir, recursive = TRUE)
-
 gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
 exp_mat <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm()
 exp_mat_mem <- exp_mat[,seq(1, ncol(exp_mat))]
