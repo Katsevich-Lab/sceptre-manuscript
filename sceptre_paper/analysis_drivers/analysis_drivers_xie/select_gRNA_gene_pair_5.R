@@ -1,16 +1,17 @@
 code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
+analysis_ready_dir <- paste0(offsite_dir, "/data/xie/analysis_ready")
 
-# load packages 
+# load packages
 library(fst)
 library(dplyr)
 library(biomaRt)
 
-# Both gene ID and gRNA position are get from GRCh 38. 
+# Both gene ID and gRNA position are get from GRCh 38.
 
 #####################
-# 1. gene positions 
+# 1. gene positions
 #####################
 gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 5947 genes (now 2437 genes)
 gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist()
@@ -42,7 +43,7 @@ saveRDS(gene.mart, file = paste0(processed_dir, "/gene_mart.rds"))
 ###########################
 # 2. guide RNA positions
 ###########################
-gRNA_indic_mat <- read.fst(paste0(processed_dir, "/gRNA_indicator_matrix.fst"))
+gRNA_indic_mat <- read.fst(paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
 gRNA.id <- colnames(gRNA_indic_mat)
 temp.gRNA = strsplit(gRNA.id, ':')
 gRNA.mart = data.frame(chr = lapply(temp.gRNA, function(x){x[1]}) %>% unlist)
@@ -59,11 +60,11 @@ saveRDS(gRNA.mart, file = paste0(processed_dir, "/gRNA_mart.rds"))
 # 3. gene-potential enhancer pairs
 ###################################
 
-# From Gasperini paper, the distance between gRNA and gene is calculated as (TSS of gene - midpoint of gRNA). 
+# From Gasperini paper, the distance between gRNA and gene is calculated as (TSS of gene - midpoint of gRNA).
 # The selection is performed chr by chr
 chr.select = intersect(gRNA.mart$chr, gene.mart$chr)
-# "chr1"  "chr10" "chr11" "chr12" "chr16" "chr17" "chr18" "chr19" "chr2"  
-# "chr20" "chr3"  "chr4"  "chr5"  "chr6"  "chr7"  "chr8"  "chrX" 
+# "chr1"  "chr10" "chr11" "chr12" "chr16" "chr17" "chr18" "chr19" "chr2"
+# "chr20" "chr3"  "chr4"  "chr5"  "chr6"  "chr7"  "chr8"  "chrX"
 # 17 chromosomes
 
 select.gRNA.gene.pair = NULL
@@ -78,7 +79,7 @@ for(chr in chr.select){
   gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
   distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
   temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)
-  select.gRNA.gene.pair = rbind(select.gRNA.gene.pair, 
+  select.gRNA.gene.pair = rbind(select.gRNA.gene.pair,
                                 data.frame(gene.id = gene.mart$original.id[gene.chr.id[temp.id[, 2]]],
                                            gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   # cat(chr, ' is done! \n')
@@ -88,7 +89,7 @@ dim(select.gRNA.gene.pair)
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))
 
 
-####### Select transcription factor(TF) and their potiential enhancer 
+####### Select transcription factor(TF) and their potiential enhancer
 ##############################
 # 4. select genes that are TF
 ##############################
@@ -105,7 +106,7 @@ for(i in 1:length(tf.ensembl.id)){
     }
   }
 }
-# 24 	35 	183 	923 	1661 	
+# 24 	35 	183 	923 	1661
 # delete tf.gene lines: 24, 193, 989, 1771
 
 tf.gene.new = tf.gene[-delete.tf.line, ]
@@ -119,7 +120,7 @@ saveRDS(tf.gene.select, file = paste0(processed_dir, "/tf_gene_select.rds"))
 
 
 ######################################################
-# 5. Find gRNAs that are pontential enhancers for TF 
+# 5. Find gRNAs that are pontential enhancers for TF
 ######################################################
 ### Find gRNAs that might be potential enhancers
 tf.match.temp <- cbind(match(tf.gene.new$Gene, temp$hgnc_symbol), match(tf.gene.new$Animal.TFDB, temp$ensembl_gene_id))
@@ -134,8 +135,8 @@ tf.gene.mart$chr <- paste0('chr', tf.gene.mart$chromosome_name)
 saveRDS(tf.gene.mart, file = paste0(processed_dir, "/tf_gene_mart.rds"))
 
 chr.select <- intersect(tf.gene.mart$chr, gRNA.mart$chr)  # 17 chromosome intersect
-# [1] "chr16" "chr7"  "chr17" "chr19" "chr12" "chr2"  "chr8"  "chr20" "chr18" 
-# "chr4"  "chrX"  "chr5"  "chr1"  "chr11" "chr10" "chr3"  "chr6" 
+# [1] "chr16" "chr7"  "chr17" "chr19" "chr12" "chr2"  "chr8"  "chr20" "chr18"
+# "chr4"  "chrX"  "chr5"  "chr1"  "chr11" "chr10" "chr3"  "chr6"
 select.gRNA.tf.pair <- NULL
 
 for(chr in chr.select){
@@ -148,12 +149,12 @@ for(chr in chr.select){
   gene.tss[gene.strand == -1] = gene.pos.end[gene.strand == -1]
   gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
   distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
-  temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)  
+  temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)
   # 1. Distance less than 1MB; 2. gRNA is in the front of gene region
-  
-  select.gRNA.tf.pair = rbind(select.gRNA.tf.pair, 
-                              data.frame(ensembl.gene.id = tf.gene.mart$ensembl_gene_id[gene.chr.id[temp.id[, 2]]], 
-                                         hgnc_symbol = tf.gene.mart$hgnc_symbol[gene.chr.id[temp.id[, 2]]], 
+
+  select.gRNA.tf.pair = rbind(select.gRNA.tf.pair,
+                              data.frame(ensembl.gene.id = tf.gene.mart$ensembl_gene_id[gene.chr.id[temp.id[, 2]]],
+                                         hgnc_symbol = tf.gene.mart$hgnc_symbol[gene.chr.id[temp.id[, 2]]],
                                          gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   cat(chr, ' is done! \n')
 }
@@ -165,7 +166,7 @@ saveRDS(select.gRNA.tf.pair, file = paste0(processed_dir, "/select_gRNA_tf_pair.
 ##############################
 ### gRNA that are not close to any transcription factor, pair with the set of genes on different chormosomes.
 
-chr.select <- intersect(tf.gene.mart$chr, gRNA.mart$chr)  
+chr.select <- intersect(tf.gene.mart$chr, gRNA.mart$chr)
 num.neg.pair = NULL
 neg.control.pair <- NULL
 for(chr in chr.select){
@@ -176,17 +177,17 @@ for(chr in chr.select){
   tf.strand <- tf.gene.mart$strand[tf.chr.id]
   tf.tss <- tf.pos.start
   tf.tss[tf.strand == -1] <- tf.pos.end[tf.strand == -1]
-  
+
   gRNA.pos <- gRNA.mart$mid_position[gRNA.chr.id]
   distance.temp <- sapply(tf.tss, function(x){x - gRNA.pos})
   temp.gRNA = gRNA.id[gRNA.chr.id[which(rowSums(abs(distance.temp) > 1000000) == length(tf.tss))]]
   # Distance greater than 1MB
   temp.gene.ensembl = gene.id[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select) ]
   temp.hgnc = gene.mart$hgnc_symbol[ gene.mart$chr != chr & !(gene.mart$hgnc_symbol %in% tf.gene.select)]
-  
-  neg.control.pair <- rbind(neg.control.pair, 
-                            data.frame(gRNA.id = rep(temp.gRNA, length(temp.gene.ensembl)), 
-                                       gene.id = rep(temp.gene.ensembl, each = length(temp.gRNA)), 
+
+  neg.control.pair <- rbind(neg.control.pair,
+                            data.frame(gRNA.id = rep(temp.gRNA, length(temp.gene.ensembl)),
+                                       gene.id = rep(temp.gene.ensembl, each = length(temp.gRNA)),
                                        gene.hgnc.id = rep(temp.hgnc, each = length(temp.gRNA))))
   num.neg.pair = rbind(num.neg.pair, data.frame(chr = chr, gRNA = length(temp.gRNA), gene = length(temp.gene.ensembl)))
   cat(chr, 'have',  length(temp.gRNA), 'gRNAs.', length(temp.gene.ensembl), ' genes not in ', chr, '. Done! \n')
@@ -199,9 +200,9 @@ saveRDS(num.neg.pair, file = paste0(processed_dir, '/num_neg_pair.rds'))
 ##############################################
 set.seed(4)
 
-df1_neg_control <- neg.control.pair %>% mutate(gene.hgnc.id = NULL) %>% rename("gRNA_id" = "gRNA.id", "gene_id" = "gene.id") %>% 
+df1_neg_control <- neg.control.pair %>% mutate(gene.hgnc.id = NULL) %>% rename("gRNA_id" = "gRNA.id", "gene_id" = "gene.id") %>%
   group_by(gRNA_id) %>% slice_sample(n = 500) %>% mutate(type = "negative_control") %>% ungroup()
-df2_cis_pairs <- select.gRNA.gene.pair %>% rename("gRNA_id" = "gRNA.id", "gene_id" = "gene.id") %>% 
+df2_cis_pairs <- select.gRNA.gene.pair %>% rename("gRNA_id" = "gRNA.id", "gene_id" = "gene.id") %>%
   mutate(type = "cis")
 bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds")) %>% filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
 df3_bulk_validation <- expand.grid(gene_id = gene.id, gRNA_id = bulk_regions$region) %>% mutate(type = "bulk_validation")
@@ -209,7 +210,7 @@ df3_bulk_validation <- expand.grid(gene_id = gene.id, gRNA_id = bulk_regions$reg
 all_pairs <- rbind(df1_neg_control, df2_cis_pairs, df3_bulk_validation)
 all_pairs_f <- mutate_all(all_pairs, factor)
 
-write_fst(x = all_pairs_f, path = paste0(processed_dir, "/gRNA_gene_pairs.fst")) 
+write_fst(x = all_pairs_f, path = paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 
 ########################################################################################
 # Sanity check: for a few cis pairs, verify the gene and gRNA are on the same chromosome
