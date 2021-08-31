@@ -1,3 +1,5 @@
+small_example <- TRUE
+
 code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 
@@ -8,7 +10,7 @@ analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
 
 cds <- readRDS(paste0(analysis_ready_dir, "/monocole_obj.rds"))
 pairs <- fst::read_fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
-pairs <- pairs[1:100,]
+if (small_example) pairs <- pairs[1:100,]
 
 # set formula
 reduced_formula <- "~ log_n_umis + batch + log_n_gRNA_umis"
