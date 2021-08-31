@@ -4,7 +4,9 @@ offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 library(monocle)
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/gasp_custom_functs.R"))
-cds <- readRDS(paste0(processed_dir, "/monocole_obj.rds"))
+analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
+
+cds <- readRDS(paste0(analysis_ready_dir, "/monocole_obj.rds"))
 pairs <- fst::read_fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 pairs <- pairs[1:100,]
 

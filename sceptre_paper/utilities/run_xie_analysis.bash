@@ -7,6 +7,7 @@ source ~/.research_config
 # Set the number of processors.
 n_processors=50
 machine=$MACHINE_NAME
+precomputation_complete=FALSE
 
 echo Running on machine $machine with $n_processors processors.
 
@@ -22,23 +23,22 @@ bash build_and_install_package.bash sceptre $machine
 bash build_and_install_package.bash katsevich2020 $machine
 
 echo Initialize the offsite directory structure.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"check_directory_structure_1.R
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"check_directory_structure_1.R
 
 echo Download the data.
 # Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"download_data_2.R
 
 echo Pre-process the data.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_process_data_3.R
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"pre_process_data_3.R
 
 echo Construct model covariate matrix and perform quality control.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R
 
 echo Determine the gene-gRNA pairs to analyze.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_5.R
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_5.R
 
 echo Create monocole object for monocole NB analysis.
-Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"create_monocle_object_5.1.R
-
+# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"create_monocle_object_5.1.R
 
 # Locate the parameter file
 parameter_file=$code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"sceptre_function_args.R

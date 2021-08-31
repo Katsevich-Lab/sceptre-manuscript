@@ -1,11 +1,11 @@
 # offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
-small_example <- FALSE
+small_example <- TRUE
 library(sceptre)
 
 processed_dir <- paste0(offsite_dir, "/data/xie/processed")
 analysis_ready_dir <- paste0(offsite_dir, "/data/xie/analysis_ready")
 results_dir_negbin <- paste0(offsite_dir, "/results/xie/negative_binomial")
-bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds"))
+bulk_regions <- readRDS(paste0(plrocessed_dir, "/bulk_region_names.rds"))
 gRNA_gene_pairs <- fst::read.fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 covariate_matrix <- fst::read.fst(paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
 cell_gene_expression_matrix_info <- readRDS(paste0(analysis_ready_dir, "/exp_mat_sub_metadata.rds")) 
