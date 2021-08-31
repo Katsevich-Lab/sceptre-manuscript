@@ -34,10 +34,10 @@ echo Construct model covariate matrix and perform quality control.
 Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"quality_control_4.R
 
 echo Determine the gene-gRNA pairs to analyze.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_5.R
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"select_gRNA_gene_pair_5.R
 
 echo Create monocole object for monocole NB analysis.
-# Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"create_monocle_object_5.1.R
+Rscript $code_dir"/sceptre_paper/analysis_drivers/analysis_drivers_xie/"create_monocle_object_5.1.R
 
 
 # Locate the parameter file
