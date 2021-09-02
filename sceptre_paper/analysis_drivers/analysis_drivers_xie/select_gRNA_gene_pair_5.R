@@ -215,7 +215,8 @@ df2_cis_pairs <- select.gRNA.gene.pair %>% rename("gRNA_id" = "gRNA.id", "gene_i
 bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds")) %>% filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
 
 # be sure to add ARL15 and MYB to the bulk region gene_ids
-df3_bulk_validation <- expand.grid(gene_id = gene.id, gRNA_id = bulk_regions$region) %>% mutate(type = "bulk_validation")
+df3_bulk_validation <- expand.grid(gene_id = unique(c(bulk_regions$targeted_gene_id, gene.id)),
+                                   gRNA_id = bulk_regions$region) %>% mutate(type = "bulk_validation")
 
 all_pairs <- rbind(df1_neg_control, df2_cis_pairs, df3_bulk_validation)
 all_pairs_f <- mutate_all(all_pairs, factor)
@@ -229,4 +230,3 @@ set.seed(4)
 test_df <- dplyr::filter(all_pairs_f, type == "cis") %>% dplyr::sample_n(5) %>% dplyr::arrange(gene_id)
 test_df_genes <- lapply(strsplit(as.character(test_df$gene_id), '[.]'), function(x){x[1]}) %>% unlist()
 dplyr::filter(gene.mart, ensembl_gene_id %in% test_df_genes) %>% dplyr::arrange(ensembl_gene_id) # OK
-

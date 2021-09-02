@@ -97,11 +97,18 @@ offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 # Save the bulk region names
+h5_files <- paste0(raw_data_dir, "/", grep(pattern = '*.h5', list.files(raw_data_dir), value = TRUE))
+gene_names <- rhdf5::h5read(h5_files[1], "/refgenome_hg38_CROP-Guide-MS2-2.1.0/gene_names")
+gene_ids <- rhdf5::h5read(h5_files[1], "/refgenome_hg38_CROP-Guide-MS2-2.1.0/genes")
+
 enh_targets_df <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/enh_targets.xlsx"), sheet = 1)
 bulk_region_names <- filter(enh_targets_df, gene_names %in% c("ARL15", "MYB")) %>%
-  select(region, region_name = Denoted.Region.Name.used.in.the.paper, targeted_gene = gene_names) %>%
-  filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
+  dplyr::select(region, region_name = Denoted.Region.Name.used.in.the.paper, targeted_gene = gene_names) %>%
+  filter(region_name %in% c("ARL15-enh", "MYB-enh-3")) %>%
+  dplyr::mutate(targeted_gene_id = c(gene_ids["ARL15" == gene_names],
+                                     gene_ids["MYB" == gene_names]))
 saveRDS(object = bulk_region_names, paste0(processed_dir, "/bulk_region_names.rds"))
+
 
 ####################################################
 # Next, we create a data frame containing UMI counts
