@@ -1,5 +1,5 @@
-args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1]
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 library(readxl)
@@ -270,8 +270,8 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
 
     KRnorm = read_tsv(sprintf("%s/HIC/GSE63525_K562_intrachromosomal_contact_matrices/K562/%s_resolution_intrachromosomal/%s/%s/%s_%s.KRnorm",
                               functional_data_dir,resolution_name,chr,quality,chr,resolution_name),
-                      col_names = "normalization", col_types = "d") %>%
-      pull()
+                      col_names = "normalization", col_types = "c") %>%
+      pull() %>% as.numeric()
 
     rejected_pairs_chr = rejected_pairs %>%
       filter(chr == !!chr, !is.na(TAD_left)) %>%

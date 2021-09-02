@@ -213,6 +213,8 @@ df1_neg_control <- neg.control.pair %>% mutate(gene.hgnc.id = NULL) %>% rename("
 df2_cis_pairs <- select.gRNA.gene.pair %>% rename("gRNA_id" = "gRNA.id", "gene_id" = "gene.id") %>%
   mutate(type = "cis")
 bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds")) %>% filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
+
+# be sure to add ARL15 and MYB to the bulk region gene_ids
 df3_bulk_validation <- expand.grid(gene_id = gene.id, gRNA_id = bulk_regions$region) %>% mutate(type = "bulk_validation")
 
 all_pairs <- rbind(df1_neg_control, df2_cis_pairs, df3_bulk_validation)

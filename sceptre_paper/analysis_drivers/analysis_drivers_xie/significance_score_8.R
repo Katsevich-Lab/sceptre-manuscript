@@ -1,5 +1,5 @@
-args <- commandArgs(trailingOnly = TRUE) 
-code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1] 
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 
 suppressPackageStartupMessages(library(R.matlab))
@@ -16,8 +16,8 @@ gRNA.fname = str_replace(gRNA_id, ':', '-')
 
 for(i in 1:length(gRNA.fname)){
   dest = paste0(raw_data_dir, '/', gRNA.fname[i], '-down_log-pval.mat')
-  download.file(url = paste0('https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/', 
-                             gRNA.fname[i], '-down_log-pval.mat?raw=true'), 
+  download.file(url = paste0('https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/',
+                             gRNA.fname[i], '-down_log-pval.mat?raw=true'),
                 destfile = dest)
 }
 
@@ -35,10 +35,10 @@ xie_pval_mat <- as.data.frame(xie_pfiles_r)
 colnames(xie_pval_mat) <- gRNA_id
 
 original_results_xie = do.call('rbind', lapply(1:nrow(gRNA.gene.pair), function(i){
-  data.frame(gRNA_id = gRNA.gene.pair$gRNA_id[i], 
-             gene_id = gRNA.gene.pair$gene_id[i], 
-             raw_p_val = xie_pval_mat[as.character(gRNA.gene.pair$gene_id[i]), 
-                                      as.character(gRNA.gene.pair$gRNA_id[i])], 
+  data.frame(gRNA_id = gRNA.gene.pair$gRNA_id[i],
+             gene_id = gRNA.gene.pair$gene_id[i],
+             raw_p_val = xie_pval_mat[as.character(gRNA.gene.pair$gene_id[i]),
+                                      as.character(gRNA.gene.pair$gRNA_id[i])],
              site_type = gRNA.gene.pair$type[i])
 }))
 rownames(original_results_xie) = NULL
@@ -78,10 +78,10 @@ SS.down.cis = ss.down[idx_temp, ]
 
 m.gene.id = match(gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 'cis'], rownames(SS.down.cis))
 m.gRNA.id = match(gRNA.gene.pair$gRNA_id[gRNA.gene.pair$type == 'cis'], colnames(SS.down.cis))
-ss_xie_cis = data.frame(gene_id = gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 'cis'],  
+ss_xie_cis = data.frame(gene_id = gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 'cis'],
                         gRNA_id = gRNA.gene.pair$gRNA_id[gRNA.gene.pair$type == 'cis'],
                         ss.down = SS.down.cis[cbind(m.gene.id, m.gRNA.id)])
-  
+
 ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[135]
 ss_xie_cis$reject.down = ss_xie_cis$ss.down >= ss_thres
 saveRDS(ss_xie_cis, file = paste0(processed_dir, '/ss_xie_cis.rds'))
