@@ -1,5 +1,5 @@
 # offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
-small_example <- TRUE
+small_example <- FALSE
 library(sceptre)
 
 processed_dir <- paste0(offsite_dir, "/data/xie/processed")

@@ -51,8 +51,7 @@ original_results = cbind(original_results, resampling_results[, c('gene_short_na
                                                                   'target_site.mid')])
 
 # ChIP-seq enrichment analysis
-if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.tsv")) |
-    !file.exists(paste0(results_dir_enrichment, "/TF_enrichments.tsv"))) {
+
   # read chipseq data
   important_TFs = c("H3K27ac", "EP300", "BRD4", "GATA2", "TAL1", "TBL1XR1", "DPF2", "RNF2")
   num_TFs = length(important_TFs)
@@ -186,11 +185,10 @@ if (!file.exists(paste0(results_dir_enrichment, "/TF_paired_enhancer_fractions.t
   TF_enrichments$up_bound = c(old_enrichments[3, ], new_enrichments[3, ], old_unique_enrichments[3, ], new_unique_enrichments[3, ])
   TF_enrichments$lower_bound = c(old_enrichments[2, ], new_enrichments[2, ], old_unique_enrichments[2, ], new_unique_enrichments[2, ])
   write_tsv(TF_enrichments, sprintf("%s/TF_enrichments.tsv", results_dir_enrichment))
-}
+
 
 
 ########  HI-C enrichment analysis
-if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) {
   domains = read_tsv(sprintf("%sHIC/GSE63525_K562_Arrowhead_domainlist.txt", functional_data_dir),
                      col_types = "ciiciicddddd") %>%
     mutate(chr1 = sprintf("chr%s", chr1), chr2 = sprintf("chr%s", chr2))
@@ -320,4 +318,4 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
                 select(gene_id, gRNA_id, score_rank),
               by = c("gene_id", "gRNA_id"))
   write_tsv(rejected_pairs, sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))
-}
+
