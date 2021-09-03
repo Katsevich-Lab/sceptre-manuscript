@@ -8,16 +8,21 @@ source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/pa
 barcodes_gene <- readRDS(paste0(processed_dir, "/cell_barcodes_gene.rds"))
 
 # Compute the number of UMIs in each cell
-exp_mat_t <- readRDS(paste0(processed_dir, "/exp_mat_t_metadata.rds")) %>% sceptre::load_fbm()
+exp_mat_metadata_t <- readRDS(paste0(processed_dir, "/exp_mat_t_metadata.rds"))
+exp_mat_metadata_t$backingfile <- paste0(processed_dir, "/expression_matrix_t")
+exp_mat_t <- exp_mat_metadata_t %>% sceptre::load_fbm()
+
 n_umis_per_cell <- big_apply(exp_mat_t, function(X, ind) {colSums(X[,ind])}) %>% unlist()
 gene_covariate_matrix <- data.frame(cell_barcode = barcodes_gene, log_n_umis = n_umis_per_cell)
 gene_barcode_original_order <- gene_covariate_matrix$cell_barcode
 
 # Compute the mean expression of each gene
 gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
-exp_mat <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm()
+exp_mat_metadata <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds"))
+exp_mat_metadata$backingfile <- paste0(processed_dir, "/expression_matrix")
+exp_mat <- load_fbm(exp_mat_metadata)
 gene_expression_p <- big_apply(exp_mat, function(X, ind) colMeans(X[,ind] >= 1)) %>% unlist()
-highly_expressed_genes <- gene_ids[which(gene_expression_p >= 0.08)]
+highly_expressed_genes <- gene_ids[which(gene_expression_p >= 0.005)] # threshold of 0.005 (1/2%)
 
 ##########################################
 # Load gRNA data and gRNA covariate matrix
@@ -57,7 +62,6 @@ gRNA_indic_mat <- fst::write_fst(gRNA_indic_matrix_sub, paste0(analysis_ready_di
 # save subsetted cell-by-gene expression matrix
 ###############################################
 gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
-exp_mat <- readRDS(paste0(processed_dir, "/exp_mat_metadata.rds")) %>% load_fbm()
 exp_mat_mem <- exp_mat[,seq(1, ncol(exp_mat))]
 exp_mat_sub <- exp_mat_mem[cell_subset,]
 exp_mat_sub_disk <- FBM(nrow = nrow(exp_mat_sub),
@@ -72,4 +76,3 @@ exp_mat_sub_metadata <- list(nrow = nrow(exp_mat_sub),
                              type = "unsigned short",
                              backingfile = paste0(analysis_ready_dir, "/expression_matrix_sub"))
 saveRDS(object = exp_mat_sub_metadata, paste0(analysis_ready_dir, "/exp_mat_sub_metadata.rds"))
-

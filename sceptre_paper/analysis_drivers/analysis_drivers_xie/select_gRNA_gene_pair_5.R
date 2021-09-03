@@ -13,7 +13,7 @@ library(biomaRt)
 #####################
 # 1. gene positions
 #####################
-gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 5947 genes (now 2437 genes)
+gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 5129
 gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist()
 ensembl <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 ensembl.37 <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", GRCh = 37)
@@ -59,7 +59,6 @@ saveRDS(gRNA.mart, file = paste0(processed_dir, "/gRNA_mart.rds"))
 ###################################
 # 3. gene-potential enhancer pairs
 ###################################
-
 # From Gasperini paper, the distance between gRNA and gene is calculated as (TSS of gene - midpoint of gRNA).
 # The selection is performed chr by chr
 chr.select = intersect(gRNA.mart$chr, gene.mart$chr)
@@ -85,7 +84,7 @@ for(chr in chr.select){
   # cat(chr, ' is done! \n')
 }
 dim(select.gRNA.gene.pair)
-# 3530 pairs of gene and gRNA (now 1221)
+# 2376 pairs of gene and gRNA
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))
 
 ### sanity check: are the genes and gRNAs on the same chromosome?
@@ -107,7 +106,7 @@ for(i in 1:length(tf.ensembl.id)){
   n = sum(tf.gene$Animal.TFDB == tf.ensembl.id[i])
   if(n > 1){
     cat(i, '\t')
-    if(tf.ensembl.id[i] != ''){
+    if(tf.ensembl.id[i] != '') {
       delete.tf.line = c(delete.tf.line, which(tf.gene$Animal.TFDB == tf.ensembl.id[i])[1])
     }
   }
@@ -217,7 +216,7 @@ df2_cis_pairs <- select.gRNA.gene.pair %>% rename("gRNA_id" = "gRNA.id", "gene_i
 bulk_regions <- readRDS(paste0(processed_dir, "/bulk_region_names.rds")) %>% filter(region_name %in% c("ARL15-enh", "MYB-enh-3"))
 df3_bulk_validation <- expand.grid(gene_id = unique(c(bulk_regions$targeted_gene_id, gene.id)),
                                    gRNA_id = bulk_regions$region) %>% mutate(type = "bulk_validation")
-fst::write_fst(x = df3_bulk_validation, path = paste0(processed_dir, "/gRNA_gene_pairs_bulk_validation.fst"))
+# fst::write_fst(x = df3_bulk_validation, path = paste0(processed_dir, "/gRNA_gene_pairs_bulk_validation.fst"))
 
 all_pairs <- rbind(df1_neg_control, df2_cis_pairs, df3_bulk_validation)
 all_pairs_f <- mutate_all(all_pairs, factor)
