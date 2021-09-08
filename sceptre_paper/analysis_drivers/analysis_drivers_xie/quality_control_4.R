@@ -44,7 +44,7 @@ gene_odm <- gene_odm[,cells_intersect]
 global_covariate_matrix <- data.frame(log_n_umis = get_cell_covariates(gene_odm) %>% dplyr::pull(n_umis) %>% log(),
                                       log_n_gRNA_umis = log(gRNA_covariate_matrix_sub$cell_gRNA_umi_counts),
                                       batch = gRNA_covariate_matrix_sub$batch)
-
+save_odm(odm = gene_odm, metadata_fp = paste0(processed_dir, "/odm/metadata_final.rds"))
 ##################################################################################
 # Create analysis-ready dir; save highly expressed genes and gRNA indicator matrix
 ##################################################################################

@@ -2,21 +2,19 @@ code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
 analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
+library(ondisc)
 
 # Load the necessary data
-cell_gene_expression_matrix_info <- readRDS(paste0(analysis_ready_dir, "/exp_mat_sub_metadata.rds"))
-cell_gene_expression_matrix_info$backingfile <- paste0(analysis_ready_dir, "/expression_matrix_sub")
-cell_gene_expression_matrix <- cell_gene_expression_matrix_info %>% load_fbm
-gene_ids <- as.character(readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS")))
 gRNA_mat <- fst::read_fst(path = paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
 gene_gRNA_pairs <- fst::read_fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
 gene_ids_used <- unique(gene_gRNA_pairs$gene_id) %>% as.character()
 covariate_matrix <- fst::read_fst(paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
 
 # Obtain the expression matrix
-gene_idxs <- match(x = gene_ids_used, table = gene_ids)
-exp_mat <- Matrix::Matrix(data = cell_gene_expression_matrix[,gene_idxs], sparse = TRUE)
-exp_mat <- Matrix::t(exp_mat)
+odm_fp <- paste0(processed_dir, "/odm/gene_expression_matrix.odm")
+metadata_fp <- paste0(processed_dir, "/odm/metadata_final.rds")
+odm <- read_odm(odm_fp = odm_fp, metadata_fp = metadata_fp)
+exp_mat <- odm[[,seq(1, ncol(odm))]]
 
 # ensure the dimensions of expression matrix, covariate matrix, and gRNA matrix match
 dim(exp_mat); dim(covariate_matrix); dim(gRNA_mat)
@@ -25,12 +23,12 @@ dim(exp_mat); dim(covariate_matrix); dim(gRNA_mat)
 global_covariate_matrix <- cbind(covariate_matrix, gRNA_mat)
 
 # obtain the features data frame
-feature_df <- data.frame(id = gene_ids[gene_idxs],
-                         gene_short_name = "NA")
+feature_df <- data.frame(id = get_feature_ids(odm),
+                         gene_short_name = get_feature_names(odm))
 
 # assign column and row names to the data frames and matrices
 # cell names first
-cell_names <- paste0("cell", seq(1, (ncol(exp_mat))))
+cell_names <- get_cell_barcodes(odm)
 colnames(exp_mat) <- cell_names
 row.names(global_covariate_matrix) <- cell_names
 # feature names second
