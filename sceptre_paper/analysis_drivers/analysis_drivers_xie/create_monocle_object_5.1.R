@@ -4,10 +4,11 @@ source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/pa
 analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
 library(ondisc)
 
-# Load the necessary data
+# Load the covariate matrix, gRNA matrix
 covariate_matrix <- fst::read_fst(paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
+gRNA_mat <- fst::read_fst(paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
 
-# Obtain the expression matrix
+# Obtain the expression matrix and gRNA matrix
 odm_fp <- paste0(processed_dir, "/odm/gene_expression_matrix.odm")
 metadata_fp <- paste0(processed_dir, "/odm/metadata_final.rds")
 odm <- read_odm(odm_fp = odm_fp, metadata_fp = metadata_fp)
