@@ -13,7 +13,7 @@ library(biomaRt)
 #####################
 # 1. gene positions
 #####################
-gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 5129
+gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 10614
 gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist()
 ensembl <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 ensembl.37 <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", GRCh = 37)
@@ -68,21 +68,22 @@ chr.select = intersect(gRNA.mart$chr, gene.mart$chr)
 
 select.gRNA.gene.pair = NULL
 
-for(chr in chr.select){
+for (chr in chr.select) {
   gene.chr.id = which(gene.mart$chr == chr)
   gRNA.chr.id = which(gRNA.mart$chr == chr)
   gene.pos.start = gene.mart$start_position[gene.chr.id]
   gene.pos.end = gene.mart$end_position[gene.chr.id]
   gene.tss = gene.pos.start
-  gene.tss[gene.mart$strand == -1] = gene.pos.end[gene.mart$strand == -1]
+  # gene.tss[gene.mart$strand == -1] = gene.pos.end[gene.mart$strand == -1]
   gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
-  distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
-  temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)
+  distance.temp = sapply(gene.tss, function(x) {abs(x - gRNA.pos)})
+  temp.id = which(distance.temp < 1000000, arr.ind = T)
   select.gRNA.gene.pair = rbind(select.gRNA.gene.pair,
                                 data.frame(gene.id = gene.mart$original.id[gene.chr.id[temp.id[, 2]]],
                                            gRNA.id = gRNA.id[gRNA.chr.id[temp.id[, 1]]]))
   # cat(chr, ' is done! \n')
 }
+
 dim(select.gRNA.gene.pair)
 # 2376 pairs of gene and gRNA
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))

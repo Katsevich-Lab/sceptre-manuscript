@@ -1,10 +1,14 @@
 code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 offsite_dir <- .get_config_path("LOCAL_SCEPTRE_DATA_DIR")
-source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
-library(ondisc)
-library(rhdf5)
-library(openxlsx)
 
+# Pre-process data
+source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/paths_to_dirs.R"))
+packs <- c("bigstatsr", "future", "furrr", "Matrix", "rhdf5", "stringr", "openxlsx", "katsevich2020", "magrittr")
+for (pack in packs) suppressPackageStartupMessages(library(pack, character.only = TRUE))
+
+###################
+# Expression matrix
+###################
 # First, we determine the number of cells and number of genes across all the batches
 h5_files <- paste0(raw_data_dir, "/", grep(pattern = '*.h5', list.files(raw_data_dir), value = TRUE))
 dims_across_h5s <- sapply(h5_files, function(h5_file) {
@@ -18,27 +22,71 @@ row.names(dims_across_h5s) <- NULL
 all(dims_across_h5s[,1] == dims_across_h5s[1,1]) # Verify n genes consistent across files
 n_cells_total <- sum(dims_across_h5s[,2])
 n_genes_total <- dims_across_h5s[1,1]
-batch_lane <- stringr::str_extract(string = h5_files, pattern = "Batch-[0-9]_[0-9]") %>%
-  gsub(pattern = "Batch-", replacement = "")
 
-# Next, initialize an ondisc matrix storing the gene expression data
-if (!dir.exists(paste0(processed_dir, "/odm"))) dir.create(paste0(processed_dir, "/odm"))
-h5_odm <- create_ondisc_matrix_from_h5_list(h5_list = h5_files,
-                                            odm_fp = paste0(processed_dir, "/odm/gene_expression_matrix"),
-                                            metadata_fp = paste0(processed_dir, "/odm/gene_expression_metadata.rds"),
-                                            barcode_suffixes = batch_lane,
-                                            progress = TRUE)
-
-# modify the ondisc matrix by identifying the protein-coding genes
+# We will use only the protein-coding genes in this analysis; load them.
 gene_df <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/Genes.xlsx"), sheet = 1)
 all_protein_coding_genes <- gene_df$Gene_Symbol
 rm(gene_df)
-is_protein_coding <- get_feature_names(h5_odm) %in% all_protein_coding_genes
-h5_odm_w_protein_coding <- h5_odm %>% mutate_feature_covariates(protein_coding = is_protein_coding)
-save_odm(h5_odm_w_protein_coding, paste0(processed_dir, "/odm/metadata_plus.rds"))
-all_gene_ids <- rhdf5::h5read(file = h5_files[1], name = "/refgenome_hg38_CROP-Guide-MS2-2.1.0/genes")
-saveRDS(object = all_gene_ids,
-        file = paste0(processed_dir, '/all_sequenced_genes_id.rds'))
+h5_file <- h5_files[1]
+h5_handle <- H5Fopen(h5_file)
+all_sequenced_genes <- h5_handle$"/refgenome_hg38_CROP-Guide-MS2-2.1.0/gene_names"
+all_sequenced_genes_ids <-  h5_handle$"/refgenome_hg38_CROP-Guide-MS2-2.1.0/genes"
+saveRDS(all_sequenced_genes_ids, file = paste0(processed_dir, '/all_sequenced_genes_id.rds'))
+
+h5_gene_info <- data.frame(row_idx = seq(1, n_genes_total), gene_name = all_sequenced_genes, gene_id = all_sequenced_genes_ids)
+h5_gene_info_protein_coding <- dplyr::filter(h5_gene_info,
+                                             gene_name %in% all_protein_coding_genes)
+genes_in_use <- unique(h5_gene_info_protein_coding$gene_name)
+genes_in_use_ids <- h5_gene_info_protein_coding$gene_id
+gene_idxs_in_use <- h5_gene_info_protein_coding$row_idx
+n_genes_in_use <- length(genes_in_use_ids)
+H5Fclose(h5_handle)
+
+# Next, we create a file-backed matrix to store the transpose of the expression matrix
+exp_mat_t <- FBM(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", init = 0, backingfile = paste0(processed_dir, "/expression_matrix_t"), create_bk = TRUE)
+exp_mat_t_metadata <- list(nrow = n_genes_in_use, ncol = n_cells_total, type = "unsigned short", backingfile = paste0(processed_dir, "/expression_matrix_t"))
+saveRDS(object = exp_mat_t_metadata, file = paste0(processed_dir, "/exp_mat_t_metadata.rds"))
+
+exp_mat <- FBM(nrow = n_cells_total, ncol = n_genes_in_use, type = "unsigned short", init = 0, backingfile = paste0(processed_dir, "/expression_matrix"), create_bk = TRUE)
+exp_mat_metadata <- list(nrow = n_cells_total, ncol = n_genes_in_use, type = "unsigned short", backingfile = paste0(processed_dir, "/expression_matrix"))
+saveRDS(object = exp_mat_metadata, file = paste0(processed_dir, "/exp_mat_metadata.rds"))
+
+# We iterate through the hd5 files and write the column chunks piece-by-piece to the FBM.
+n_cells_processed <- 0
+ordered_cell_barcodes <- character(0)
+
+batch_lane <- stringr::str_extract(string = h5_files, pattern = "Batch-[0-9]_[0-9]") %>%
+  gsub(pattern = "Batch-", replacement = "")
+for (i in seq(1, length(h5_files))) {
+  print(i)
+  curr_batch_lane <- batch_lane[i]
+  h5_file <- h5_files[i]
+  print(paste("Working on", h5_file))
+  h5_handle <- H5Fopen(h5_file)
+  dat <- h5_handle$"refgenome_hg38_CROP-Guide-MS2-2.1.0/data"
+  indices <- h5_handle$"refgenome_hg38_CROP-Guide-MS2-2.1.0/indices"
+  ind_ptr <- h5_handle$"refgenome_hg38_CROP-Guide-MS2-2.1.0/indptr"
+  shape <-  h5_handle$"refgenome_hg38_CROP-Guide-MS2-2.1.0/shape"
+  n_cols <- shape[2]
+  cell_barcodes <- h5_handle$"refgenome_hg38_CROP-Guide-MS2-2.1.0/barcodes"
+  # do some barcode processing
+  if (any(duplicated(cell_barcodes))) stop("Duplicate barcodes")
+  cell_barcodes <- paste0(cell_barcodes, "_", curr_batch_lane)
+  # Ensure that the maximum index pointer is less than the maximum integer value in R
+  if (max(ind_ptr) >= 2147483647) stop("Index pointer exceeds R max integer value.")
+  sparseM <- Matrix::sparseMatrix(i = indices, p = ind_ptr, x = dat, dims = shape)
+  sparseM <- sparseM[gene_idxs_in_use,]
+  # write
+  exp_mat_t[seq(1, n_genes_in_use), (n_cells_processed + 1):(n_cells_processed + n_cols)] <- as.matrix(sparseM)
+  exp_mat[(n_cells_processed + 1):(n_cells_processed + n_cols), seq(1, n_genes_in_use)] <- as.matrix(t(sparseM))
+  H5Fclose(h5_handle)
+  n_cells_processed <- n_cells_processed + n_cols
+  ordered_cell_barcodes <- c(ordered_cell_barcodes, cell_barcodes)
+}
+
+saveRDS(object = ordered_cell_barcodes, file = paste0(processed_dir, "/cell_barcodes_gene.rds"))
+saveRDS(object = genes_in_use, file = paste0(processed_dir, "/ordered_genes.RDS"))
+saveRDS(object = genes_in_use_ids, file = paste0(processed_dir, "/ordered_gene_ids.RDS"))
 
 ###############
 # gRNA UMI data
