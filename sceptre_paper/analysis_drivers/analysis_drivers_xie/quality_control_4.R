@@ -55,7 +55,6 @@ if (!dir.exists(analysis_ready_dir)) dir.create(path = analysis_ready_dir, recur
 fst::write_fst(x = global_covariate_matrix,
                path = paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
 fst::write_fst(gRNA_indic_matrix_sub, paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
-saveRDS(highly_expressed_genes, paste0(analysis_ready_dir, "/ordered_gene_ids.rds"))
 
 ######################################################################################
 # save subsetted cell-by-gene expression matrix (only highly expressed genes included)
