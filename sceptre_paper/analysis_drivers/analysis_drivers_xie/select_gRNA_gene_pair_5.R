@@ -73,8 +73,9 @@ for(chr in chr.select){
   gRNA.chr.id = which(gRNA.mart$chr == chr)
   gene.pos.start = gene.mart$start_position[gene.chr.id]
   gene.pos.end = gene.mart$end_position[gene.chr.id]
+  gene.strand = gene.mart$strand[gene.chr.id]
   gene.tss = gene.pos.start
-  gene.tss[gene.mart$strand == -1] = gene.pos.end[gene.mart$strand == -1]
+  gene.tss[gene.strand == -1] = gene.pos.end[gene.strand == -1]
   gRNA.pos = gRNA.mart$mid_position[gRNA.chr.id]
   distance.temp = sapply(gene.tss, function(x){x - gRNA.pos})
   temp.id = which(abs(distance.temp) < 1000000, arr.ind = T)
@@ -84,7 +85,7 @@ for(chr in chr.select){
   # cat(chr, ' is done! \n')
 }
 dim(select.gRNA.gene.pair)
-# 2376 pairs of gene and gRNA
+#
 saveRDS(select.gRNA.gene.pair, file = paste0(processed_dir, "/select_gRNA_gene_pair.rds"))
 
 ### sanity check: are the genes and gRNAs on the same chromosome?
