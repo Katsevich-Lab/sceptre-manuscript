@@ -14,7 +14,7 @@ gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
 gRNA_id = sort(as.character(unique(gRNA.gene.pair$gRNA_id)))
 gRNA.fname = str_replace(gRNA_id, ':', '-')
 
-for(i in 1:length(gRNA.fname)){
+for(i in 1:length(gRNA.fname)) {
   dest = paste0(raw_data_dir, '/', gRNA.fname[i], '-down_log-pval.mat')
   download.file(url = paste0('https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/',
                              gRNA.fname[i], '-down_log-pval.mat?raw=true'),
@@ -23,7 +23,7 @@ for(i in 1:length(gRNA.fname)){
 
 all_sequenced_genes_id <- readRDS(paste0(raw_data_dir, '/all_sequenced_genes_id.rds'))
 xie_pfiles = setNames(paste0(raw_data_dir, '/', gRNA.fname, '-down_log-pval.mat'), gRNA_id)
-extract_p_vals = function(p_mat){
+extract_p_vals = function(p_mat) {
   p_vals <- exp(p_mat$matrix[1, ])
   names(p_vals) <- all_sequenced_genes_id  #actually this should be provided in download_data_2.R
   return(p_vals)
@@ -34,7 +34,7 @@ saveRDS(xie_pfiles_r, file = paste0(processed_dir, '/raw_p_val_xie.rds')) # with
 xie_pval_mat <- as.data.frame(xie_pfiles_r)
 colnames(xie_pval_mat) <- gRNA_id
 
-original_results_xie = do.call('rbind', lapply(1:nrow(gRNA.gene.pair), function(i){
+original_results_xie = do.call('rbind', lapply(1:nrow(gRNA.gene.pair), function(i) {
   data.frame(gRNA_id = gRNA.gene.pair$gRNA_id[i],
              gene_id = gRNA.gene.pair$gene_id[i],
              raw_p_val = xie_pval_mat[as.character(gRNA.gene.pair$gene_id[i]),
