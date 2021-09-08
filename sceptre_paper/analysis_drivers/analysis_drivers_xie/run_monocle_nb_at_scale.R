@@ -9,7 +9,8 @@ source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_xie/ga
 analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
 
 cds <- readRDS(paste0(analysis_ready_dir, "/monocole_obj.rds"))
-pairs <- fst::read_fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
+pairs <- fst::read_fst(paste0(processed_dir, "/gRNA_gene_pairs.fst")) %>%
+  dplyr::filter(type != "bulk_validation")
 if (small_example) pairs <- pairs[1:100,]
 
 # set formula
