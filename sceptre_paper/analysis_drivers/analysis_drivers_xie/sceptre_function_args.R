@@ -11,7 +11,7 @@ covariate_matrix <- fst::read.fst(paste0(analysis_ready_dir, "/covariate_model_m
 cell_gene_expression_matrix_info <- readRDS(paste0(analysis_ready_dir, "/exp_mat_sub_metadata.rds")) 
 cell_gene_expression_matrix_info$backingfile <- paste0(analysis_ready_dir, "/expression_matrix_sub")
 cell_gene_expression_matrix <- sceptre::load_fbm(cell_gene_expression_matrix_info)
-ordered_gene_ids <- readRDS(paste0(processed_dir, "/ordered_gene_ids.RDS"))
+ordered_gene_ids <- readRDS(paste0(analysis_ready_dir, "/ordered_gene_ids.RDS"))
 gRNA_indicator_matrix_fp <- paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst")
 regularization_amount <- 3
 cell_subset <- seq(1, nrow(cell_gene_expression_matrix))

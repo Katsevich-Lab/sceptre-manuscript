@@ -54,13 +54,13 @@ if (!dir.exists(analysis_ready_dir)) dir.create(path = analysis_ready_dir, recur
 
 fst::write_fst(x = global_covariate_matrix,
                path = paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
-saveRDS(object = highly_expressed_genes, file = paste0(processed_dir, "/highly_expressed_genes.rds"))
 fst::write_fst(gRNA_indic_matrix_sub, paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
+saveRDS(highly_expressed_genes, paste0(analysis_ready_dir, "/ordered_gene_ids.rds"))
 
 ######################################################################################
 # save subsetted cell-by-gene expression matrix (only highly expressed genes included)
 ######################################################################################
-exp_mat_sub <- as.matrix(gene_odm[[,1:ncol(gene_odm)]])
+exp_mat_sub <- t(as.matrix(gene_odm[[,1:ncol(gene_odm)]]))
 exp_mat_sub_disk <- FBM(nrow = nrow(exp_mat_sub),
                         ncol = ncol(exp_mat_sub),
                         type = "unsigned short",

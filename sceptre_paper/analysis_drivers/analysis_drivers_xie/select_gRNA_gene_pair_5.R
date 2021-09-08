@@ -16,7 +16,8 @@ library(biomaRt)
 gene.id <- readRDS(paste0(processed_dir, '/highly_expressed_genes.rds'))   # 10614
 gene.ensembl.id <- lapply(strsplit(gene.id, '[.]'), function(x){x[1]}) %>% unlist()
 ensembl <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
-ensembl.37 <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", GRCh = 37)
+ensembl.37 <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl",
+                                  GRCh = 37)
 temp <- biomaRt::getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol', 'chromosome_name',
                                     'start_position', 'end_position', 'strand'),
                        mart = ensembl, useCache = FALSE)

@@ -5,9 +5,6 @@ analysis_ready_dir <- paste0(offsite_dir, "data/xie/analysis_ready")
 library(ondisc)
 
 # Load the necessary data
-gRNA_mat <- fst::read_fst(path = paste0(analysis_ready_dir, "/gRNA_indicator_matrix.fst"))
-gene_gRNA_pairs <- fst::read_fst(paste0(processed_dir, "/gRNA_gene_pairs.fst"))
-gene_ids_used <- unique(gene_gRNA_pairs$gene_id) %>% as.character()
 covariate_matrix <- fst::read_fst(paste0(analysis_ready_dir, "/covariate_model_matrix.fst"))
 
 # Obtain the expression matrix
