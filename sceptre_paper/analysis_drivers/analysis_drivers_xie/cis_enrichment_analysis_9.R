@@ -13,7 +13,6 @@ library(tidyr)
 
 # create cis file for resampling results for Xie data
 gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
-resampling_results_xie = read.fst(paste0(results_dir, "/all_results.fst")) %>% as_tibble()
 all_results_annotated = read.fst(paste0(results_dir, "/all_results_annotated.fst")) %>% as_tibble()
 resampling_results_xie_cis = all_results_annotated %>% filter(type == 'cis')
 

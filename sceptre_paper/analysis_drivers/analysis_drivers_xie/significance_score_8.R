@@ -14,14 +14,15 @@ gRNA.gene.pair = read.fst(paste0(processed_dir, '/gRNA_gene_pairs.fst'))
 gRNA_id = sort(as.character(unique(gRNA.gene.pair$gRNA_id)))
 gRNA.fname = str_replace(gRNA_id, ':', '-')
 
-for(i in 1:length(gRNA.fname)) {
+for (i in 1:length(gRNA.fname)) {
   dest = paste0(raw_data_dir, '/', gRNA.fname[i], '-down_log-pval.mat')
   download.file(url = paste0('https://github.com/russellxie/Global-analysis-K562-enhancers/blob/master/Notebooks/Data/Hypergeometric_pvals/',
                              gRNA.fname[i], '-down_log-pval.mat?raw=true'),
                 destfile = dest)
 }
 
-all_sequenced_genes_id <- readRDS(paste0(raw_data_dir, '/all_sequenced_genes_id.rds'))
+all_sequenced_genes_id <- rhdf5::h5read(file = paste0(raw_data_dir, "/GSM3722727_K562-dCas9-KRAB_5K-sgRNAs_Batch-4_1_filtered_gene_bc_matrices_h5.h5"),
+                                        name = "/refgenome_hg38_CROP-Guide-MS2-2.1.0/genes")
 xie_pfiles = setNames(paste0(raw_data_dir, '/', gRNA.fname, '-down_log-pval.mat'), gRNA_id)
 extract_p_vals = function(p_mat) {
   p_vals <- exp(p_mat$matrix[1, ])
@@ -82,6 +83,6 @@ ss_xie_cis = data.frame(gene_id = gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 
                         gRNA_id = gRNA.gene.pair$gRNA_id[gRNA.gene.pair$type == 'cis'],
                         ss.down = SS.down.cis[cbind(m.gene.id, m.gRNA.id)])
 
-ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[135]
+ss_thres = sort(ss_xie_cis$ss.down, decreasing = T)[135]
 ss_xie_cis$reject.down = ss_xie_cis$ss.down >= ss_thres
 saveRDS(ss_xie_cis, file = paste0(processed_dir, '/ss_xie_cis.rds'))
