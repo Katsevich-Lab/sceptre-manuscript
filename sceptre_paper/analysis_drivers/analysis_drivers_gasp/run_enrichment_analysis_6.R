@@ -1,5 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 require(plyranges)
 require(GenomicRanges)
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/file_paths_to_dirs.R"))
@@ -203,7 +203,7 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
                      col_types = "ciiciicddddd") %>%
     mutate(chr1 = sprintf("chr%s", chr1), chr2 = sprintf("chr%s", chr2))
   
-  er(site_type == "DHS", quality_rank_grna == "top_two") %>%
+  all_pairs = original_results %>% filter(site_type == "DHS", quality_rank_grna == "top_two") %>%
     select(chr, gene_id, target_gene.start, target_gene.stop, TSS,
            target_site, target_site.start, target_site.stop, rejected) %>%
     dplyr::rename(rejected_monocle = rejected) %>%
@@ -284,8 +284,8 @@ if (!file.exists(sprintf("%s/rejected_pairs_HIC.tsv", results_dir_enrichment))) 
     
     KRnorm = read_tsv(sprintf("%s/HIC/GSE63525_K562_intrachromosomal_contact_matrices/K562/%s_resolution_intrachromosomal/%s/%s/%s_%s.KRnorm",
                               functional_data_dir,resolution_name,chr,quality,chr,resolution_name),
-                      col_names = "normalization", col_types = "d") %>%
-      pull()
+                      col_names = "normalization", col_types = "c") %>%
+      pull() %>% as.numeric()
     
     rejected_pairs_chr = rejected_pairs %>%
       filter(chr == !!chr, !is.na(TAD_left)) %>%
