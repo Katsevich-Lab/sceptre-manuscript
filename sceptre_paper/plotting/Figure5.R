@@ -14,22 +14,21 @@ fig5_dir <- paste0(manuscript_figure_dir, "/Figure5")
 ####### subfigure a (Significance Score vs SCEPTRE p-values) #########
 resampling_results <- resampling_results_xie_cis
 original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reject.down') %>% dplyr::rename(rejected = reject.down)
-original_results = cbind(original_results, resampling_results[, c('gene_short_name', 'chr', 'strand', 'target_gene.start', 
-                                                                  'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
-                                                                  'target_site.mid')])
+original_results <- left_join(original_results, resampling_results[, c('gene_id', 'gRNA_id', 'gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                   'target_site.mid')], 
+          by = c("gene_id", "gRNA_id"))
 
 rejected_by_annotated = rep(NA, nrow(resampling_results))
-rejected_by_annotated[resampling_results$rejected*10 + ss_xie_cis$reject.down == 0] = 'Neither method'
-rejected_by_annotated[resampling_results$rejected*10 + ss_xie_cis$reject.down == 1] = 'Virtual FACS only'
-rejected_by_annotated[resampling_results$rejected*10 + ss_xie_cis$reject.down == 10] = 'SCEPTRE only'
-rejected_by_annotated[resampling_results$rejected*10 + ss_xie_cis$reject.down == 11] = 'Both methods'
+rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 0] = 'Neither method'
+rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 1] = 'Virtual FACS only'
+rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 10] = 'SCEPTRE only'
+rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 11] = 'Both methods'
 rejected_by_annotated = factor(rejected_by_annotated, levels = c("Neither method", "Both methods", "SCEPTRE only", "Virtual FACS only"))
 table(rejected_by_annotated)
 #rejected_by_annotated
-#   Neither method      Both methods      SCEPTRE only Virtual FACS only 
-#             3367                84                51                51 
 
-ss_thres = sort(ss_xie_cis$ss.down, decreasing = T)[135]
+ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[sum(resampling_results$rejected)]
 df_s = data.frame(gene_id = resampling_results$gene_id, gRNA_id = resampling_results$gRNA_id, 
                   p_value = resampling_results$p_value, signif.score = ss_xie_cis$ss.down, 
                   rejected_by_annotated = rejected_by_annotated)
@@ -57,47 +56,69 @@ p_a = ggplot(data = arrange(df_s, rejected_by_annotated), aes(x = signif.score, 
     plot.title = element_text(hjust = 0.5))
 
 ####### subfigure b (distances) ##########
+monocle_results = monocle_results_xie_cis
+nb_results = nb_results_xie_cis
+
 df = original_results %>%
-  dplyr::rename(old_rejected = rejected) %>%
+  dplyr::rename(rejected_vf = rejected) %>%
   #filter(site_type == "cis") %>%
   left_join(resampling_results %>%
               select(gene_id, gRNA_id, rejected) %>%
-              dplyr::rename(new_rejected = rejected),
+              dplyr::rename(rejected_sceptre = rejected),
+            by = c("gene_id", "gRNA_id")) %>%
+  left_join(monocle_results %>%
+              select(gene_id, gRNA_id, rejected) %>%
+              dplyr::rename(rejected_monocle = rejected), 
+            by = c("gene_id", "gRNA_id")) %>%
+  left_join(nb_results %>%
+              select(gene_id, gRNA_id, rejected) %>%
+              dplyr::rename(rejected_nb = rejected), 
             by = c("gene_id", "gRNA_id")) %>%
   mutate(strand = ifelse(target_gene.start == TSS, "+", "-"),
          enhancer_location = 0.5*(target_site.start + target_site.stop),
          TSS_dist = ifelse(strand == "+", enhancer_location - TSS, TSS - enhancer_location))
 
-df1 = df %>% filter(old_rejected) %>% mutate(group = "old_rejections")
-df2 = df %>% filter(new_rejected) %>% mutate(group = "new_rejections")
+df1 = df %>% filter(rejected_vf) %>% mutate(group = "vf_rejections")
+df2 = df %>% filter(rejected_sceptre) %>% mutate(group = "sceptre_rejections")
+df3 = df %>% filter(rejected_monocle) %>% mutate(group = "monocle_rejections")
+df4 = df %>% filter(rejected_nb) %>% mutate(group = "nb_rejections")
 
 dist_tab <- rbind(
   df1 %>%
     filter(TSS_dist <= 0) %>%
     summarise(`Mean distance (kb)` = mean(TSS_dist)/1000,
               `Median distance (kb)` = median(TSS_dist)/1000) %>%
-    mutate(method = "Original"),
+    mutate(method = "Virtual FACS"),
   df2 %>%
     filter(TSS_dist <= 0) %>%
     summarise(`Mean distance (kb)` = mean(TSS_dist)/1000, `Median distance (kb)` = median(TSS_dist)/1000) %>%
-    mutate(method = "SCEPTRE")
+    mutate(method = "SCEPTRE"), 
+  df3 %>%
+    filter(TSS_dist <= 0) %>%
+    summarise(`Mean distance (kb)` = mean(TSS_dist)/1000, `Median distance (kb)` = median(TSS_dist)/1000) %>%
+    mutate(method = "Monocle NB"), 
+  df4 %>%
+    filter(TSS_dist <= 0) %>%
+    summarise(`Mean distance (kb)` = mean(TSS_dist)/1000, `Median distance (kb)` = median(TSS_dist)/1000) %>%
+    mutate(method = "Improved NB")
 ) %>%
   gather(metric, measure, -method) %>%
   spread(method, measure) # %>% kable(format = "latex", booktabs = TRUE, escape = FALSE, linesep = "",digits = 1, col.names = c("", "Original", "SCEPTRE"))
-#metric  Original  SCEPTRE
-#1   Mean distance (kb) -208.6636 -97.8121
-#2 Median distance (kb)  -58.5065 -40.9805
 
-p_b <- rbind(df1, df2) %>%
+
+p_b <- rbind(df1, df2, df3, df4) %>%
   filter(TSS_dist <= 0) %>%
   mutate(group = factor(group,
-                        levels = c("new_rejections", "old_rejections"),
-                        labels = c("SCEPTRE", "Virtual FACS"))) %>%
+                        levels = c("sceptre_rejections", "vf_rejections", "monocle_rejections", 'nb_rejections'),
+                        labels = c("SCEPTRE", "Virtual FACS", "Monocle NB", "Improved NB"))) %>%
   mutate(TSS_dist = TSS_dist/1000) %>%
   filter(TSS_dist >= -300) %>%
-  ggplot(aes(x = TSS_dist, group = desc(group), fill = group)) +
-  geom_histogram(position = position_identity(), alpha = 0.75, bins = 14, aes(y = ..density..)) +
-  scale_fill_manual(values = c(plot_colors[["sceptre"]], plot_colors[["hypergeometric"]])) +
+  ggplot(aes(x = TSS_dist, group = dplyr::desc(group), fill = group, col = group)) +
+  geom_histogram(position = position_identity(), alpha = 0.3, bins = 14, aes(y = ..density..)) +
+  scale_fill_manual(values = c(plot_colors[["sceptre"]], plot_colors[["hypergeometric"]], 
+                               plot_colors[['gasperini_nb']], plot_colors[['hf_nb']])) +
+  scale_color_manual(values = c(plot_colors[["sceptre"]], plot_colors[["hypergeometric"]], 
+                                plot_colors[['gasperini_nb']], plot_colors[['hf_nb']])) +
   scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0)) +
   xlab("Enhancer to TSS distance (kb)") + ylab("Frequency") + ggtitle("Gene-enhancer distances") +
   theme_bw() + theme(panel.grid = element_blank(),
@@ -108,40 +129,55 @@ p_b <- rbind(df1, df2) %>%
                      legend.position = c(0.2, 0.8),
                      plot.title = element_text(hjust = 0.5))
 
+
 # subfigure c (TADs)
-old_scores = rejected_pairs_HIC_xie %>% filter(rejected_old, !is.na(score_rank)) %>% pull(score_rank)
-new_scores = rejected_pairs_HIC_xie %>% filter(rejected_new, !is.na(score_rank)) %>% pull(score_rank)
+vf_scores = rejected_pairs_HIC_xie %>% filter(rejected_vf, !is.na(score_rank)) %>% pull(score_rank)
+sceptre_scores = rejected_pairs_HIC_xie %>% filter(rejected_sceptre, !is.na(score_rank)) %>% pull(score_rank)
+monocle_scores = rejected_pairs_HIC_xie %>% filter(rejected_monocle, !is.na(score_rank)) %>% pull(score_rank)
+nb_scores = rejected_pairs_HIC_xie %>% filter(rejected_nb, !is.na(score_rank)) %>% pull(score_rank)
+
+
 sceptre_percent = rejected_pairs_HIC_xie %>% 
-  filter(rejected_new) %>%
+  filter(rejected_sceptre) %>%
   dplyr::summarise(total = dplyr::n(), 
                    same_tad = sum(!is.na(TAD_left)), 
                    same_tad_prop = sum(!is.na(TAD_left))/dplyr::n())
 
-original_percent = rejected_pairs_HIC_xie %>% 
-  filter(rejected_old) %>%
+vf_percent = rejected_pairs_HIC_xie %>% 
+  filter(rejected_vf) %>%
   dplyr::summarise(total = dplyr::n(), 
                    same_tad = sum(!is.na(TAD_left)), 
                    same_tad_prop = sum(!is.na(TAD_left))/dplyr::n())
-#> sceptre_percent
-# A tibble: 1 x 3
-#total same_tad same_tad_prop
-#<int>    <int>         <dbl>
-#  1   135       97         0.719
-#> original_percent
-# A tibble: 1 x 3
-#total same_tad same_tad_prop
-#<int>    <int>         <dbl>
-#  1   135       83         0.615
+
+monocle_percent = rejected_pairs_HIC_xie %>% 
+  filter(rejected_monocle) %>%
+  dplyr::summarise(total = dplyr::n(), 
+                   same_tad = sum(!is.na(TAD_left)), 
+                   same_tad_prop = sum(!is.na(TAD_left))/dplyr::n())
+
+nb_percent = rejected_pairs_HIC_xie %>% 
+  filter(rejected_nb) %>%
+  dplyr::summarise(total = dplyr::n(), 
+                   same_tad = sum(!is.na(TAD_left)), 
+                   same_tad_prop = sum(!is.na(TAD_left))/dplyr::n())
+
+
 
 x = seq(0, 1 + 1e-10, length.out = 1000)
-old_ecdf = ecdf(old_scores)(x)
-new_ecdf = ecdf(new_scores)(x)
-p_c <- tibble(x, old_ecdf, new_ecdf) %>%
+vf_ecdf = ecdf(vf_scores)(x)
+sceptre_ecdf = ecdf(sceptre_scores)(x)
+nb_ecdf = ecdf(nb_scores)(x)
+monocle_ecdf = ecdf(monocle_scores)(x)
+
+p_c <- tibble(x, vf_ecdf, sceptre_ecdf, monocle_ecdf, nb_ecdf) %>%
   gather(method, ecdf, -x) %>%
-  mutate(method = factor(method, levels = c("new_ecdf", "old_ecdf"), labels = c("SCEPTRE", "Virtual FACS"))) %>%
+  mutate(method = factor(method, levels = c("sceptre_ecdf", "vf_ecdf", "monocle_ecdf", "nb_ecdf"), 
+                         labels = c("SCEPTRE", "Virtual FACS", "Monocle NB", "Improved NB"))) %>%
   ggplot(aes(x = x, y = ecdf, group = method, colour = method)) +
-  geom_line(lwd = 1.2) + geom_abline(slope = 1, linetype = "dashed") +
-  scale_colour_manual(values = c( plot_colors[["sceptre"]], plot_colors[["hypergeometric"]]), name = "Loci pairs") + ggtitle("Gene-enhancer HIC interactions")  +
+  geom_line(lwd = 0.9) + geom_abline(slope = 1, linetype = "dashed") +
+  scale_colour_manual(values = c( plot_colors[["sceptre"]], plot_colors[["hypergeometric"]], plot_colors[['gasperini_nb']], 
+                                  plot_colors[['hf_nb']]), 
+                      name = "Loci pairs") + ggtitle("Gene-enhancer HIC interactions")  +
   xlab("Rank of pair by TAD interaction frequency") +
   ylab("Cumulative fraction of pairs") +
   theme_bw() + theme(legend.position = c(0.2, 0.8),
@@ -151,20 +187,23 @@ p_c <- tibble(x, old_ecdf, new_ecdf) %>%
                      legend.background = element_blank(),
                      axis.line = element_line(),
                      plot.title = element_text(hjust = 0.5))
-# subfigure d (Chip-seq)
-my_order <- TF_enrichments_xie %>% filter(method == "Proposed") %>% pull(enrichment) %>% order()
-ordered_labs <- (TF_enrichments_xie %>% filter(method == "Proposed") %>% pull(TF))[my_order]
 
-p_d <- TF_enrichments_xie %>% arrange(desc(method)) %>%
-  mutate(method = factor(method, levels = c("Original", "Proposed"), labels = c("Virtual FACS", "SCEPTRE")),
+
+# subfigure d (Chip-seq)
+my_order <- TF_enrichments_xie %>% filter(method == "SCEPTRE") %>% pull(enrichment) %>% order()
+ordered_labs <- (TF_enrichments_xie %>% filter(method == "SCEPTRE") %>% pull(TF))[my_order]
+
+p_d <- TF_enrichments_xie %>% arrange(dplyr::desc(method)) %>%
+  mutate(method = factor(method, levels = c("Virtual FACS", "Monocle NB", "Improved NB", "SCEPTRE")),
          TF = factor(TF,
                      levels = ordered_labs,
                      labels = ordered_labs)) %>%
   #filter(method %in% c('Original', 'SCEPTRE')) %>%
   ggplot(aes(x = TF, y = enrichment, fill = method)) +
-  geom_col(position = "dodge", width = 1.25) +
+  geom_col(position = "dodge", width = 0.95) +
   xlab("ChIP-seq target") + ylab("Enrichment (odds ratio)") + ggtitle("Enhancer ChIP-seq enrichment") +
-  scale_fill_manual(values = c(plot_colors[["hypergeometric"]], plot_colors[["sceptre"]])) +
+  scale_fill_manual(values = c(plot_colors[["hypergeometric"]], plot_colors[['gasperini_nb']], plot_colors[['hf_nb']], 
+                               plot_colors[["sceptre"]])) +
   scale_y_continuous(expand = c(0, 0)) + 
   geom_hline(yintercept = 1, linetype = "dashed") +
   theme_bw() + coord_flip() + theme(
@@ -176,4 +215,5 @@ p_d <- TF_enrichments_xie %>% arrange(desc(method)) %>%
     axis.text.x = element_text(angle = 0, vjust = 0.2, hjust=0))
 
 combined_full = plot_grid(p_a, p_b, p_c, p_d, align = 'v', labels = c("a", "b", "c", "d"), nrow = 2)
+
 ggsave(filename = paste0(fig5_dir, "/Fig5_full.pdf"), plot = combined_full, device = "pdf", scale = 1, width = 8, height = 6.5)
