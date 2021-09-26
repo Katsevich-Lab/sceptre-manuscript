@@ -45,10 +45,28 @@ resampling_results = resampling_results_xie_cis
 ss_xie_cis = readRDS(file = paste0(processed_dir, '/ss_xie_cis.rds'))
 original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reject.down') %>% dplyr::rename(rejected = reject.down)
 
-# BUG! ROWS NOT ORDERED IDENTICALLY.
-original_results = cbind(original_results, resampling_results[, c('gene_short_name', 'chr', 'strand', 'target_gene.start',
-                                                                  'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
-                                                                  'target_site.mid')])
+# Add annotations to Virtual FACS
+original_results <- left_join(original_results, resampling_results[, c('gene_id', 'gRNA_id', 'gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                   'target_site.mid')], 
+          by = c('gene_id' = 'gene_id', 'gRNA_id' = 'gRNA_id'))
+
+monocle_results_xie = read.fst(paste0(results_dir_negative_binomial, "/monocle_results_annotated.fst"))
+nb_results_xie = read.fst(paste0(results_dir_negative_binomial, "/all_results_annotated.fst"))
+
+monocle_results_xie_cis = monocle_results_xie %>% filter(type == 'cis')
+nb_results_xie_cis = nb_results_xie %>% filter(type == 'cis')
+
+monocle_results = cbind(monocle_results_xie_cis, 
+                                resampling_results[match(resampling_results$pair_str, monocle_results_xie_cis$pair_str),
+                                                   c('gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                     'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                     'target_site.mid')])
+nb_results = cbind(nb_results_xie_cis, 
+                           resampling_results[match(resampling_results$pair_str, nb_results_xie_cis$pair_str),
+                                              c('gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                'target_site.mid')])
 
 # ChIP-seq enrichment analysis
 
@@ -79,17 +97,31 @@ original_results = cbind(original_results, resampling_results[, c('gene_short_na
     #filter(site_type == "cis") %>%
     select(chr, gRNA_id, target_site.start, target_site.stop, rejected) %>%
     group_by(chr, gRNA_id, target_site.start, target_site.stop) %>%
-    summarise(rejected_old = any(rejected)) %>%
+    summarise(rejected_vf = any(rejected)) %>%
     ungroup() %>%
     inner_join(resampling_results %>%
                  #filter(site_type == "cis") %>%
                  select(gRNA_id, rejected) %>%
                  group_by(gRNA_id) %>%
-                 summarise(rejected_new = any(rejected)),
+                 summarise(rejected_sceptre = any(rejected)),
                by = "gRNA_id") %>%
+    inner_join(monocle_results %>% 
+               select(gRNA_id, rejected) %>% 
+                 group_by(gRNA_id) %>%
+                 summarise(rejected_monocle = any(rejected)), 
+               by = 'gRNA_id') %>%
+    inner_join(nb_results %>%
+                 select(gRNA_id, rejected) %>%
+                 group_by(gRNA_id) %>%
+                 summarise(rejected_nb = any(rejected)),
+               by = 'gRNA_id') %>%
     unique() %>%
-    mutate(rejected_new_unique = rejected_new & !rejected_old,
-           rejected_old_unique = rejected_old & !rejected_new)
+    mutate(rejected_sceptre_unique_nb = rejected_sceptre & !rejected_nb,
+           rejected_sceptre_unique_monocle = rejected_sceptre & !rejected_monocle,
+           rejected_sceptre_unique_vf = rejected_sceptre & ! rejected_vf,
+           rejected_nb_unique = rejected_nb & !rejected_sceptre, 
+           rejected_monocle_unique = rejected_monocle & !rejected_sceptre, 
+           rejected_vf_unique = rejected_vf & !rejected_sceptre)
 
   # GRanges object for chipseq data
   gr_chipseq <- GRanges(
@@ -102,10 +134,16 @@ original_results = cbind(original_results, resampling_results[, c('gene_short_na
   gr_cand = GRanges(
     seqnames = df_cand_enhancers$chr,
     ranges = IRanges(start = df_cand_enhancers$target_site.start, end = df_cand_enhancers$target_site.stop),
-    rejected_old = df_cand_enhancers$rejected_old,
-    rejected_new = df_cand_enhancers$rejected_new,
-    rejected_new_unique = df_cand_enhancers$rejected_new_unique,
-    rejected_old_unique = df_cand_enhancers$rejected_old_unique,
+    rejected_sceptre = df_cand_enhancers$rejected_sceptre,
+    rejected_vf = df_cand_enhancers$rejected_vf,
+    rejected_monocle = df_cand_enhancers$rejected_monocle,
+    rejected_nb = df_cand_enhancers$rejected_nb,
+    rejected_sceptre_unique_vf = df_cand_enhancers$rejected_sceptre_unique_vf,
+    rejected_sceptre_unique_monocle = df_cand_enhancers$rejected_sceptre_unique_monocle, 
+    rejected_sceptre_unique_nb = df_cand_enhancers$rejected_sceptre_unique_nb,
+    rejected_vf_unique = df_cand_enhancers$rejected_vf_unique,
+    rejected_monocle_unique = df_cand_enhancers$rejected_monocle_unique, 
+    rejected_nb_unique = df_cand_enhancers$rejected_nb_unique, 
     gRNA_id = df_cand_enhancers$gRNA_id)
 
   # Split chipseq data into quintiles
@@ -129,61 +167,140 @@ original_results = cbind(original_results, resampling_results[, c('gene_short_na
   # compute paired fractions in each quintile
   paired_fractions = gr_cand_overlaps %>%
     group_by(TF, quintile) %>%
-    summarise(rejected_old = mean(rejected_old),
-              rejected_new = mean(rejected_new),
-              rejected_old_unique = mean(rejected_old_unique),
-              rejected_new_unique = mean(rejected_new_unique)) %>%
+    summarise(rejected_sceptre = mean(rejected_sceptre),
+              rejected_vf = mean(rejected_vf),
+              rejected_monocle = mean(rejected_monocle),
+              rejected_nb = mean(rejected_nb),
+              rejected_sceptre_unique_vf = mean(rejected_sceptre_unique_vf),
+              rejected_sceptre_unique_monocle = mean(rejected_sceptre_unique_monocle), 
+              rejected_sceptre_unique_nb = mean(rejected_sceptre_unique_nb),
+              rejected_vf_unique = mean(rejected_vf_unique),
+              rejected_monocle_unique = mean(rejected_monocle_unique), 
+              rejected_nb_unique = mean(rejected_nb_unique)) %>%
     as_tibble()
+
   write_tsv(paired_fractions, sprintf("%s/TF_paired_enhancer_fractions.tsv", results_dir_enrichment))
 
   # compute odds ratios for old and new methods
-  old_enrichments = sapply(important_TFs, function(TF){
+  vf_enrichments = sapply(important_TFs, function(TF){
     enrichment = gr_cand_overlaps %>%
       filter(TF == !!TF, quintile %in% c(0, 2)) %>%
       as_tibble() %>%
-      select(rejected_old, quintile) %>%
+      select(rejected_vf, quintile) %>%
       table() %>%
       fisher.test()
     c(enrichment$estimate, enrichment$conf.int)
   })
-  new_enrichments = sapply(important_TFs, function(TF){
+  sceptre_enrichments = sapply(important_TFs, function(TF){
     enrichment = gr_cand_overlaps %>%
       filter(TF == !!TF, quintile %in% c(0, 2)) %>%
       as_tibble() %>%
-      select(rejected_new, quintile) %>%
+      select(rejected_sceptre, quintile) %>%
       table() %>%
       fisher.test()
     c(enrichment$estimate, enrichment$conf.int)
   })
-  old_unique_enrichments = sapply(important_TFs, function(TF){
+  monocle_enrichments = sapply(important_TFs, function(TF){
     enrichment = gr_cand_overlaps %>%
       filter(TF == !!TF, quintile %in% c(0, 2)) %>%
       as_tibble() %>%
-      select(rejected_old_unique, quintile) %>%
+      select(rejected_monocle, quintile) %>%
       table() %>%
       fisher.test()
     c(enrichment$estimate, enrichment$conf.int)
   })
-  new_unique_enrichments = sapply(important_TFs, function(TF){
+  nb_enrichments = sapply(important_TFs, function(TF){
     enrichment = gr_cand_overlaps %>%
       filter(TF == !!TF, quintile %in% c(0, 2)) %>%
       as_tibble() %>%
-      select(rejected_new_unique, quintile) %>%
+      select(rejected_nb, quintile) %>%
+      table() %>%
+      fisher.test()
+    c(enrichment$estimate, enrichment$conf.int)
+  })
+  
+  sceptre_unique_vf_enrichments = sapply(important_TFs, function(TF){
+    enrichment = gr_cand_overlaps %>%
+      filter(TF == !!TF, quintile %in% c(0, 2)) %>%
+      as_tibble() %>%
+      select(rejected_sceptre_unique_vf, quintile) %>%
+      table() %>%
+      fisher.test()
+    c(enrichment$estimate, enrichment$conf.int)
+  })
+  sceptre_unique_monocle_enrichments = sapply(important_TFs, function(TF){
+    enrichment = gr_cand_overlaps %>%
+      filter(TF == !!TF, quintile %in% c(0, 2)) %>%
+      as_tibble() %>%
+      select(rejected_sceptre_unique_monocle, quintile) %>%
+      table() %>%
+      fisher.test()
+    c(enrichment$estimate, enrichment$conf.int)
+  })
+  sceptre_unique_nb_enrichments = sapply(important_TFs,  function(TF){
+    enrichment = gr_cand_overlaps %>%
+      filter(TF == !!TF, quintile %in% c(0, 2)) %>%
+      as_tibble() %>%
+      select(rejected_sceptre_unique_nb, quintile) %>%
+      table() %>%
+      fisher.test()
+    c(enrichment$estimate, enrichment$conf.int)
+  })
+
+vf_unique_enrichment = sapply(important_TFs,  function(TF){
+    enrichment = gr_cand_overlaps %>%
+      filter(TF == !!TF, quintile %in% c(0, 2)) %>%
+      as_tibble() %>%
+      select(rejected_vf_unique, quintile) %>%
+      table() %>%
+      fisher.test()
+    c(enrichment$estimate, enrichment$conf.int)
+  })
+  monocle_unique_enrichment = sapply(important_TFs,  function(TF){
+    enrichment = gr_cand_overlaps %>%
+      filter(TF == !!TF, quintile %in% c(0, 2)) %>%
+      as_tibble() %>%
+      select(rejected_monocle_unique, quintile) %>%
+      table() %>%
+      fisher.test()
+    c(enrichment$estimate, enrichment$conf.int)
+  })
+  nb_unique_enrichment = sapply(important_TFs,  function(TF){
+    enrichment = gr_cand_overlaps %>%
+      filter(TF == !!TF, quintile %in% c(0, 2)) %>%
+      as_tibble() %>%
+      select(rejected_nb_unique, quintile) %>%
       table() %>%
       fisher.test()
     c(enrichment$estimate, enrichment$conf.int)
   })
 
 
-  TF_enrichments = tibble(TF = important_TFs, old_enrichments = old_enrichments[1, ], new_enrichments = new_enrichments[1, ],
-                          old_unique_enrichments = old_unique_enrichments[1, ], new_unique_enrichments = new_unique_enrichments[1, ]) %>%
+
+  TF_enrichments = tibble(TF = important_TFs, vf_enrichments = vf_enrichments[1, ], sceptre_enrichments = sceptre_enrichments[1, ],
+                          monocle_enrichments = monocle_enrichments[1, ], nb_enrichments = nb_enrichments[1, ],
+                          sceptre_unique_vf_enrichments = sceptre_unique_vf_enrichments[1, ], 
+                          sceptre_unique_monocle_enrichments = sceptre_unique_monocle_enrichments[1, ], 
+                          sceptre_unique_nb_enrichments = sceptre_unique_nb_enrichments[1, ], 
+                          vf_unique_enrichments = vf_unique_enrichment[1, ], monocle_unique_enrichments = monocle_unique_enrichment[1, ],
+                          nb_unique_enrichments = nb_unique_enrichment[1, ]
+                          ) %>%
     gather(method, enrichment, -TF) %>%
     mutate(method = factor(method,
-                           levels = c("old_enrichments", "new_enrichments",
-                                      "old_unique_enrichments", "new_unique_enrichments"),
-                           labels = c("Original", "Proposed", "Original Unique", "Proposed Unique")))
-  TF_enrichments$up_bound = c(old_enrichments[3, ], new_enrichments[3, ], old_unique_enrichments[3, ], new_unique_enrichments[3, ])
-  TF_enrichments$lower_bound = c(old_enrichments[2, ], new_enrichments[2, ], old_unique_enrichments[2, ], new_unique_enrichments[2, ])
+                           levels = c("vf_enrichments", "sceptre_enrichments", "monocle_enrichments", "nb_enrichments",
+                                      "sceptre_unique_vf_enrichments", "sceptre_unique_monocle_enrichments", 
+                                      "sceptre_unique_nb_enrichments", "vf_unique_enrichments", "monocle_unique_enrichments", 
+                                      "nb_unique_enrichments"),
+                           labels = c("Virtual FACS", "SCEPTRE", "Monocle NB", "Improved NB", 
+                                      "SCEPTRE unique Virtual FACS", "SCEPTRE unique Monocle NB", "SCEPTRE unique Improved NB", 
+                                      "Virtual FACS unique", "Monocle NB unique", "Improved NB unique")))
+  TF_enrichments$up_bound = c(vf_enrichments[3, ], sceptre_enrichments[3, ], monocle_enrichments[3, ], nb_enrichments[3, ],
+                              sceptre_unique_vf_enrichments[3, ], sceptre_unique_monocle_enrichments[3, ], sceptre_unique_nb_enrichments[3, ],
+                              vf_unique_enrichment[3, ], monocle_unique_enrichment[3, ], nb_unique_enrichment[3, ])
+  TF_enrichments$lower_bound = c(vf_enrichments[2, ], sceptre_enrichments[2, ], monocle_enrichments[2, ], nb_enrichments[2, ],
+                                 sceptre_unique_vf_enrichments[2, ], sceptre_unique_monocle_enrichments[2, ], 
+                                 sceptre_unique_nb_enrichments[2, ],
+                                 vf_unique_enrichment[2, ], monocle_unique_enrichment[2, ], nb_unique_enrichment[2, ])
   write_tsv(TF_enrichments, sprintf("%s/TF_enrichments.tsv", results_dir_enrichment))
 
 
@@ -197,11 +314,19 @@ original_results = cbind(original_results, resampling_results[, c('gene_short_na
     #filter(site_type == "cis") %>%
     select(chr, gene_id, target_gene.start, target_gene.stop, TSS,
            gRNA_id, target_site.start, target_site.stop, rejected) %>%
-    dplyr::rename(rejected_old = rejected) %>%
+    dplyr::rename(rejected_vf = rejected) %>%
     left_join(resampling_results %>%
                 #filter(site_type == "cis") %>%
                 select(gene_id,  gRNA_id, rejected) %>%
-                dplyr::rename(rejected_new = rejected),
+                dplyr::rename(rejected_sceptre = rejected),
+              by = c("gene_id", "gRNA_id")) %>%
+    left_join(monocle_results %>%
+                select(gene_id, gRNA_id, rejected) %>%
+                dplyr::rename(rejected_monocle = rejected), 
+              by = c("gene_id", "gRNA_id")) %>%
+    left_join(nb_results %>%
+                select(gene_id, gRNA_id, rejected) %>%
+                dplyr::rename(rejected_nb = rejected), 
               by = c("gene_id", "gRNA_id"))
 
   all_enhancers = all_pairs %>% select(gRNA_id, chr, target_site.start, target_site.stop) %>% unique()
@@ -225,7 +350,7 @@ original_results = cbind(original_results, resampling_results[, c('gene_short_na
   gr_genes = gr_genes %>% join_overlap_left(gr_domains)
   gr_enhancers = gr_enhancers %>% join_overlap_left(gr_domains)
 
-  rejected_pairs = all_pairs %>% filter(rejected_old | rejected_new)
+  rejected_pairs = all_pairs %>% filter(rejected_vf | rejected_sceptre | rejected_monocle | rejected_nb)
   num_rejected_pairs = nrow(rejected_pairs)
   TAD_left = integer(num_rejected_pairs)
   TAD_right = integer(num_rejected_pairs)
@@ -274,7 +399,7 @@ original_results = cbind(original_results, resampling_results[, c('gene_short_na
     rejected_pairs_chr = rejected_pairs %>%
       filter(chr == !!chr, !is.na(TAD_left)) %>%
       mutate(enhancer = 0.5*(target_site.start + target_site.stop)) %>%
-      select(enhancer, TSS, TAD_left, TAD_right, gene_id, gRNA_id, rejected_old, rejected_new) %>%
+      select(enhancer, TSS, TAD_left, TAD_right, gene_id, gRNA_id, rejected_vf, rejected_sceptre, rejected_monocle, rejected_nb) %>%
       mutate_at(c("enhancer", "TSS", "TAD_left", "TAD_right"), ~floor(./resolution)+1)
 
     observed_normalized = observed %>%
