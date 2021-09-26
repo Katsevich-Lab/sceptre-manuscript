@@ -11,17 +11,14 @@ covariates_gasp = read.fst(sprintf("%s/data/gasperini/processed/cell_covariate_m
 # Xie results: 4 methods: original, resampling_results (sceptre), likelihood results (iNB), and monocle_nb
 gRNA.gene.pair = read.fst(sprintf("%s/data/xie/processed/gRNA_gene_pairs.fst", offsite_dir)) %>% as_tibble()
 original_results_xie = readRDS(sprintf("%s/data/xie/processed/raw_pval_xie.rds", offsite_dir)) %>% as_tibble()
-# original_results_xie = readRDS("~/Desktop/raw_pval_xie.rds") %>% as_tibble()
 resampling_results_xie_with_names = read.fst(sprintf("%s/results/xie/sceptre/all_results_annotated.fst", offsite_dir)) %>% as_tibble()
-# resampling_results_xie_with_names = read.fst("~/Desktop/all_results_annotated.fst") %>% as_tibble()
 likelihood_results_xie = read.fst(sprintf("%s/results/xie/negative_binomial/all_results.fst", offsite_dir)) %>% as_tibble()
 
 p_vals_bulk <- paste0(offsite_dir, "/results/xie/bulk_rna_seq/pvals_arl15_enh.rds") %>% readRDS() %>% as_tibble() %>% rename(gene_names = gene_id)
 p_vals_bulk_myb3_enh3 <- paste0(offsite_dir, "/results/xie/bulk_rna_seq/pvals_myb_enh3.rds") %>% readRDS() %>% as_tibble() %>% rename(gene_names = gene_id)
-covariates_xie = read.fst(sprintf("%s/data/xie/processed/covariate_model_matrix.fst", offsite_dir)) %>% as_tibble()
-grna_indicator_matrix_xie = read.fst(sprintf("%s/data/xie/processed/gRNA_indicator_matrix.fst", offsite_dir)) %>% as_tibble()
+covariates_xie = read.fst(sprintf("%s/data/xie/analysis_ready/covariate_model_matrix.fst", offsite_dir)) %>% as_tibble()
+grna_indicator_matrix_xie = read.fst(sprintf("%s/data/xie/analysis_ready/gRNA_indicator_matrix.fst", offsite_dir)) %>% as_tibble()
 ss_xie_cis = readRDS(sprintf("%s/data/xie/processed/ss_xie_cis.rds", offsite_dir)) %>% as_tibble()
-# ss_xie_cis = readRDS("~/Desktop/ss_xie_cis.rds") %>% as_tibble()
 
 resampling_results_xie_cis = resampling_results_xie_with_names %>% filter(type == 'cis')
 gene.mart = readRDS(sprintf("%s/data/xie/processed/gene_mart.rds", offsite_dir))
