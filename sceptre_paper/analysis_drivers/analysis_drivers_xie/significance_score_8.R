@@ -83,6 +83,10 @@ ss_xie_cis = data.frame(gene_id = gRNA.gene.pair$gene_id[gRNA.gene.pair$type == 
                         gRNA_id = gRNA.gene.pair$gRNA_id[gRNA.gene.pair$type == 'cis'],
                         ss.down = SS.down.cis[cbind(m.gene.id, m.gRNA.id)])
 
-ss_thres = sort(ss_xie_cis$ss.down, decreasing = T)[135]
+# load the number of cis SCEPTRE discoveries
+sceptre_res <- fst::read_fst(paste0(results_dir, "/all_results_annotated.fst"))
+n_sceptre_discoveries <- sceptre_res %>% dplyr::filter(type == "cis") %>% dplyr::pull(rejected) %>% sum()
+
+ss_thres = sort(ss_xie_cis$ss.down, decreasing = T)[n_sceptre_discoveries]
 ss_xie_cis$reject.down = ss_xie_cis$ss.down >= ss_thres
 saveRDS(ss_xie_cis, file = paste0(processed_dir, '/ss_xie_cis.rds'))

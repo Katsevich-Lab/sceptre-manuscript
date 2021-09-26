@@ -28,6 +28,8 @@ h5_odm <- create_ondisc_matrix_from_h5_list(h5_list = h5_files,
                                             metadata_fp = paste0(processed_dir, "/odm/gene_expression_metadata.rds"),
                                             barcode_suffixes = batch_lane,
                                             progress = TRUE)
+h5_odm <- read_odm(odm_fp = paste0(processed_dir, "/odm/gene_expression_matrix.odm"),
+                   metadata_fp = paste0(processed_dir, "/odm/gene_expression_metadata.rds"))
 
 # modify the ondisc matrix by identifying the protein-coding genes
 gene_df <- read.xlsx(xlsxFile = paste0(raw_data_dir, "/Genes.xlsx"), sheet = 1)

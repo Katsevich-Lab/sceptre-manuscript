@@ -1,5 +1,6 @@
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
+
 library(mgcv)
 library(scales)
 require(katsevich2020)
@@ -28,7 +29,7 @@ table(rejected_by_annotated)
 #   Neither method      Both methods      SCEPTRE only Virtual FACS only 
 #             3367                84                51                51 
 
-ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[135]
+ss_thres = sort(ss_xie_cis$ss.down, decreasing = T)[135]
 df_s = data.frame(gene_id = resampling_results$gene_id, gRNA_id = resampling_results$gRNA_id, 
                   p_value = resampling_results$p_value, signif.score = ss_xie_cis$ss.down, 
                   rejected_by_annotated = rejected_by_annotated)
