@@ -49,25 +49,21 @@ original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reje
 original_results <- left_join(original_results, resampling_results[, c('gene_id', 'gRNA_id', 'gene_short_name', 'chr', 'strand', 'target_gene.start',
                                                    'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
                                                    'target_site.mid')], 
-          by = c('gene_id' = 'gene_id', 'gRNA_id' = 'gRNA_id'))
+          by = c("gene_id", "gRNA_id"))
 
 monocle_results_xie = read.fst(paste0(results_dir_negative_binomial, "/monocle_results_annotated.fst"))
 nb_results_xie = read.fst(paste0(results_dir_negative_binomial, "/all_results_annotated.fst"))
 
 monocle_results_xie_cis = monocle_results_xie %>% filter(type == 'cis')
 nb_results_xie_cis = nb_results_xie %>% filter(type == 'cis')
-
-monocle_results = cbind(monocle_results_xie_cis, 
-                                resampling_results[match(resampling_results$pair_str, monocle_results_xie_cis$pair_str),
-                                                   c('gene_short_name', 'chr', 'strand', 'target_gene.start',
-                                                     'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
-                                                     'target_site.mid')])
-nb_results = cbind(nb_results_xie_cis, 
-                           resampling_results[match(resampling_results$pair_str, nb_results_xie_cis$pair_str),
-                                              c('gene_short_name', 'chr', 'strand', 'target_gene.start',
-                                                'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
-                                                'target_site.mid')])
-
+monocle_results <- left_join(monocle_results_xie_cis, resampling_results[, c('gene_id', 'gRNA_id', 'gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                                             'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                                             'target_site.mid')], 
+                             by = c("gene_id", "gRNA_id"))
+nb_results <- left_join(nb_results_xie_cis, resampling_results[, c('gene_id', 'gRNA_id', 'gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                                   'target_site.mid')], 
+                        by = c("gene_id", "gRNA_id"))
 # ChIP-seq enrichment analysis
 
   # read chipseq data
