@@ -198,7 +198,7 @@ p_d <- TF_enrichments_xie %>% arrange(dplyr::desc(method)) %>%
          TF = factor(TF,
                      levels = ordered_labs,
                      labels = ordered_labs)) %>%
-  #filter(method %in% c('Original', 'SCEPTRE')) %>%
+  filter(method %in% c("Virtual FACS", "Monocle NB", "Improved NB", "SCEPTRE")) %>%
   ggplot(aes(x = TF, y = enrichment, fill = method)) +
   geom_col(position = "dodge", width = 0.95) +
   xlab("ChIP-seq target") + ylab("Enrichment (odds ratio)") + ggtitle("Enhancer ChIP-seq enrichment") +
