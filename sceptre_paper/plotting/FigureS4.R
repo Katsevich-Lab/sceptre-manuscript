@@ -1,11 +1,11 @@
 # Reproduce Figure S3 from Katsevich, Barry, and Roeder (2020).
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "/Users/timbarry/Box/SCEPTRE/SCEPTRE/" else args[1]
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 require(katsevich2020)
 require(ggrepel)
 require(cowplot)
 source(paste0(code_dir, "/sceptre_paper/plotting/load_data_for_plotting.R"))
-figS3_dir <- paste0(manuscript_figure_dir, "/FigureS4")
+figS4_dir <- paste0(manuscript_figure_dir, "/FigureS4")
 
 resampling_results <- resampling_results_xie_cis
 original_results <- ss_xie_cis %>% select('gene_id', 'gRNA_id', 'ss.down', 'reject.down') %>% dplyr::rename(rejected = reject.down)
@@ -111,14 +111,15 @@ p_b <- tibble(x, old_ecdf, new_ecdf) %>%
 # subfigure c (Chip-seq)
 my_order <- TF_enrichments_xie %>% filter(method == "SCEPTRE unique Virtual FACS") %>% pull(enrichment) %>% order()
 ordered_labs <- (TF_enrichments_xie %>% filter(method == "SCEPTRE unique Virtual FACS") %>% pull(TF))[my_order]
-p_c <- TF_enrichments_xie %>% arrange(desc(method)) %>%
+p_c <- TF_enrichments_xie %>% arrange(desc(method)) %>% 
+  filter(method %in% c("Virtual FACS unique", "SCEPTRE unique Virtual FACS")) %>%
   mutate(method = factor(method, levels = c("Virtual FACS unique", "SCEPTRE unique Virtual FACS"), 
                          labels = c("Virtual FACS", "SCEPTRE")),
          TF = factor(TF,
                      levels = ordered_labs,
                      labels = ordered_labs)) %>%
   ggplot(aes(x = TF, y = enrichment, fill = method)) +
-  geom_col(position = "dodge", width = 1.25) +
+  geom_col(position = "dodge", width = 0.9) +
   geom_hline(yintercept = 1, linetype = "dashed") + 
   xlab("ChIP-seq target") + ylab("Enrichment (odds ratio)") + ggtitle("Enhancer ChIP-seq enrichment") +
   scale_fill_manual(values = c(plot_colors[["hypergeometric"]], plot_colors[["sceptre"]])) +
