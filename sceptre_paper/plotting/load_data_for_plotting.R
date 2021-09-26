@@ -36,26 +36,42 @@ resampling_results_xie_cis = cbind(resampling_results_xie_cis, gRNA.mart[match(r
 resampling_results_xie_cis <- resampling_results_xie_cis %>% dplyr::rename(target_site.start = start_position,
                                                                     target_site.stop = end_position,
                                                                     target_site.mid = mid_position)
+# need to change
+monocle_results_xie = read.fst(sprintf("%s/results/xie/negative_binomial/monocle_results_annotated.fst", offsite_dir))
+nb_results_xie = read.fst(sprintf("%s/results/xie/negative_binomial/all_results_annotated.fst", offsite_dir))
+
+monocle_results_xie_cis = monocle_results_xie %>% filter(type == 'cis')
+nb_results_xie_cis = nb_results_xie %>% filter(type == 'cis')
+
+monocle_results_xie_cis <- left_join(monocle_results_xie_cis, resampling_results_xie_cis[, c('gene_id', 'gRNA_id', 'gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                                             'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                                             'target_site.mid')], 
+                             by = c("gene_id", "gRNA_id"))
+nb_results_xie_cis <- left_join(nb_results_xie_cis, resampling_results_xie_cis[, c('gene_id', 'gRNA_id', 'gene_short_name', 'chr', 'strand', 'target_gene.start',
+                                                                   'target_gene.stop', 'TSS', 'target_site.start', 'target_site.stop',
+                                                                   'target_site.mid')], 
+                        by = c("gene_id", "gRNA_id"))
+
 
 
 # simulation results
 simulation_results = read.fst(sprintf("%s/results/simulations/all_results.fst", offsite_dir)) %>% as_tibble()
 
 # enrichment results Gasperini
-rejected_pairs_HIC = read_tsv(sprintf("%s/results/gasperini/enrichment/rejected_pairs_HIC.tsv", offsite_dir),
-                              col_types = "cciiiciilliid")
-TF_enrichments = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_enrichments.tsv", offsite_dir),
+rejected_pairs_HIC_gasp = read_tsv(sprintf("%s/results/gasperini/enrichment/rejected_pairs_HIC.tsv", offsite_dir),
+                              col_types = "cciiiciillliid")
+TF_enrichments_gasp = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_enrichments.tsv", offsite_dir),
                           col_types = "ccd")
-paired_fractions = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_paired_enhancer_fractions.tsv", offsite_dir),
-                            col_types = "cidddd")
+paired_fractions_gasp = read_tsv(sprintf("%s/results/gasperini/enrichment/TF_paired_enhancer_fractions.tsv", offsite_dir),
+                            col_types = "ciddddddd")
 
 # enrichment results Xie
 rejected_pairs_HIC_xie <- read_tsv(sprintf("%s/results/xie/enrichment/rejected_pairs_HIC.tsv", offsite_dir),
-                              col_types = "cciiiciilliid") %>% as_tibble()
+                              col_types = "cciiiciilllliid") %>% as_tibble()
 TF_enrichments_xie = read_tsv(sprintf("%s/results/xie/enrichment/TF_enrichments.tsv", offsite_dir),
                               col_types = "ccddd") %>% as_tibble()
 paired_fractions_xie = read_tsv(sprintf("%s/results/xie/enrichment/TF_paired_enhancer_fractions.tsv", offsite_dir),
-                            col_types = "cidddd") %>% as_tibble()
+                            col_types = "cidddddddddd") %>% as_tibble()
 
 # dispersion coefficients alpha_0 and alpha_1 from equation (6) in DESeq2 paper
 disp_coeffs = as.numeric(readRDS(sprintf("%s/data/gasperini/processed/disp_coefficients.rds", offsite_dir)))
