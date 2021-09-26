@@ -1,5 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE)
-code_dir <- if (is.na(args[1])) "~/research_code/sceptre-manuscript/" else args[1]
+code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre-manuscript")
 source(paste0(code_dir, "/sceptre_paper/analysis_drivers/analysis_drivers_gasp/file_paths_to_dirs.R"))
 require(readxl)
 require(tidyverse)
