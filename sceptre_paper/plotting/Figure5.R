@@ -19,19 +19,17 @@ original_results <- left_join(original_results, resampling_results[, c('gene_id'
                                                    'target_site.mid')], 
           by = c("gene_id", "gRNA_id"))
 
-rejected_by_annotated = rep(NA, nrow(resampling_results))
-rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 0] = 'Neither method'
-rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 1] = 'Virtual FACS only'
-rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 10] = 'SCEPTRE only'
-rejected_by_annotated[resampling_results$rejected*10 + original_results$rejected == 11] = 'Both methods'
-rejected_by_annotated = factor(rejected_by_annotated, levels = c("Neither method", "Both methods", "SCEPTRE only", "Virtual FACS only"))
-table(rejected_by_annotated)
-#rejected_by_annotated
+ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[Nrs.rej]
+df_s <- left_join(ss_xie_cis, resampling_results[, c('gene_id', 'gRNA_id', 'rejected', 'p_value')], by = c('gene_id', 'gRNA_id')) %>%
+  dplyr::rename(signif.score = ss.down) %>% 
+  mutate(rejected_by_annotated = factor(c('Neither method', 'SCEPTRE only', 'Virtual FACS only', 'Both methods')[reject.down*2 + rejected + 1], 
+         levels = c("Neither method", "Both methods", "SCEPTRE only", "Virtual FACS only"))) %>% as.data.frame()
 
-ss_thres =sort(ss_xie_cis$ss.down, decreasing = T)[sum(resampling_results$rejected)]
-df_s = data.frame(gene_id = resampling_results$gene_id, gRNA_id = resampling_results$gRNA_id, 
-                  p_value = resampling_results$p_value, signif.score = ss_xie_cis$ss.down, 
-                  rejected_by_annotated = rejected_by_annotated)
+table(df_s$rejected_by_annotated)
+#Neither method      Both methods      SCEPTRE only Virtual FACS only 
+#5014                83                56                56 
+
+df_s$signif.score[df_s$signif.score < -10] <- -10
 p_a = ggplot(data = arrange(df_s, rejected_by_annotated), aes(x = signif.score, y = p_value, color = rejected_by_annotated)) + 
   geom_point(alpha = 0.9) +
   #geom_text_repel(colour = "black", force = 0.8, point.padding = 0.1, box.padding = 0.3, size = 3, min.segment.length = 0, max.overlaps = 50) +
@@ -39,7 +37,7 @@ p_a = ggplot(data = arrange(df_s, rejected_by_annotated), aes(x = signif.score, 
   #geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
   scale_color_manual(values = c("grey60", "darkorchid1",  plot_colors[["sceptre"]], plot_colors[["hypergeometric"]]), name = "") +
   #scale_shape_manual(values = c("circle", "triangle"), labels = c("Non-outlier", "Outlier"),name = "Gasperini analysis") +
-  scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(-5, 0, 10, 100, 1000), limits = c(-7, 9000)) + 
+  scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(-5, 0, 10, 100), limits = c(-12, 9000)) + 
   scale_y_continuous(trans = revlog_trans(base = 10)) +
   xlab("Virtual FACS Significance Score") +
   guides(color = guide_legend(order = 1)) +
