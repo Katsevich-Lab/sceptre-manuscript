@@ -17,6 +17,8 @@ qq_data <- simulation_results %>%
   mutate(pvalue = ifelse(p_value < p_thresh, p_thresh, p_value),
          facet_label = factor(x = as.character(dataset_id), levels = c("2", "1", "3", "4"), labels = c("Correct model", "Dispersion too large", "Dispersion too small", "Zero inflation")),
          method = factor(x = as.character(method), levels = c("sceptre", "negative_binomial", "scMAGeCK"), labels = c("SCEPTRE", "Fixed dispersion NB", "scMAGeCK")))
+qq_data <- qq_data[qq_data$method != 'scMAGeCK', ]
+qq_data$method = factor(as.character(qq_data$method), levels = c('SCEPTRE', 'Negative Binomial'))
 
 p_a <- qq_data %>%
   ggplot(aes(x = expected, col = method, y = pvalue, ymin = clower, ymax = cupper)) +
@@ -26,28 +28,33 @@ p_a <- qq_data %>%
   xlab("Expected null p-value") +
   ylab("Observed p-value") +
   ggtitle("Simulated negative control pair") +
-  scale_colour_manual(values = setNames(plot_colors[c("sceptre", "hf_nb", "scMAGeCK")], NULL), name = "Method") +
+  scale_colour_manual(values = setNames(plot_colors[c("sceptre", "hf_nb")], NULL), name = "Method") +
   guides(color = guide_legend(override.aes = list(alpha = 1))) +
   scale_x_continuous(trans = revlog_trans(base = 10)) +
   scale_y_continuous(trans = revlog_trans(base = 10)) +
   facet_wrap(.~facet_label, nrow = 1) +
   theme_bw() + theme(
+    legend.position = c(0.15, 0.8),
+    legend.title = element_blank(),
     panel.spacing.x = unit(1.25, "lines"),
     plot.title = element_text(hjust = 0.5),
     strip.background = element_blank(),
     panel.grid = element_blank(),
     panel.border = element_blank(),
-    axis.line = element_line(),
-    legend.position = "none")
+    axis.line = element_line())
+
 # ggsave(filename = paste0(fig3_dir, "/figure3a.pdf"), plot = p_a, device = "pdf", scale = 1, width = 8, height = 2.75)
 
 # subfigure b: p-values for gasperini NTCs
 df_NTC <- rbind(select(original_results_gasp, gene_id, grna_group, pvalue = pvalue.raw, site_type) %>% mutate(method = "Monocle NB"),
                 select(resampling_results_gasp, gene_id, grna_group, pvalue = p_value, site_type) %>% mutate(method = "SCEPTRE"),
-                select(likelihood_results_gasp,  gene_id, grna_group, pvalue, site_type) %>% mutate(method = "Hafemeister NB")) %>% filter(site_type == "NTC") %>% mutate_at(.vars = c("gene_id", "grna_group", "site_type"), .funs = factor) %>% mutate(method = factor(x = as.character(method), levels = c("Monocle NB", "Hafemeister NB", "SCEPTRE"), labels = c("Monocle NB", "Hafemeister NB", "SCEPTRE"))) %>% arrange(method)
+                select(likelihood_results_gasp,  gene_id, grna_group, pvalue, site_type) %>% mutate(method = "Hafemeister NB")) %>% 
+          filter(site_type == "NTC") %>% mutate_at(.vars = c("gene_id", "grna_group", "site_type"), .funs = factor) %>% 
+          mutate(method = factor(x = as.character(method), levels = c("Monocle NB", "Hafemeister NB", "SCEPTRE"), labels = c("Monocle NB", "Hafemeister NB", "SCEPTRE"))) %>% 
+          arrange(method)
 df1 <- df_NTC %>%
   group_by(method) %>%
-  mutate(r = rank(pvalue), expected = ppoints(n())[r],
+  dplyr::mutate(r = rank(pvalue), expected = ppoints(n())[r],
          clower = qbeta(p=(1-ci)/2, shape1 = r, shape2 = n()+1-r),
          cupper = qbeta(p=(1+ci)/2, shape1 = r, shape2 = n()+1-r)) %>%
   ungroup() %>% mutate()
@@ -63,7 +70,7 @@ p_b <- df1 %>% filter(-log10(expected) > 2 | row_number() %% subsampling_factor 
   xlab(expression(paste("Expected null p-value"))) +
   ylab(expression(paste("Observed p-value"))) +
   ggtitle("Gasperini negative control pairs") +
-  theme_bw() + theme(legend.position = "none",
+  theme_bw() + theme(legend.position = c(0.25, 0.85),
                      legend.background = element_rect(fill = "transparent", colour = NA),
                      legend.title = element_blank(),
                      panel.grid = element_blank(),
@@ -75,34 +82,41 @@ p_b <- df1 %>% filter(-log10(expected) > 2 | row_number() %% subsampling_factor 
 # ggsave(filename = paste0(fig3_dir, "/figure3b.pdf"), plot = p_b, device = "pdf", scale = 1, width = 4, height = 3)
 
 # new subfigure c: negative control for Xie data
+likelihood_results_xie <- likelihood_results_xie %>% rename(site_type = type)
+monocle_results_xie <- monocle_results_xie %>% dplyr::rename(site_type = type)
 
 df_NTC <- rbind(select(original_results_xie, gene_id, gRNA_id, pvalue = raw_p_val, site_type) %>% mutate(method = "Virtual FACS"),
                 select(resampling_results_xie, gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "SCEPTRE"),
-                select(likelihood_results_xie,  gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "Improved NB")) %>% filter(site_type == "negative_control") %>% mutate_at(.vars = c("gene_id", "gRNA_id", "site_type"), .funs = factor) %>%
-  mutate(method = factor(x = as.character(method), levels = c("Virtual FACS", "Improved NB", "SCEPTRE"), labels = c("Virtual FACS", "Improved NB", "SCEPTRE"))) %>% arrange(method)
+                select(likelihood_results_xie,  gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = "Negative Binomial"), 
+                select(monocle_results_xie, gene_id, gRNA_id, pvalue = p_value, site_type) %>% mutate(method = 'Monocle NB')  ) %>% 
+  filter(site_type == "negative_control") %>% mutate_at(.vars = c("gene_id", "gRNA_id", "site_type"), .funs = factor) %>% 
+  mutate(method = factor(x = as.character(method), levels = c("Virtual FACS", "Negative Binomial", "SCEPTRE", "Monocle NB"), labels = c("Virtual FACS", "Negative Binomial", "SCEPTRE", "Monocle NB"))) %>%
+  arrange(method)
 
 df1 <- df_NTC %>%
   group_by(method) %>%
-  mutate(r = rank(pvalue), expected = ppoints(n())[r],
+  dplyr::mutate(r = rank(pvalue), expected = ppoints(n())[r],
          clower = qbeta(p=(1-ci)/2, shape1 = r, shape2 = n()+1-r),
          cupper = qbeta(p=(1+ci)/2, shape1 = r, shape2 = n()+1-r)) %>%
   ungroup() %>% mutate()
 
 p_thresh <- 1e-8
-p_xie_neg <- df1 %>% filter(-log10(expected) > 0 | row_number() %% subsampling_factor == 0) %>%
+p_xie_neg <- df1 %>% filter(-log10(expected) > 0 | row_number() %% subsampling_factor == 0) %>% 
   mutate(clower = ifelse(method == "SCEPTRE", clower, NA), cupper = ifelse(method == "SCEPTRE", cupper, NA)) %>%
   mutate(pvalue = ifelse(pvalue < p_thresh, p_thresh, pvalue)) %>%
   ggplot(aes(x = expected, y = pvalue, group = method, ymin = clower, ymax = cupper)) +
   geom_point(aes(color = method), size = 1, alpha = 0.5) +
   geom_ribbon(alpha = 0.2) +
   geom_abline(intercept = 0, slope = 1) +
-  scale_colour_manual(values = setNames(plot_colors[c("hypergeometric", "hf_nb", "sceptre")], NULL), name = "Method") +
-  scale_x_continuous(trans = revlog_trans(base = 10)) +
+  scale_colour_manual(values = setNames(plot_colors[c("hypergeometric", "hf_nb", "sceptre", "gasperini_nb")], NULL), name = "Method") +
+  scale_x_continuous(trans = revlog_trans(base = 10)) + 
   scale_y_continuous(trans = revlog_trans(base = 10)) +
   xlab(expression(paste("Expected null p-value"))) +
   ylab(expression(paste("Observed p-value"))) +
   ggtitle("Xie negative control pairs") +
-  theme_bw() + theme(legend.position = "none",
+  theme_bw() + theme(
+    legend.position = c(0.25, 0.8),
+    #legend.title = element_blank(), 
     legend.background = element_rect(fill = "transparent", colour = NA),
     legend.title = element_blank(),
     panel.grid = element_blank(),
@@ -118,13 +132,13 @@ combined_results <- rbind(
   original_results_gasp %>%
     mutate(pvalue.empirical = ifelse(beta > 0, 1, pvalue.empirical)) %>%
     select(gene_id, target_site, quality_rank_grna, site_type, pvalue.empirical) %>%
-    rename(pvalue = pvalue.empirical) %>%
+    dplyr::rename(pvalue = pvalue.empirical) %>%
     mutate(method = "Original"),
   resampling_results_gasp %>%
     select(gene_id, target_site, quality_rank_grna, site_type, p_value) %>%
-    rename(pvalue = p_value) %>%
+    dplyr::rename(pvalue = p_value) %>%
     mutate(method = "SCEPTRE"))
-
+library(tidyr)
 p_d <- combined_results %>%
   mutate(pvalue = ifelse(pvalue == 0, 1e-17, pvalue)) %>%
   filter(site_type %in% c("selfTSS")) %>%
@@ -154,8 +168,8 @@ p_e <- ggplot(data = to_plot, mapping = aes(x = bulk_pval, y = sceptre_pval, col
   scale_colour_manual(values = c("grey60", "firebrick3")) +
   scale_x_continuous(trans = revlog_trans(base = 10)) +
   scale_y_continuous(trans = revlog_trans(base = 10)) +
-  geom_vline(xintercept = filter(to_plot, !rejected_bulk) %>% pull(bulk_pval) %>% min() - 5e-5, col = "royalblue4", linetype = "dashed") +
-  geom_hline(yintercept = filter(to_plot, !rejected_sceptre) %>% pull(bulk_pval) %>% min() - 5e-5, col = "royalblue4", linetype = "dashed") +
+  geom_vline(xintercept = filter(to_plot, !rejected_bulk) %>% pull(bulk_pval) %>% min(), col = "royalblue4", linetype = "dashed") +
+  geom_hline(yintercept = filter(to_plot, !rejected_sceptre) %>% pull(sceptre_pval) %>% min(), col = "royalblue4", linetype = "dashed") +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5),
                      legend.background = element_rect(fill = "transparent", color = NA),
                      panel.grid = element_blank(),
@@ -171,15 +185,15 @@ if (FALSE) {
 }
 
 # Legend
-ex <- tibble(x = 1:5, y = 1:5, Method = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")) %>% mutate(Method = factor(x = Method, levels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK"), labels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")))
-p_vert <- ggplot(data = ex, mapping = aes(x = x, y = y, col = Method)) + geom_point() + scale_colour_manual(values = setNames(plot_colors[c("sceptre", "gasperini_nb", "hf_nb", "hypergeometric", "scMAGeCK")], NULL), name = "Method") + theme_bw() + theme(legend.title = element_blank())
-legend <- get_legend(plot = p_vert)
+# ex <- tibble(x = 1:5, y = 1:5, Method = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")) %>% mutate(Method = factor(x = Method, levels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK"), labels = c("SCEPTRE", "Monocle NB", "Improved NB", "Virtual FACS", "scMAGeCK")))
+#p_vert <- ggplot(data = ex, mapping = aes(x = x, y = y, col = Method)) + geom_point() + scale_colour_manual(values = setNames(plot_colors[c("sceptre", "gasperini_nb", "hf_nb", "hypergeometric", "scMAGeCK")], NULL), name = "Method") + theme_bw() + theme(legend.title = element_blank())
+# legend <- get_legend(plot = p_vert)
 #ggsave(plot = legend, filename = paste0(manuscript_figure_dir, "/Figure3/vert_legend.pdf"), width = 1.5, height = 1.5)
-library(patchwork)
-p_c <- p_xie_neg + inset_element(legend, left = 0.1, right = 0.4, bottom = 0.45, top = 0.95)
+# library(patchwork)
+# p_c <- p_xie_neg + inset_element(legend, left = 0.1, right = 0.4, bottom = 0.45, top = 0.95)
 
 # Arrange figure 3 through cowplot
-middle_row <- plot_grid(p_b, p_c, align = "hv", nrow = 1, ncol = 2, labels = c("b", "c"),  hjust = -4)
+middle_row <- plot_grid(p_b, p_xie_neg, align = "hv", nrow = 1, ncol = 2, labels = c("b", "c"),  hjust = -4)
 bottom_row <- plot_grid(p_d, p_e, align = "hv", nrow = 1, ncol = 2, labels = c("d", "e"), hjust = -4)
 final_plot <- plot_grid(p_a, middle_row, bottom_row, nrow = 3, labels = c("a", "", ""), hjust = -4, rel_heights = c(0.8, 1, 0.8))
 #save(final_plot, file = 'Figure3_plot.RData')
