@@ -14,8 +14,6 @@ original_results <- left_join(original_results, resampling_results[, c('gene_id'
                                                    'target_site.mid')], 
           by = c("gene_id", "gRNA_id"))
 
-
-
 # subfigure a (distances)
 df = original_results %>% 
   dplyr::rename(rejected_old = rejected, old_pvalue = ss.down) %>%
