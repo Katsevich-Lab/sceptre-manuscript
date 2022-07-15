@@ -1,261 +1,339 @@
 \begin{thebibliography}{10}
-\expandafter\ifx\csname url\endcsname\relax
-  \def\url#1{\texttt{#1}}\fi
-\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
-\providecommand{\bibinfo}[2]{#2}
-\providecommand{\eprint}[2][]{\url{#2}}
 
 \bibitem{Gallagher2018}
-\bibinfo{author}{Gallagher, M.~D.} \& \bibinfo{author}{Chen-Plotkin, A.~S.}
-\newblock \bibinfo{title}{{The Post-GWAS Era: From Association to Function}}.
-\newblock \emph{\bibinfo{journal}{American Journal of Human Genetics}}
-  \textbf{\bibinfo{volume}{102}}, \bibinfo{pages}{717--730}
-  (\bibinfo{year}{2018}).
-\newblock \urlprefix\url{https://doi.org/10.1016/j.ajhg.2018.04.002}.
+Michael~D. Gallagher and Alice~S. Chen-Plotkin.
+\newblock {The Post-GWAS Era: From Association to Function}.
+\newblock {\em American Journal of Human Genetics}, 102(5):717--730, 2018.
 
 \bibitem{Gasperini2020}
-\bibinfo{author}{Gasperini, M.}, \bibinfo{author}{Tome, J.~M.} \&
-  \bibinfo{author}{Shendure, J.}
-\newblock \bibinfo{title}{{Towards a comprehensive catalogue of validated and
-  target-linked human enhancers}}.
-\newblock \emph{\bibinfo{journal}{Nature Reviews Genetics}}
-  (\bibinfo{year}{2020}).
+Molly Gasperini, Jacob~M. Tome, and Jay Shendure.
+\newblock {Towards a comprehensive catalogue of validated and target-linked
+  human enhancers}.
+\newblock {\em Nature Reviews Genetics}, 2020.
 
 \bibitem{Dixit2016}
-\bibinfo{author}{Dixit, A.} \emph{et~al.}
-\newblock \bibinfo{title}{{Perturb-Seq: Dissecting Molecular Circuits with
-  Scalable Single-Cell RNA Profiling of Pooled Genetic Screens}}.
-\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{167}},
-  \bibinfo{pages}{1853--1866} (\bibinfo{year}{2016}).
+Atray Dixit, Oren Parnas, Biyu Li, Jenny Chen, Charles~P. Fulco, Livnat
+  Jerby-Arnon, Nemanja~D. Marjanovic, Danielle Dionne, Tyler Burks, Raktima
+  Raychowdhury, Britt Adamson, Thomas~M. Norman, Eric~S. Lander, Jonathan~S.
+  Weissman, Nir Friedman, and Aviv Regev.
+\newblock {Perturb-Seq: Dissecting Molecular Circuits with Scalable Single-Cell
+  RNA Profiling of Pooled Genetic Screens}.
+\newblock {\em Cell}, 167:1853--1866, dec 2016.
 
 \bibitem{Adamson2016}
-\bibinfo{author}{Adamson, B.} \emph{et~al.}
-\newblock \bibinfo{title}{{A Multiplexed Single-Cell CRISPR Screening Platform
-  Enables Systematic Dissection of the Unfolded Protein Response}}.
-\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{167}},
-  \bibinfo{pages}{1867--1882.e21} (\bibinfo{year}{2016}).
+Britt Adamson, Thomas~M. Norman, Marco Jost, Min~Y. Cho, James~K. Nu{\~{n}}ez,
+  Yuwen Chen, Jacqueline~E. Villalta, Luke~A. Gilbert, Max~A. Horlbeck,
+  Marco~Y. Hein, Ryan~A. Pak, Andrew~N. Gray, Carol~A. Gross, Atray Dixit, Oren
+  Parnas, Aviv Regev, and Jonathan~S. Weissman.
+\newblock {A Multiplexed Single-Cell CRISPR Screening Platform Enables
+  Systematic Dissection of the Unfolded Protein Response}.
+\newblock {\em Cell}, 167(7):1867--1882.e21, dec 2016.
 
 \bibitem{Datlinger2017}
-\bibinfo{author}{Datlinger, P.} \emph{et~al.}
-\newblock \bibinfo{title}{{Pooled CRISPR screening with single-cell
-  transcriptome readout}}.
-\newblock \emph{\bibinfo{journal}{Nature Methods}}
-  \textbf{\bibinfo{volume}{14}}, \bibinfo{pages}{297--301}
-  (\bibinfo{year}{2017}).
+Paul Datlinger, Andr{\'{e}}~F. Rendeiro, Christian Schmidl, Thomas Krausgruber,
+  Peter Traxler, Johanna Klughammer, Linda~C. Schuster, Amelie Kuchler, Donat
+  Alpar, and Christoph Bock.
+\newblock {Pooled CRISPR screening with single-cell transcriptome readout}.
+\newblock {\em Nature Methods}, 14(3):297--301, 2017.
 
 \bibitem{Mimitou2019}
-\bibinfo{author}{Mimitou, E.~P.} \emph{et~al.}
-\newblock \bibinfo{title}{{Multiplexed detection of proteins, transcriptomes,
-  clonotypes and CRISPR perturbations in single cells}}.
-\newblock \emph{\bibinfo{journal}{Nature Methods}}
-  \textbf{\bibinfo{volume}{16}}, \bibinfo{pages}{409--412}
-  (\bibinfo{year}{2019}).
+Eleni~P. Mimitou, Anthony Cheng, Antonino Montalbano, Stephanie Hao, Marlon
+  Stoeckius, Mateusz Legut, Timothy Roush, Alberto Herrera, Efthymia Papalexi,
+  Zhengqing Ouyang, Rahul Satija, Neville~E. Sanjana, Sergei~B. Koralov, and
+  Peter Smibert.
+\newblock {Multiplexed detection of proteins, transcriptomes, clonotypes and
+  CRISPR perturbations in single cells}.
+\newblock {\em Nature Methods}, 16(5):409--412, 2019.
 
 \bibitem{Xie2017}
-\bibinfo{author}{Xie, S.}, \bibinfo{author}{Duan, J.}, \bibinfo{author}{Li,
-  B.}, \bibinfo{author}{Zhou, P.} \& \bibinfo{author}{Hon, G.~C.}
-\newblock \bibinfo{title}{{Multiplexed Engineering and Analysis of
-  Combinatorial Enhancer Activity in Single Cells}}.
-\newblock \emph{\bibinfo{journal}{Molecular Cell}}
-  \textbf{\bibinfo{volume}{66}}, \bibinfo{pages}{285--299}
-  (\bibinfo{year}{2017}).
+Shiqi Xie, Jialei Duan, Boxun Li, Pei Zhou, and Gary~C. Hon.
+\newblock {Multiplexed Engineering and Analysis of Combinatorial Enhancer
+  Activity in Single Cells}.
+\newblock {\em Molecular Cell}, 66:285--299, 2017.
 
 \bibitem{Xie2019}
-\bibinfo{author}{Xie, S.}, \bibinfo{author}{Armendariz, D.},
-  \bibinfo{author}{Zhou, P.}, \bibinfo{author}{Duan, J.} \&
-  \bibinfo{author}{Hon, G.~C.}
-\newblock \bibinfo{title}{{Global Analysis of Enhancer Targets Reveals
-  Convergent Enhancer-Driven Regulatory Modules}}.
-\newblock \emph{\bibinfo{journal}{Cell Reports}} \textbf{\bibinfo{volume}{29}},
-  \bibinfo{pages}{2570--2578.e5} (\bibinfo{year}{2019}).
+Shiqi Xie, Daniel Armendariz, Pei Zhou, Jialei Duan, and Gary~C. Hon.
+\newblock {Global Analysis of Enhancer Targets Reveals Convergent
+  Enhancer-Driven Regulatory Modules}.
+\newblock {\em Cell Reports}, 29(9):2570--2578.e5, 2019.
 
 \bibitem{Gasperini2019}
-\bibinfo{author}{Gasperini, M.} \emph{et~al.}
-\newblock \bibinfo{title}{{A Genome-wide Framework for Mapping Gene Regulation
-  via Cellular Genetic Screens}}.
-\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{176}},
-  \bibinfo{pages}{377--390.e19} (\bibinfo{year}{2019}).
+Molly Gasperini, Andrew~J. Hill, Jos{\'{e}}~L. McFaline-Figueroa, Beth Martin,
+  Seungsoo Kim, Melissa~D. Zhang, Dana Jackson, Anh Leith, Jacob Schreiber,
+  William~S. Noble, Cole Trapnell, Nadav Ahituv, and Jay Shendure.
+\newblock {A Genome-wide Framework for Mapping Gene Regulation via Cellular
+  Genetic Screens}.
+\newblock {\em Cell}, 176(1-2):377--390.e19, 2019.
 
 \bibitem{Yang2020}
-\bibinfo{author}{Yang, L.} \emph{et~al.}
-\newblock \bibinfo{title}{{Linking genotypes with multiple phenotypes in
-  single-cell CRISPR screens}}.
-\newblock \emph{\bibinfo{journal}{Genome Biology}}
-  \textbf{\bibinfo{volume}{21}} (\bibinfo{year}{2020}).
+Lin Yang, Yuqing Zhu, Hua Yu, Sitong Chen, Yulan Chu, He~Huang, Jin Zhang, and
+  Wei Li.
+\newblock {Linking genotypes with multiple phenotypes in single-cell CRISPR
+  screens}.
+\newblock {\em Genome Biology}, 21, 2020.
 
 \bibitem{Hill2018}
-\bibinfo{author}{Hill, A.~J.} \emph{et~al.}
-\newblock \bibinfo{title}{{On the design of CRISPR-based single-cell molecular
-  screens}}.
-\newblock \emph{\bibinfo{journal}{Nature Methods}}
-  \textbf{\bibinfo{volume}{15}}, \bibinfo{pages}{271--274}
-  (\bibinfo{year}{2018}).
+Andrew~J. Hill, Jos{\'{e}}~L. McFaline-Figueroa, Lea~M. Starita, Molly~J.
+  Gasperini, Kenneth~A. Matreyek, Jonathan Packer, Dana Jackson, Jay Shendure,
+  and Cole Trapnell.
+\newblock {On the design of CRISPR-based single-cell molecular screens}.
+\newblock {\em Nature Methods}, 15(4):271--274, 2018.
 
 \bibitem{Replogle2020}
-\bibinfo{author}{Replogle, J.~M.} \emph{et~al.}
-\newblock \bibinfo{title}{{Combinatorial single-cell CRISPR screens by direct
-  guide RNA capture and targeted sequencing}}.
-\newblock \emph{\bibinfo{journal}{Nature Biotechnology}}
-  (\bibinfo{year}{2020}).
+Joseph~M. Replogle, Thomas~M. Norman, Albert Xu, Jeffrey~A. Hussmann, Jin Chen,
+  J.~Zachery Cogan, Elliott~J. Meer, Jessica~M. Terry, Daniel~P. Riordan,
+  Niranjan Srinivas, Ian~T. Fiddes, Joseph~G. Arthur, Luigi~J. Alvarado,
+  Katherine~A. Pfeiffer, Tarjei~S. Mikkelsen, Jonathan~S. Weissman, and Britt
+  Adamson.
+\newblock {Combinatorial single-cell CRISPR screens by direct guide RNA capture
+  and targeted sequencing}.
+\newblock {\em Nature Biotechnology}, 2020.
 
 \bibitem{CetL16}
-\bibinfo{author}{Cand{\`{e}}s, E.}, \bibinfo{author}{Fan, Y.},
-  \bibinfo{author}{Janson, L.} \& \bibinfo{author}{Lv, J.}
-\newblock \bibinfo{title}{{Panning for gold: `model-X' knockoffs for high
-  dimensional controlled variable selection}}.
-\newblock \emph{\bibinfo{journal}{Journal of the Royal Statistical Society:
-  Series B (Statistical Methodology)}} \textbf{\bibinfo{volume}{80}},
-  \bibinfo{pages}{551--577} (\bibinfo{year}{2018}).
+Emmanuel Cand{\`{e}}s, Yingying Fan, Lucas Janson, and Jinchi Lv.
+\newblock {Panning for gold: `model-X' knockoffs for high dimensional
+  controlled variable selection}.
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 80(3):551--577, 2018.
 
 \bibitem{Morris2021}
-\bibinfo{author}{Morris, J.~A.} \emph{et~al.}
-\newblock \bibinfo{title}{Discovery of target genes and pathways of blood trait
-  loci using pooled crispr screens and single cell rna sequencing}.
-\newblock \emph{\bibinfo{journal}{bioRxiv}}  (\bibinfo{year}{2021}).
+John~A Morris, Zharko Daniloski, J{\'u}lia Domingo, Timothy Barry, Marcello
+  Ziosi, Dafni~A Glinos, Stephanie Hao, Eleni Mimitou, Peter Smibert, Kathryn
+  Roeder, et~al.
+\newblock Discovery of target genes and pathways of blood trait loci using
+  pooled crispr screens and single cell rna sequencing.
+\newblock {\em bioRxiv}, 2021.
 
 \bibitem{Love2014}
-\bibinfo{author}{Love, M.~I.}, \bibinfo{author}{Huber, W.} \&
-  \bibinfo{author}{Anders, S.}
-\newblock \bibinfo{title}{{Moderated estimation of fold change and dispersion
-  for RNA-seq data with DESeq2}}.
-\newblock \emph{\bibinfo{journal}{Genome Biology}}
-  \textbf{\bibinfo{volume}{15}}, \bibinfo{pages}{550} (\bibinfo{year}{2014}).
+Michael~I Love, Wolfgang Huber, and Simon Anders.
+\newblock {Moderated estimation of fold change and dispersion for RNA-seq data
+  with DESeq2}.
+\newblock {\em Genome Biology}, 15:550, 2014.
 
 \bibitem{Qiu2017}
-\bibinfo{author}{Qiu, X.} \emph{et~al.}
-\newblock \bibinfo{title}{{Single-cell mRNA quantification and differential
-  analysis with Census}}.
-\newblock \emph{\bibinfo{journal}{Nature Methods}}
-  \textbf{\bibinfo{volume}{14}}, \bibinfo{pages}{309--315}
-  (\bibinfo{year}{2017}).
+Xiaojie Qiu, Andrew Hill, Jonathan Packer, Dejun Lin, Yi~An Ma, and Cole
+  Trapnell.
+\newblock {Single-cell mRNA quantification and differential analysis with
+  Census}.
+\newblock {\em Nature Methods}, 14(3):309--315, 2017.
 
 \bibitem{Hafemeister2019}
-\bibinfo{author}{Hafemeister, C.} \& \bibinfo{author}{Satija, R.}
-\newblock \bibinfo{title}{{Normalization and variance stabilization of
-  single-cell RNA-seq data using regularized negative binomial regression}}.
-\newblock \emph{\bibinfo{journal}{Genome Biology}}
-  \textbf{\bibinfo{volume}{20}}, \bibinfo{pages}{1--15} (\bibinfo{year}{2019}).
+Christoph Hafemeister and Rahul Satija.
+\newblock {Normalization and variance stabilization of single-cell RNA-seq data
+  using regularized negative binomial regression}.
+\newblock {\em Genome Biology}, 20(1):1--15, 2019.
 
 \bibitem{GTExPilot}
-\bibinfo{author}{Ardlie, K.~G.} \emph{et~al.}
-\newblock \bibinfo{title}{{The Genotype-Tissue Expression (GTEx) pilot
-  analysis: Multitissue gene regulation in humans}}.
-\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{348}},
-  \bibinfo{pages}{648--660} (\bibinfo{year}{2015}).
+K~G Ardlie, D~S Deluca, A~V Segr{\`{e}}, T~J Sullivan, T~R Young, E~T Gelfand,
+  C~A Trowbridge, J~B Maller, T~Tukiainen, and M~$\backslash$textitet al. Lek.
+\newblock {The Genotype-Tissue Expression (GTEx) pilot analysis: Multitissue
+  gene regulation in humans}.
+\newblock {\em Science}, 348(6235):648--660, 2015.
 
 \bibitem{Andersson2014}
-\bibinfo{author}{Andersson, R.} \emph{et~al.}
-\newblock \bibinfo{title}{{An atlas of active enhancers across human cell types
-  and tissues}}.
-\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{507}},
-  \bibinfo{pages}{455--461} (\bibinfo{year}{2014}).
+Robin Andersson, Claudia Gebhard, Irene Miguel-Escalada, Ilka Hoof, Jette
+  Bornholdt, Mette Boyd, Yun Chen, Xiaobei Zhao, Christian Schmidl, Takahiro
+  Suzuki, Evgenia Ntini, Erik Arner, Eivind Valen, Kang Li, Lucia
+  Schwarzfischer, Dagmar Glatz, Johanna Raithel, Berit Lilje, Nicolas Rapin,
+  Frederik~Otzen Bagger, Mette J{\o}rgensen, Peter~Refsing Andersen, Nicolas
+  Bertin, Owen Rackham, A.~Maxwell Burroughs, J.~Kenneth Baillie, Yuri Ishizu,
+  Yuri Shimizu, Erina Furuhata, Shiori Maeda, Yutaka Negishi, Christopher~J.
+  Mungall, Terrence~F. Meehan, Timo Lassmann, Masayoshi Itoh, Hideya Kawaji,
+  Naoto Kondo, Jun Kawai, Andreas Lennartsson, Carsten~O. Daub, Peter Heutink,
+  David~A. Hume, Torben~Heick Jensen, Harukazu Suzuki, Yoshihide Hayashizaki,
+  Ferenc M{\"{u}}ller, Alistair~R.R. Forrest, Piero Carninci, Michael Rehli,
+  and Albin Sandelin.
+\newblock {An atlas of active enhancers across human cell types and tissues}.
+\newblock {\em Nature}, 507(7493):455--461, 2014.
 
 \bibitem{Zamanighomi2019}
-\bibinfo{author}{Zamanighomi, M.} \emph{et~al.}
-\newblock \bibinfo{title}{{GEMINI: A variational Bayesian approach to identify
-  genetic interactions from combinatorial CRISPR screens}}.
-\newblock \emph{\bibinfo{journal}{Genome Biology}}
-  \textbf{\bibinfo{volume}{20}}, \bibinfo{pages}{1--10} (\bibinfo{year}{2019}).
+Mahdi Zamanighomi, Sidharth~S. Jain, Takahiro Ito, Debjani Pal, Timothy~P.
+  Daley, and William~R. Sellers.
+\newblock {GEMINI: A variational Bayesian approach to identify genetic
+  interactions from combinatorial CRISPR screens}.
+\newblock {\em Genome Biology}, 20(1):1--10, 2019.
 
 \bibitem{Norman2019}
-\bibinfo{author}{Norman, T.~M.} \emph{et~al.}
-\newblock \bibinfo{title}{{Exploring genetic interaction manifolds constructed
-  from rich single-cell phenotypes}}.
-\newblock \emph{\bibinfo{journal}{Science}} \textbf{\bibinfo{volume}{365}},
-  \bibinfo{pages}{786--793} (\bibinfo{year}{2019}).
+Thomas~M. Norman, Max~A. Horlbeck, Joseph~M. Replogle, Alex~Y. Ge, Albert Xu,
+  Marco Jost, Luke~A. Gilbert, and Jonathan~S. Weissman.
+\newblock {Exploring genetic interaction manifolds constructed from rich
+  single-cell phenotypes}.
+\newblock {\em Science}, 365(6455):786--793, 2019.
 
 \bibitem{Zhang2020}
-\bibinfo{author}{Zhang, L.} \& \bibinfo{author}{Janson, L.}
-\newblock \bibinfo{title}{{Floodgate : inference for model-free variable
-  importance}}.
-\newblock \emph{\bibinfo{journal}{arXiv}} \bibinfo{pages}{1--67}
-  (\bibinfo{year}{2020}).
+Lu~Zhang and Lucas Janson.
+\newblock {Floodgate : inference for model-free variable importance}.
+\newblock {\em arXiv}, pages 1--67, 2020.
 
 \bibitem{Przybyla2021}
-\bibinfo{author}{Przybyla, L.} \& \bibinfo{author}{Gilbert, L.~A.}
-\newblock \bibinfo{title}{A new era in functional genomics screens}.
-\newblock \emph{\bibinfo{journal}{Nature Reviews Genetics}}
-  \bibinfo{pages}{1--15} (\bibinfo{year}{2021}).
+Laralynne Przybyla and Luke~A Gilbert.
+\newblock A new era in functional genomics screens.
+\newblock {\em Nature Reviews Genetics}, pages 1--15, 2021.
 
 \bibitem{Datlinger2021}
-\bibinfo{author}{Datlinger, P.} \emph{et~al.}
-\newblock \bibinfo{title}{Ultra-high-throughput single-cell rna sequencing and
-  perturbation screening with combinatorial fluidic indexing}.
-\newblock \emph{\bibinfo{journal}{Nature Methods}}
-  \textbf{\bibinfo{volume}{18}}, \bibinfo{pages}{635--642}
-  (\bibinfo{year}{2021}).
+Paul Datlinger, Andr{\'e}~F Rendeiro, Thorina Boenke, Martin Senekowitsch,
+  Thomas Krausgruber, Daniele Barreca, and Christoph Bock.
+\newblock Ultra-high-throughput single-cell rna sequencing and perturbation
+  screening with combinatorial fluidic indexing.
+\newblock {\em Nature Methods}, 18(6):635--642, 2021.
 
 \bibitem{Pierce2020}
-\bibinfo{author}{Pierce, S.~E.}, \bibinfo{author}{Granja, J.~M.} \&
-  \bibinfo{author}{Greenleaf, W.~J.}
-\newblock \bibinfo{title}{High-throughput single-cell chromatin accessibility
-  crispr screens enable unbiased identification of regulatory networks in
-  cancer}.
-\newblock \emph{\bibinfo{journal}{bioRxiv}}  (\bibinfo{year}{2020}).
+Sarah~Elisabeth Pierce, Jeffrey~Michael Granja, and William~James Greenleaf.
+\newblock High-throughput single-cell chromatin accessibility crispr screens
+  enable unbiased identification of regulatory networks in cancer.
+\newblock {\em bioRxiv}, 2020.
 
 \bibitem{Liu2020}
-\bibinfo{author}{Liu, M.}, \bibinfo{author}{Katsevich, E.},
-  \bibinfo{author}{Ramdas, A.} \& \bibinfo{author}{Janson, L.}
-\newblock \bibinfo{title}{{Fast and Powerful Conditional Randomization Testing
-  via Distillation}}.
-\newblock \emph{\bibinfo{journal}{arXiv}}  (\bibinfo{year}{2020}).
-\newblock \urlprefix\url{https://arxiv.org/abs/2006.03980}.
+Molei Liu, Eugene Katsevich, Aaditya Ramdas, and Lucas Janson.
+\newblock {Fast and Powerful Conditional Randomization Testing via
+  Distillation}.
+\newblock {\em arXiv}, 2020.
 
 \bibitem{FR01}
-\bibinfo{author}{Finner, H.} \& \bibinfo{author}{Roters, M.}
-\newblock \bibinfo{title}{{On the false discovery rate and expected type I
-  errors}}.
-\newblock \emph{\bibinfo{journal}{Biometrical Journal}}
-  \textbf{\bibinfo{volume}{43}}, \bibinfo{pages}{985--1005}
-  (\bibinfo{year}{2001}).
+Helmut Finner and M~Roters.
+\newblock {On the false discovery rate and expected type I errors}.
+\newblock {\em Biometrical Journal}, 43(8):985--1005, 2001.
 
 \bibitem{XSEDE}
-\bibinfo{author}{Towns, J.} \emph{et~al.}
-\newblock \bibinfo{title}{{XSEDE: Accelerating Scientific Discovery}}.
-\newblock \emph{\bibinfo{journal}{Computing in Science {\&} Engineering}}
-  \textbf{\bibinfo{volume}{16}}, \bibinfo{pages}{62--74}
-  (\bibinfo{year}{2014}).
+J~Towns, T~Cockerill, M~Dahan, I~Foster, K~Gaither, A~Grimshaw, V~Hazlewood,
+  S~Lathrop, D~Lifka, G~D Peterson, R~Roskies, J~Scott, and N~Wilkins-Diehr.
+\newblock {XSEDE: Accelerating Scientific Discovery}.
+\newblock {\em Computing in Science {\&} Engineering}, 16(05):62--74, sep 2014.
 
 \bibitem{Bridges}
-\bibinfo{author}{Nystrom, N.~A.}, \bibinfo{author}{Levine, M.~J.},
-  \bibinfo{author}{Roskies, R.~Z.} \& \bibinfo{author}{Scott, J.~R.}
-\newblock \bibinfo{title}{{Bridges: A Uniquely Flexible HPC Resource for New
-  Communities and Data Analytics}}.
-\newblock In \emph{\bibinfo{booktitle}{Proceedings of the 2015 XSEDE
-  Conference: Scientific Advancements Enabled by Enhanced
-  Cyberinfrastructure}}, XSEDE '15, \bibinfo{pages}{30:1----30:8}
-  (\bibinfo{publisher}{ACM}, \bibinfo{address}{New York, NY, USA},
-  \bibinfo{year}{2015}).
+Nicholas~A Nystrom, Michael~J Levine, Ralph~Z Roskies, and J~Ray Scott.
+\newblock {Bridges: A Uniquely Flexible HPC Resource for New Communities and
+  Data Analytics}.
+\newblock In {\em Proceedings of the 2015 XSEDE Conference: Scientific
+  Advancements Enabled by Enhanced Cyberinfrastructure}, XSEDE '15, pages
+  30:1----30:8, New York, NY, USA, 2015. ACM.
 
 \bibitem{Dunham2012}
-\bibinfo{author}{Dunham, I.} \emph{et~al.}
-\newblock \bibinfo{title}{{An integrated encyclopedia of DNA elements in the
-  human genome}}.
-\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{489}},
-  \bibinfo{pages}{57--74} (\bibinfo{year}{2012}).
+Ian Dunham, Anshul Kundaje, Shelley~F. Aldred, Patrick~J. Collins, Carrie~A.
+  Davis, Francis Doyle, Charles~B. Epstein, Seth Frietze, Jennifer Harrow,
+  Rajinder Kaul, Jainab Khatun, Bryan~R. Lajoie, Stephen~G. Landt, Bum~Kyu Lee,
+  Florencia Pauli, Kate~R. Rosenbloom, Peter Sabo, Alexias Safi, Amartya
+  Sanyal, Noam Shoresh, Jeremy~M. Simon, Lingyun Song, Nathan~D. Trinklein,
+  Robert~C. Altshuler, Ewan Birney, James~B. Brown, Chao Cheng, Sarah Djebali,
+  Xianjun Dong, Jason Ernst, Terrence~S. Furey, Mark Gerstein, Belinda
+  Giardine, Melissa Greven, Ross~C. Hardison, Robert~S. Harris, Javier Herrero,
+  Michael~M. Hoffman, Sowmya Iyer, Manolis Kellis, Pouya Kheradpour, Timo
+  Lassmann, Qunhua Li, Xinying Lin, Georgi~K. Marinov, Angelika Merkel, Ali
+  Mortazavi, Stephen~C.J. Parker, Timothy~E. Reddy, Joel Rozowsky, Felix
+  Schlesinger, Robert~E. Thurman, Jie Wang, Lucas~D. Ward, Troy~W. Whitfield,
+  Steven~P. Wilder, Weisheng Wu, Hualin~S. Xi, Kevin~Y. Yip, Jiali Zhuang,
+  Bradley~E. Bernstein, Eric~D. Green, Chris Gunter, Michael Snyder, Michael~J.
+  Pazin, Rebecca~F. Lowdon, Laura~A.L. Dillon, Leslie~B. Adams, Caroline~J.
+  Kelly, Julia Zhang, Judith~R. Wexler, Peter~J. Good, Elise~A. Feingold,
+  Gregory~E. Crawford, Job Dekker, Laura Elnitski, Peggy~J. Farnham, Morgan~C.
+  Giddings, Thomas~R. Gingeras, Roderic Guig{\'{o}}, Timothy~J. Hubbard,
+  W.~James Kent, Jason~D. Lieb, Elliott~H. Margulies, Richard~M. Myers, John~A.
+  Stamatoyannopoulos, Scott~A. Tenenbaum, Zhiping Weng, Kevin~P. White, Barbara
+  Wold, Yanbao Yu, John Wrobel, Brian~A. Risk, Harsha~P. Gunawardena,
+  Heather~C. Kuiper, Christopher~W. Maier, Ling Xie, Xian Chen, Tarjei~S.
+  Mikkelsen, Shawn Gillespie, Alon Goren, Oren Ram, Xiaolan Zhang, Li~Wang,
+  Robbyn Issner, Michael~J. Coyne, Timothy Durham, Manching Ku, Thanh Truong,
+  Matthew~L. Eaton, Alex Dobin, Andrea Tanzer, Julien Lagarde, Wei Lin,
+  Chenghai Xue, Brian~A. Williams, Chris Zaleski, Maik R{\"{o}}der, Felix
+  Kokocinski, Rehab~F. Abdelhamid, Tyler Alioto, Igor Antoshechkin, Michael~T.
+  Baer, Philippe Batut, Ian Bell, Kimberly Bell, Sudipto Chakrabortty,
+  Jacqueline Chrast, Joao Curado, Thomas Derrien, Jorg Drenkow, Erica Dumais,
+  Jackie Dumais, Radha Duttagupta, Megan Fastuca, Kata Fejes-Toth, Pedro
+  Ferreira, Sylvain Foissac, Melissa~J. Fullwood, Hui Gao, David Gonzalez,
+  Assaf Gordon, C{\'{e}}dric Howald, Sonali Jha, Rory Johnson, Philipp
+  Kapranov, Brandon King, Colin Kingswood, Guoliang Li, Oscar~J. Luo, Eddie
+  Park, Jonathan~B. Preall, Kimberly Presaud, Paolo Ribeca, Daniel Robyr,
+  Xiaoan Ruan, Michael Sammeth, Kuljeet~Singh Sandhu, Lorain Schaeffer,
+  Lei~Hoon See, Atif Shahab, Jorgen Skancke, Ana~Maria Suzuki, Hazuki
+  Takahashi, Hagen Tilgner, Diane Trout, Nathalie Walters, Huaien Wang,
+  Yoshihide Hayashizaki, Alexandre Reymond, Stylianos~E. Antonarakis,
+  Gregory~J. Hannon, Yijun Ruan, Piero Carninci, Cricket~A. Sloan, Katrina
+  Learned, Venkat~S. Malladi, Matthew~C. Wong, Galt~P. Barber, Melissa~S.
+  Cline, Timothy~R. Dreszer, Steven~G. Heitner, Donna Karolchik, Vanessa~M.
+  Kirkup, Laurence~R. Meyer, Jeffrey~C. Long, Morgan Maddren, Brian~J. Raney,
+  Linda~L. Grasfeder, Paul~G. Giresi, Anna Battenhouse, Nathan~C. Sheffield,
+  Kimberly~A. Showers, Darin London, Akshay~A. Bhinge, Christopher Shestak,
+  Matthew~R. Schaner, Seul~Ki Kim, Zhuzhu~Z. Zhang, Piotr~A. Mieczkowski,
+  Joanna~O. Mieczkowska, Zheng Liu, Ryan~M. McDaniell, Yunyun Ni, Naim~U.
+  Rashid, Min~Jae Kim, Sheera Adar, Zhancheng Zhang, Tianyuan Wang, Deborah
+  Winter, Damian Keefe, Vishwanath~R. Iyer, Meizhen Zheng, Ping Wang, Jason
+  Gertz, Jost Vielmetter, E.~Christopher Partridge, Katherine~E. Varley, Clarke
+  Gasper, Anita Bansal, Shirley Pepke, Preti Jain, Henry Amrhein, Kevin~M.
+  Bowling, Michael Anaya, Marie~K. Cross, Michael~A. Muratet, Kimberly~M.
+  Newberry, Kenneth McCue, Amy~S. Nesmith, Katherine~I. Fisher-Aylor, Barbara
+  Pusey, Gilberto DeSalvo, Stephanie~L. Parker, Sreeram Balasubramanian,
+  Nicholas~S. Davis, Sarah~K. Meadows, Tracy Eggleston, J.~Scott Newberry,
+  Shawn~E. Levy, Devin~M. Absher, Wing~H. Wong, Matthew~J. Blow, Axel Visel,
+  Len~A. Pennachio, Hanna~M. Petrykowska, Alexej Abyzov, Bronwen Aken, Daniel
+  Barrell, Gemma Barson, Andrew Berry, Alexandra Bignell, Veronika Boychenko,
+  Giovanni Bussotti, Claire Davidson, Gloria Despacio-Reyes, Mark Diekhans,
+  Iakes Ezkurdia, Adam Frankish, James Gilbert, Jose~Manuel Gonzalez,
+  Ed~Griffiths, Rachel Harte, David~A. Hendrix, Toby Hunt, Irwin Jungreis, Mike
+  Kay, Ekta Khurana, Jing Leng, Michael~F. Lin, Jane Loveland, Zhi Lu, Deepa
+  Manthravadi, Marco Mariotti, Jonathan Mudge, Gaurab Mukherjee, Cedric
+  Notredame, Baikang Pei, Jose~Manuel Rodriguez, Gary Saunders, Andrea Sboner,
+  Stephen Searle, Cristina Sisu, Catherine Snow, Charlie Steward, Electra
+  Tapanari, Michael~L. Tress, Marijke~J. {Van Baren}, Stefan Washietl, Laurens
+  Wilming, Amonida Zadissa, Zhengdong Zhang, Michael Brent, David Haussler,
+  Alfonso Valencia, Nick Addleman, Roger~P. Alexander, Raymond~K. Auerbach,
+  Suganthi Balasubramanian, Keith Bettinger, Nitin Bhardwaj, Alan~P. Boyle,
+  Alina~R. Cao, Philip Cayting, Alexandra Charos, Yong Cheng, Catharine
+  Eastman, Ghia Euskirchen, Joseph~D. Fleming, Fabian Grubert, Lukas Habegger,
+  Manoj Hariharan, Arif Harmanci, Sushma Iyengar, Victor~X. Jin, Konrad~J.
+  Karczewski, Maya Kasowski, Phil Lacroute, Hugo Lam, Nathan Lamarre-Vincent,
+  Jin Lian, Marianne Lindahl-Allen, Renqiang Min, Benoit Miotto, Hannah
+  Monahan, Zarmik Moqtaderi, Xinmeng~J. Mu, Henriette O'Geen, Zhengqing Ouyang,
+  Dorrelyn Patacsil, Debasish Raha, Lucia Ramirez, Brian Reed, Minyi Shi, Teri
+  Slifer, Heather Witt, Linfeng Wu, Xiaoqin Xu, Koon~Kiu Yan, Xinqiong Yang,
+  Kevin Struhl, Sherman~M. Weissman, Luiz~O. Penalva, Subhradip Karmakar,
+  Raj~R. Bhanvadia, Alina Choudhury, Marc Domanus, Lijia Ma, Jennifer Moran,
+  Alec Victorsen, Thomas Auer, Lazaro Centanin, Michael Eichenlaub, Franziska
+  Gruhl, Stephan Heermann, Burkhard Hoeckendorf, Daigo Inoue, Tanja Kellner,
+  Stephan Kirchmaier, Claudia Mueller, Robert Reinhardt, Lea Schertel,
+  Stephanie Schneider, Rebecca Sinn, Beate Wittbrodt, Jochen Wittbrodt, Gaurav
+  Jain, Gayathri Balasundaram, Daniel~L. Bates, Rachel Byron, Theresa~K.
+  Canfield, Morgan~J. Diegel, Douglas Dunn, Abigail~K. Ebersol, Tristan Frum,
+  Kavita Garg, Erica Gist, R.~Scott Hansen, Lisa Boatman, Eric Haugen, Richard
+  Humbert, Audra~K. Johnson, Ericka~M. Johnson, Tattyana~V. Kutyavin, Kristen
+  Lee, Dimitra Lotakis, Matthew~T. Maurano, Shane~J. Neph, Fiedencio~V. Neri,
+  Eric~D. Nguyen, Hongzhu Qu, Alex~P. Reynolds, Vaughn Roach, Eric Rynes,
+  Minerva~E. Sanchez, Richard~S. Sandstrom, Anthony~O. Shafer, Andrew~B.
+  Stergachis, Sean Thomas, Benjamin Vernot, Jeff Vierstra, Shinny Vong, Hao
+  Wang, Molly~A. Weaver, Yongqi Yan, Miaohua Zhang, Joshua~M. Akey, Michael
+  Bender, Michael~O. Dorschner, Mark Groudine, Michael~J. MacCoss, Patrick
+  Navas, George Stamatoyannopoulos, Kathryn Beal, Alvis Brazma, Paul Flicek,
+  Nathan Johnson, Margus Lukk, Nicholas~M. Luscombe, Daniel Sobral, Juan~M.
+  Vaquerizas, Serafim Batzoglou, Arend Sidow, Nadine Hussami, Sofia
+  Kyriazopoulou-Panagiotopoulou, Max~W. Libbrecht, Marc~A. Schaub, Webb Miller,
+  Peter~J. Bickel, Balazs Banfai, Nathan~P. Boley, Haiyan Huang, Jingyi~Jessica
+  Li, William~Stafford Noble, Jeffrey~A. Bilmes, Orion~J. Buske, Avinash~D.
+  Sahu, Peter~V. Kharchenko, Peter~J. Park, Dannon Baker, James Taylor, and
+  Lucas Lochovsky.
+\newblock {An integrated encyclopedia of DNA elements in the human genome}.
+\newblock {\em Nature}, 489(7414):57--74, 2012.
 
 \bibitem{Rao2014}
-\bibinfo{author}{Rao, S.~S.} \emph{et~al.}
-\newblock \bibinfo{title}{{A 3D map of the human genome at kilobase resolution
-  reveals principles of chromatin looping}}.
-\newblock \emph{\bibinfo{journal}{Cell}} \textbf{\bibinfo{volume}{159}},
-  \bibinfo{pages}{1665--1680} (\bibinfo{year}{2014}).
+Suhas~S.P. Rao, Miriam~H. Huntley, Neva~C. Durand, Elena~K. Stamenova, Ivan~D.
+  Bochkov, James~T. Robinson, Adrian~L. Sanborn, Ido Machol, Arina~D. Omer,
+  Eric~S. Lander, and Erez~Lieberman Aiden.
+\newblock {A 3D map of the human genome at kilobase resolution reveals
+  principles of chromatin looping}.
+\newblock {\em Cell}, 159(7):1665--1680, 2014.
 
 \bibitem{Fishilevich2017}
-\bibinfo{author}{Fishilevich, S.} \emph{et~al.}
-\newblock \bibinfo{title}{{GeneHancer: genome-wide integration of enhancers and
-  target genes in GeneCards}}.
-\newblock \emph{\bibinfo{journal}{Database : the journal of biological
-  databases and curation}} \textbf{\bibinfo{volume}{2017}},
-  \bibinfo{pages}{1--17} (\bibinfo{year}{2017}).
+Simon Fishilevich, Ron Nudel, Noa Rappaport, Rotem Hadar, Inbar Plaschkes,
+  Tsippi {Iny Stein}, Naomi Rosen, Asher Kohn, Michal Twik, Marilyn Safran,
+  Doron Lancet, and Dana Cohen.
+\newblock {GeneHancer: genome-wide integration of enhancers and target genes in
+  GeneCards}.
+\newblock {\em Database : the journal of biological databases and curation},
+  2017:1--17, 2017.
 
 \bibitem{barrycode}
-\bibinfo{author}{Barry, T.}, \bibinfo{author}{Wang, X.},
-  \bibinfo{author}{Morris, J.~A.}, \bibinfo{author}{Roeder, K.} \&
-  \bibinfo{author}{Katsevich, E.}
-\newblock \bibinfo{title}{Sceptre improves calibration and sensitivity in
-  single-cell crispr screen analysis}.
-\newblock \bibinfo{howpublished}{Github. katsevich-lab.github.io/sceptre/.}
-  (\bibinfo{year}{2021}).
+Timothy Barry, Xuran Wang, John~A. Morris, Kathryn Roeder, and Eugene
+  Katsevich.
+\newblock Sceptre improves calibration and sensitivity in single-cell crispr
+  screen analysis.
+\newblock Github. katsevich-lab.github.io/sceptre, 2021.
 
 \end{thebibliography}

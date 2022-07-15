@@ -1,0 +1,32 @@
+We request that the editorial team make the following edits:
+- line 15: change "excellent" to "good"
+- line 27: change "the most promising technology" to "among the most promising technologies"
+- line 285: remove the comma after the phrase "In this work"
+- line 371: change "gene/gRNA" to "gene-gRNA"
+- please update our Figure 3 (attached). We shifted the legend in panel "a" so that it aligns with the legend in panel "b."
+
+Below are our responses to the questions at the end of the proof:
+
+Q1 remark. The corresponding author is correct.
+
+Q2 remark. The section citations are correct.
+
+Q3 remark. The caption for Table 1 is incorrect. The third sentence should come immediately after the first two sentences. Thus, the caption for Table 1 should read as follows: "Statistical methods employed in single-cell CRISPR screen analysis. Parametric methods are non-robust to misspecified gene expression distributions, and classical nonparametric methods cannot adjust for confounders. Conditional resampling (implemented in this work as SCEPTRE) addresses both challenges"
+
+We are unable to see the supplementary materials. Are those available to view somewhere?
+
+Q4 remark. We acknowledge that the sentence "The authors read and approved the final manuscript." has been added to the end of the paragraph of the "Authors' contributions" section.
+
+Q5 remark. We acknowledge that "Ethics approval" has been changed to “Ethics approval and consent to participate.”
+
+Q6 remark. We confirm that the affiliations are captured and presented correctly.
+
+Q7 remark. References [2] and [12] are captured and presented correctly.
+
+Q8 remark. There is no page number available for reference [10]. However, the article number is 19. Therefore, the citation should be as follows: Yang L, Zhu Y, Yu H, Chen S, Chu Y, Huang H, Zhang J, Li W. Linking genotypes with multiple phenotypes in single-cell CRISPR screens. Genome Biol. 2020;21(19).
+
+Q9 remark. The citation for [25] should be updated to the following: Pierce, S.E., Granja, J.M. & Greenleaf, W.J. High-throughput single-cell chromatin accessibility CRISPR screens enable unbiased identification of regulatory networks in cancer. Nat Commun. 2021; 12(2969).
+
+The citation for [26] should be updated to the following: Molei Liu, Eugene Katsevich, Lucas Janson, Aaditya Ramdas, Fast and Powerful Conditional Randomization Testing via Distillation, Biometrika. 2021; asab039.
+
+[26] has not yet been assigned a page number range. [33] is a Github repository and therefore does not have a page number or page range.
