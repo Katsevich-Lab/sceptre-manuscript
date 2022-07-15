@@ -61,4 +61,4 @@ download.file(url = "https://github.com/russellxie/Global-analysis-K562-enhancer
 # 5. TF info
 ############
 dest <- paste0(raw_data_dir, "/TF_human.csv")
-download.file(url = "https://www.dropbox.com/s/yva35ufl4yypr4t/TF_human.csv?dl=1", destfile = dest)
+download.file(url = "https://www.dropbox.com/s/9sjcy4amhkl04v5/TF_human.csv?dl=1", destfile = dest)

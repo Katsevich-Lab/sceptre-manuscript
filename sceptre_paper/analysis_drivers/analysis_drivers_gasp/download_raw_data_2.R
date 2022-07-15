@@ -93,14 +93,14 @@ chip_seq_file_location <- "bit.ly/SCEPTRE/raw/ChIP-seq"
 # download.file(url = sprintf("%s/BRD4.bed?dl=1", chip_seq_file_location), destfile = "./test")
 # download.file(url = urls[i], destfile = dest_locs[i])
 
-urls <- c("https://www.dropbox.com/sh/65twliq3qt78ex0/AABu0Vgsj4Wf-8dijc_mIDssa/data/raw/ChIP-seq/BRD4.bed?dl=1",
-          "https://www.dropbox.com/sh/65twliq3qt78ex0/AACLMKyUAsNFudCTHwZpu0eja/data/raw/ChIP-seq/DPF2.bed?dl=1",
-          "https://www.dropbox.com/sh/65twliq3qt78ex0/AAAsMLrZLkEf6Q5T0wTSmiLwa/data/raw/ChIP-seq/EP300.bed?dl=1",
-          "https://www.dropbox.com/sh/65twliq3qt78ex0/AADtl80uTvunTt1CNUd_4lUra/data/raw/ChIP-seq/GATA2.bed?dl=1",
-          "https://www.dropbox.com/sh/65twliq3qt78ex0/AABnS8MAk4-gBljbWG1fpgGJa/data/raw/ChIP-seq/H3K27ac.bed?dl=1",
-          "https://www.dropbox.com/sh/65twliq3qt78ex0/AAAGRES3MsckonN8ZAwr_8jYa/data/raw/ChIP-seq/RNF2.bed?dl=1",
-          "https://www.dropbox.com/sh/65twliq3qt78ex0/AACIaHcTumi85sUGqmkH78Gsa/data/raw/ChIP-seq/TAL1.bed?dl=1",
-          "https://www.dropbox.com/sh/65twliq3qt78ex0/AADVYs4mozwjTGB2IbRHE1LKa/data/raw/ChIP-seq/TBL1XR1.bed?dl=1")
+urls <- c("https://www.dropbox.com/s/ensny0esh4ubv1g/BRD4.bed?dl=1",
+          "https://www.dropbox.com/s/i3a9v9snlvq7ty4/DPF2.bed?dl=1",
+          "https://www.dropbox.com/s/3lri4skubzr4u5x/EP300.bed?dl=1",
+          "https://www.dropbox.com/s/5006spzfckc5kn5/GATA2.bed?dl=1",
+          "https://www.dropbox.com/s/h1eupnfarh9hlr7/H3K27ac.bed?dl=1",
+          "https://www.dropbox.com/s/8gc72jq4pn49qn3/RNF2.bed?dl=1",
+          "https://www.dropbox.com/s/v5hoq9g6giudz13/TAL1.bed?dl=1",
+          "https://www.dropbox.com/s/sjak2i2f126twsm/TBL1XR1.bed?dl=1")
 dest_locs <- paste0(offsite_dir, "/data/functional/ChIP-seq/", chip_seq_files, ".bed")
 for (i in 1:length(chip_seq_files)) {
   download.file(url = urls[i], destfile = dest_locs[i])
